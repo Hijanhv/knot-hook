@@ -3,9 +3,16 @@
 @tailwind utilities;
 
 @layer base {
-  html { -webkit-font-smoothing: antialiased; }
-  body { @apply bg-canvas text-ink font-sans antialiased; }
-  /* Every figure in this app is a measured number. Keep them from jittering. */
+  html {
+    -webkit-font-smoothing: antialiased;
+    /* Belt and braces: the body className sets this too, but painting the root as well
+       means an overscroll bounce never reveals a white strip under the cream page. */
+    background-color: #f7f5ef;
+  }
+}
+
+@layer utilities {
+  /* Every figure in this app is a measured number. Keep them from jittering as they update. */
   .tnum { font-variant-numeric: tabular-nums; }
 }
 
