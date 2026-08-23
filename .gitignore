@@ -4,3 +4,5 @@ broadcast/
 coverage/
 lcov.info
 .env
+node_modules/
+.next/

@@ -1,0 +1,29 @@
+---
+title: "Liquidity lifecycle"
+description: "Independent, non-blocking, and JIT-resistant."
+---
+
+Each provider holds an **independent** pending request. There is no global lock, so one provider's
+pending deposit can never stall swaps, withdrawals, or anyone else's deposit.
+
+<Steps>
+  <Step title="Queue">
+    Assets are taken and held inactive. No shares are minted yet.
+  </Step>
+  <Step title="Mature">
+    After the maturity window, the deposit becomes activatable. Fresh capital cannot back a quote
+    before this point, which is what closes just-in-time liquidity.
+  </Step>
+  <Step title="Activate">
+    Shares mint at the **current** reserve ratio, so pending capital cannot capture gains that
+    accrued before it entered. Any excess becomes refundable.
+  </Step>
+  <Step title="Cancel or claim">
+    Only the provider can activate, cancel or claim. Excess is refundable to them alone.
+  </Step>
+</Steps>
+
+<Note>
+Cancelling has no maturity requirement, deliberately. Forcing a wait on **exit** would trap funds
+without adding protection, because the anti-JIT property comes from delaying **activation**.
+</Note>

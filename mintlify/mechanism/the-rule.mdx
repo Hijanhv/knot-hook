@@ -1,0 +1,48 @@
+---
+title: "The rule"
+description: "Two quotes, and the taker gets the worse one."
+---
+
+## Why two quotes
+
+A pool's own reserves say what it can afford in isolation. The federation's aggregate reserves say
+what the pair can afford in total. When a pool is skewed, those disagree — and the gap is exactly
+the value an arbitrageur would take.
+
+<Steps>
+  <Step title="Local pool quotes">
+    Constant product against this pool's own reserves.
+  </Step>
+  <Step title="Federation quotes">
+    The same maths against the sum of every member's reserves.
+  </Step>
+  <Step title="Take the worse one">
+    `min` for exact input, `max` for exact output.
+  </Step>
+  <Step title="The difference stays">
+    The taker never receives the surplus. It remains in the local pool.
+  </Step>
+</Steps>
+
+## Worked example
+
+Pool A holds 1,000 token0 and 1,500 token1. Pool B holds 1,000 and 500. Alone, Pool A offers far
+more token1 for a new token0 trade. Together the pair is balanced at 2,000 / 2,000.
+
+If Pool A would pay 14.8 token1 and the aggregate supports 9.9, the trader receives **9.9**. The
+remaining 4.9 stays in Pool A, and both books update atomically.
+
+## What binds, and when
+
+The bound only bites when the local pool is the generous one, which happens when it is skewed
+relative to the pair. Across 1,001 randomised configurations it never once bound on a trade that
+was widening divergence.
+
+| Skew | Value withheld |
+| --- | --- |
+| 1× (balanced) | 0 bps |
+| 2× | 4,299 bps |
+| 4× | 6,674 bps |
+| 8× | 7,862 bps |
+
+A pool in line with its pair is untouched. The mechanism engages in proportion to fragmentation.

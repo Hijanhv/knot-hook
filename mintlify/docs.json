@@ -1,0 +1,26 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Knot",
+  "description": "One token pair. Several pools. One reserve-aware price boundary.",
+  "colors": { "primary": "#0d4f4a", "light": "#136d66", "dark": "#083733" },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          { "group": "Getting started", "pages": ["introduction", "quickstart"] },
+          { "group": "Mechanism", "pages": ["mechanism/the-rule", "mechanism/execution-flow", "mechanism/lifecycle"] },
+          { "group": "MEV protection", "pages": ["security/threat-model", "security/results", "security/limits"] },
+          { "group": "Reference", "pages": ["reference/contracts", "reference/integrate"] }
+        ]
+      }
+    ]
+  },
+  "navbar": {
+    "links": [{ "label": "App", "href": "https://knot-hook.vercel.app/app" }],
+    "primary": { "type": "github", "href": "https://github.com/Hijanhv/KNOT-hook-" }
+  },
+  "footer": { "socials": { "github": "https://github.com/Hijanhv/KNOT-hook-" } }
+}

@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-font-smoothing: antialiased; }
+  body { @apply bg-canvas text-ink font-sans antialiased; }
+  /* Every figure in this app is a measured number. Keep them from jittering. */
+  .tnum { font-variant-numeric: tabular-nums; }
+}
+
+@layer components {
+  .wrap { @apply mx-auto w-full max-w-content px-6; }
+  .rule { @apply border-t border-line; }
+  .eyebrow { @apply font-mono text-[11px] uppercase tracking-[0.18em] text-muted; }
+  .card { @apply rounded-lg border border-line bg-surface p-6 shadow-card; }
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md border border-edge bg-ink px-4 py-2
+           text-sm font-medium text-canvas transition-colors hover:bg-marine
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-md border border-line bg-surface px-4 py-2
+           text-sm font-medium text-ink transition-colors hover:border-edge
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

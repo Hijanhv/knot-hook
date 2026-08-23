@@ -1,0 +1,32 @@
+---
+title: "Integrate"
+description: "Read the bound from your own contract or frontend."
+---
+
+## Read a quote
+
+`preview` is a view and mutates nothing, so it is safe to call from anywhere.
+
+```solidity
+(uint256 localQuote, uint256 aggregateQuote, uint256 knotQuote) =
+    federation.preview(hook, zeroForOne, exactInput, specifiedAmount);
+```
+
+`knotQuote` is what a taker actually receives. The gap between `localQuote` and `knotQuote` is the
+value retained for LPs on that trade.
+
+## From a frontend
+
+```ts
+const [local, aggregate, enforced] = await publicClient.readContract({
+  address: FEDERATION,
+  abi: federationAbi,
+  functionName: "preview",
+  args: [hook, true, true, parseEther("5")],
+});
+```
+
+<Note>
+`preview` reverts with `NotMember` for an address that is not a registered member. Check
+`isMember(hook)` first if the address is user-supplied.
+</Note>

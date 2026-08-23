@@ -1,0 +1,53 @@
+---
+title: "Adversarial results"
+description: "Every number, and the command that reproduces it."
+---
+
+Across 9,087 test functions scraped from 131 theme-matched Uniswap Hook Incubator repositories,
+only **28 mention "manipulation"** and **21 mention "attack."** Most hooks prove their code runs.
+Few prove the mechanism survives an adversary.
+
+```bash
+forge test --match-contract MEVProtectionTest -vv
+forge test --match-contract EconomicViabilityTest -vv
+forge test --match-contract RouterRealismTest -vv
+```
+
+## The core thesis
+
+The attack Knot exists to stop, run with and without the federation:
+
+| | Attacker P&L, 5-token stake |
+| --- | --- |
+| Independent pools | **+13.58** — profitable |
+| Under Knot | **−0.075** — a loss |
+| **Profit removed** | **13.66** |
+
+Holds at every size tested, scaling from 0.29 at 0.1 tokens to 42.99 at 20 tokens.
+
+## Routing
+
+The mechanism only ever quotes equal-or-worse than an unfederated pool of identical reserves. The
+question is whether that costs flow. Measured against pools that actually exist:
+
+| | |
+| --- | --- |
+| Routes leaving the federation | **0 of 40** |
+| Federation's best member vs an external pool of equal depth | **wins 40 of 40** |
+
+Flow moving from the skewed member to the deep member never leaves — the same LP set earns the fee.
+
+## Skew sensitivity
+
+| Skew | Withheld | Retained ÷ fees forgone |
+| --- | --- | --- |
+| 1× (balanced) | 0 bps | — |
+| 2× | 4,299 bps | 262× |
+| 4× | 6,674 bps | 824× |
+| 6× | 7,466 bps | 1,387× |
+| 8× | 7,862 bps | 1,949× |
+
+## Stateful
+
+Twelve sequential extraction attempts with state carried forward: the quote for a fixed size falls
+from 1.2678 to 1.2406. Extraction gets harder as the pool drains, never easier.

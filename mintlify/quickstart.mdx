@@ -1,0 +1,45 @@
+---
+title: "Quickstart"
+description: "Build, test and reproduce every number in these docs."
+---
+
+## Install
+
+```bash
+git clone https://github.com/Hijanhv/KNOT-hook-.git
+cd KNOT-hook-
+forge install OpenZeppelin/uniswap-hooks@rev=01a87ba5e69a3f75d0157cbf8ea49971ad83599a
+git -C lib/uniswap-hooks submodule update --init --recursive
+```
+
+<Warning>
+The nested submodule step is required. `forge install` fetches `uniswap-hooks` but not its own
+dependencies, and the resulting compile error points at the wrong thing.
+</Warning>
+
+## Run the suite
+
+<CodeGroup>
+```bash Everything
+forge test
+```
+```bash MEV adversarial
+forge test --match-contract MEVProtectionTest -vv
+```
+```bash Economics
+forge test --match-contract EconomicViabilityTest -vv
+```
+```bash Coverage
+forge coverage
+```
+</CodeGroup>
+
+## Frontend
+
+```bash
+cd frontend && npm install && npm run dev
+```
+
+Open [localhost:3000](http://localhost:3000). The app reads deployed addresses from
+`NEXT_PUBLIC_FEDERATION`, `NEXT_PUBLIC_DEEP_POOL` and `NEXT_PUBLIC_SHALLOW_POOL`, and falls back
+to the test configuration so the mechanism is explorable before deployment.

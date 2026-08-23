@@ -1,0 +1,50 @@
+---
+title: "Introduction"
+description: "One token pair. Several pools. One reserve-aware price boundary."
+---
+
+Two Uniswap pools can hold the same tokens and quote very different prices. The shallower one
+becomes the weak link: easier to move, slower to correct, and able to offer a rate the pair's
+combined liquidity does not actually support.
+
+Knot connects participating pools through one shared reserve ledger. Every swap is quoted twice
+and the trader receives the **less favourable** of the two. The clipped difference stays with the
+local pool's LPs.
+
+<CodeGroup>
+```text Exact input
+output = min(local output, aggregate output)
+```
+```text Exact output
+input = max(local input, aggregate input)
+```
+</CodeGroup>
+
+This is arithmetic, not a prediction. There is no model to be wrong, no oracle to read, and no
+classifier deciding who looks like an attacker.
+
+## What it is for
+
+<CardGroup cols={2}>
+  <Card title="Protects" icon="shield">
+    Liquidity providers in fragmented pairs, from value leaking through the weakest pool.
+  </Card>
+  <Card title="Does not protect" icon="circle-minus">
+    Swappers from sandwiching. That is a different problem with a different victim.
+  </Card>
+</CardGroup>
+
+## Measured results
+
+| Metric | Value |
+| --- | --- |
+| Attacker profit removed on a cross-pool round trip | **13.66** tokens on a 5-token stake |
+| Value withheld and kept with LPs (4× skew) | **6,674 bps** of the isolated quote |
+| Value retained ÷ fee revenue forgone | **824×** at 4× skew, **1,949×** at 8× |
+| Effect on a balanced pool | **0 bps** — the bound is inert |
+| Advantage from splitting a trade 8 ways | none |
+
+<Note>
+Unaudited hackathon software. These figures measure mechanics against the canonical v4
+`PoolManager`, not realised LP P&L.
+</Note>
