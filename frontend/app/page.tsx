@@ -1,63 +1,164 @@
 import Link from "next/link";
 import KnotMark from "@/components/KnotMark";
-import Stat from "@/components/Stat";
 import Reveal from "@/components/Reveal";
+import Counter from "@/components/Counter";
+import ScrollCue from "@/components/ScrollCue";
 import FlowDiagram from "@/components/FlowDiagram";
 import { SITE } from "@/lib/site";
 
+/**
+ * Structure follows goodgrowth: an animation-led opening where the motion is the content,
+ * then a large typographic statement, then a single-column narrative with generous pacing.
+ * Sans throughout, set large and tight. Marine on warm paper, as before.
+ */
 export default function Home() {
   return (
     <>
-      {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="wrap pt-20 pb-16 md:pt-28">
-        <div className="grid items-center gap-12 md:grid-cols-[1.15fr_1fr]">
-          <div className="animate-rise [animation-delay:80ms]">
-            <div className="mb-5 flex flex-wrap items-center gap-2">
-              <span className="rounded-full border border-marine/30 bg-marine/5 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-marine">
-                Uniswap v4 hook
-              </span>
-              <span className="rounded-full border border-line bg-surface px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-                {SITE.cohort} · {SITE.projectId}
-              </span>
-            </div>
-            <h1 className="font-display text-4xl leading-[1.08] tracking-tightest md:text-6xl">
-              One pair.<br />Several pools.<br />
-              <span className="text-marine">One price boundary.</span>
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-soft">
-              A shallow pool can hand an arbitrageur a better quote than the pair&rsquo;s combined liquidity
-              actually supports. Knot makes participating pools check both reserve states before a trade,
-              and leaves the difference with the LPs who would otherwise have funded it.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/app" className="btn">Launch app</Link>
-              <a href={SITE.docs} target="_blank" rel="noopener noreferrer" className="btn-ghost">Read the docs ↗</a>
-            </div>
-          </div>
-          <KnotMark className="w-full text-marine" />
+      {/* ── 1. Opening. The mechanism animating, almost no words. ── */}
+      <section className="flex min-h-[78vh] flex-col items-center justify-center px-6">
+        <KnotMark className="w-full max-w-[520px] text-marine" />
+        <div className="mt-14 flex flex-col items-center gap-6">
+          <p className="max-w-md text-center text-sm leading-relaxed text-muted">
+            A Uniswap v4 hook. Live on Unichain Sepolia.
+          </p>
+          <ScrollCue />
         </div>
       </section>
 
-      {/* ── The problem ──────────────────────────────────────── */}
-      <section id="problem" className="rule scroll-mt-20">
-        <div className="wrap py-20">
+      {/* ── 2. The statement. Type scaled hard against the viewport. ── */}
+      <section className="px-6 py-[14vh]">
+        <div className="mx-auto max-w-5xl">
           <Reveal>
-            <p className="eyebrow mb-3">The problem</p>
-            <h2 className="max-w-2xl font-display text-3xl leading-tight tracking-tightest md:text-4xl">
-              Liquidity for one pair is split across pools that know nothing about each other.
+            <h1 className="text-[clamp(2.75rem,8.5vw,7rem)] font-semibold leading-[0.95] tracking-[-0.045em]">
+              One pair.
+              <br />
+              Several pools.
+              <br />
+              <span className="text-marine">One price boundary.</span>
+            </h1>
+          </Reveal>
+          <Reveal delay={160}>
+            <p className="mt-14 max-w-2xl text-xl leading-[1.65] text-ink-soft md:text-2xl">
+              A shallow pool can hand an arbitrageur a better quote than the pair&rsquo;s combined
+              liquidity actually supports. Knot makes participating pools check both reserve states
+              before a trade, and leaves the difference with the LPs who would otherwise have funded it.
+            </p>
+          </Reveal>
+          <Reveal delay={280}>
+            <div className="mt-14 flex flex-wrap items-center gap-4">
+              <Link href="/app" className="btn">Launch app</Link>
+              <a href={SITE.docs} target="_blank" rel="noopener noreferrer" className="btn-ghost">Docs ↗</a>
+              <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
+                {SITE.cohort} · {SITE.projectId}
+              </span>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── 3. The problem, as narrative. Single column, one idea per beat. ── */}
+      <section id="problem" className="scroll-mt-24 px-6 py-[12vh]">
+        <div className="mx-auto max-w-3xl">
+          <Reveal><p className="eyebrow mb-14">The problem</p></Reveal>
+          {[
+            ["One pool runs shallow.", "Same tokens, far less depth. Its price is cheaper to move and slower to correct."],
+            ["It quotes beyond its means.", "In isolation it offers a rate the pair's combined liquidity does not actually support."],
+            ["The difference leaves.", "An arbitrageur takes the generous quote. That value was funded by the pool's own LPs."],
+          ].map(([h, p], i) => (
+            <Reveal key={h} delay={i * 90}>
+              <div className="border-t border-line py-12">
+                <h2 className="text-3xl font-semibold leading-tight tracking-[-0.035em] md:text-[2.75rem]">{h}</h2>
+                <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">{p}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* ── 4. The rule. The one thing to remember. ── */}
+      <section id="how" className="scroll-mt-24 bg-surface2/50 px-6 py-[14vh]">
+        <div className="mx-auto max-w-4xl">
+          <Reveal>
+            <p className="eyebrow mb-10">How it works</p>
+            <h2 className="text-[clamp(2rem,5.5vw,3.75rem)] font-semibold leading-[1.05] tracking-[-0.04em]">
+              Every swap is quoted twice.
+              <br />
+              <span className="text-marine">The taker gets the worse one.</span>
             </h2>
           </Reveal>
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
+          <Reveal delay={140}>
+            <div className="mt-14 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-lg border border-line bg-surface p-7 transition-all duration-300 hover:-translate-y-1 hover:border-marine">
+                <p className="eyebrow mb-4">Exact input</p>
+                <code className="tnum font-mono text-base">output = <span className="text-marine">min</span>(local, aggregate)</code>
+              </div>
+              <div className="rounded-lg border border-line bg-surface p-7 transition-all duration-300 hover:-translate-y-1 hover:border-marine">
+                <p className="eyebrow mb-4">Exact output</p>
+                <code className="tnum font-mono text-base">input = <span className="text-marine">max</span>(local, aggregate)</code>
+              </div>
+            </div>
+          </Reveal>
+          <Reveal delay={220}>
+            <p className="mt-10 max-w-2xl text-lg leading-relaxed text-ink-soft">
+              Arithmetic, not a prediction. No model to be wrong, no oracle to read, no classifier
+              deciding who looks like an attacker.
+            </p>
+          </Reveal>
+          <Reveal delay={300}><div className="mt-14"><FlowDiagram /></div></Reveal>
+        </div>
+      </section>
+
+      {/* ── 5. Results, as a compact list rather than a card grid. ── */}
+      <section className="px-6 py-[14vh]">
+        <div className="mx-auto max-w-3xl">
+          <Reveal>
+            <p className="eyebrow mb-4">Measured on-chain</p>
+            <h2 className="mb-16 text-[clamp(1.75rem,4.5vw,3rem)] font-semibold leading-tight tracking-[-0.035em]">
+              Every number reproduces a test.
+            </h2>
+          </Reveal>
+          {[
+            { n: 6674, u: "bps", l: "Value kept with LPs", d: "Withheld from a taker exploiting the skewed pool.", t: "text-marine" },
+            { n: 1949, u: "×", l: "Retained vs fees forgone", d: "At 8× skew. Still 262× at 2×.", t: "text-marine" },
+            { n: 0, u: "bps", l: "Effect on a balanced pool", d: "The bound is inert where nothing is wrong.", t: "text-ink" },
+            { n: 0, u: "", l: "Gain from splitting 8 ways", d: "Sliced output is marginally worse. Path independence holds.", t: "text-ink" },
+          ].map((r, i) => (
+            <Reveal key={r.l} delay={i * 80}>
+              <div className="group flex items-baseline justify-between gap-8 border-t border-line py-8">
+                <div>
+                  <p className="text-lg font-medium">{r.l}</p>
+                  <p className="mt-1.5 text-base text-muted">{r.d}</p>
+                </div>
+                <p className={`shrink-0 text-4xl font-semibold tracking-[-0.04em] md:text-5xl ${r.t}`}>
+                  <Counter to={r.n} />
+                  <span className="ml-1 text-lg font-normal text-muted">{r.u}</span>
+                </p>
+              </div>
+            </Reveal>
+          ))}
+          <Reveal delay={340}>
+            <code className="mt-10 inline-block rounded-md border border-line bg-surface px-3 py-2 font-mono text-xs text-muted">
+              forge test --match-contract MEVProtectionTest -vv
+            </code>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── 6. Stack, as a compact spec list. ── */}
+      <section id="stack" className="scroll-mt-24 px-6 py-[12vh]">
+        <div className="mx-auto max-w-3xl">
+          <Reveal><p className="eyebrow mb-12">Stack</p></Reveal>
+          <div className="grid gap-x-16 gap-y-0 sm:grid-cols-2">
             {[
-              { n: "01", h: "One pool runs shallow", p: "Same tokens, far less depth. Its price is cheaper to move and slower to correct." },
-              { n: "02", h: "It quotes beyond its means", p: "In isolation it offers a rate the pair's combined liquidity does not actually support." },
-              { n: "03", h: "The difference leaves", p: "An arbitrageur takes the generous quote. That value was funded by the pool's LPs." },
-            ].map((c, i) => (
-              <Reveal key={c.n} delay={i * 110}>
-                <div className="group border-l-2 border-line pl-5 transition-colors duration-300 hover:border-marine">
-                  <span className="font-mono text-xs text-faint transition-colors group-hover:text-marine">{c.n}</span>
-                  <h3 className="mt-2 font-display text-xl tracking-tightest">{c.h}</h3>
-                  <p className="mt-2 leading-relaxed text-muted">{c.p}</p>
+              ["Protocol", "Uniswap v4"], ["Hook base", "BaseCustomCurve"],
+              ["Accounting", "ERC-6909 claims"], ["Language", "Solidity 0.8.26"],
+              ["Network", "Unichain Sepolia"], ["Interface", "Next.js · wagmi"],
+              ["Docs", "Mintlify"], ["Oracle", "none, by design"],
+            ].map(([k, v], i) => (
+              <Reveal key={k} delay={i * 45}>
+                <div className="flex items-baseline justify-between border-t border-line py-4">
+                  <span className="text-muted">{k}</span>
+                  <span className="font-mono text-sm">{v}</span>
                 </div>
               </Reveal>
             ))}
@@ -65,159 +166,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── How it works ─────────────────────────────────────── */}
-      <section id="how" className="rule scroll-mt-20">
-        <div className="wrap py-20">
+      {/* ── 7. Close. ── */}
+      <section className="px-6 pb-[16vh] pt-[8vh]">
+        <div className="mx-auto max-w-3xl">
           <Reveal>
-            <p className="eyebrow mb-3">How it works</p>
-            <h2 className="max-w-2xl font-display text-3xl leading-tight tracking-tightest md:text-4xl">
-              Every swap is quoted twice. The taker gets the worse one.
+            <h2 className="text-[clamp(2rem,6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.045em]">
+              Connect a wallet and
+              <br />
+              <span className="text-marine">watch the bound bind.</span>
             </h2>
-            <p className="mt-4 max-w-2xl leading-relaxed text-ink-soft">
-              This is arithmetic, not a prediction. There is no model to be wrong, no oracle to read,
-              and no classifier deciding who looks like an attacker.
-            </p>
-          </Reveal>
-
-          <Reveal delay={120} className="mt-12">
-            <FlowDiagram />
-          </Reveal>
-
-          <Reveal delay={200} className="mt-10">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="card transition-all duration-300 hover:-translate-y-1 hover:border-marine hover:shadow-lift">
-                <p className="eyebrow mb-3">Exact input</p>
-                <code className="tnum block font-mono text-sm">
-                  output = <span className="text-marine">min</span>(local, aggregate)
-                </code>
-              </div>
-              <div className="card transition-all duration-300 hover:-translate-y-1 hover:border-marine hover:shadow-lift">
-                <p className="eyebrow mb-3">Exact output</p>
-                <code className="tnum block font-mono text-sm">
-                  input = <span className="text-marine">max</span>(local, aggregate)
-                </code>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── Measured ─────────────────────────────────────────── */}
-      <section className="rule">
-        <div className="wrap py-20">
-          <Reveal>
-            <p className="eyebrow mb-3">Measured</p>
-            <h2 className="mb-12 font-display text-3xl tracking-tightest md:text-4xl">
-              Every number comes from a test you can run.
-            </h2>
-          </Reveal>
-          <div className="grid gap-10 md:grid-cols-3">
-            <Reveal><Stat label="Value kept with LPs" numeric={6674} unit="bps" tone="marine"
-              note="Withheld from a taker exploiting a skewed pool and left with LPs." /></Reveal>
-            <Reveal delay={110}><Stat label="Gain from splitting 8 ways" numeric={0}
-              note="Sliced output is marginally worse than one large trade. Path independence holds." /></Reveal>
-            <Reveal delay={220}><Stat label="Sandwich round trip" value="Unprofitable" tone="marine"
-              note="An attacker sandwiching a victim through one pool ends the sequence down 1.484 currency0." /></Reveal>
-          </div>
-          <Reveal delay={300} className="mt-10">
-            <code className="inline-block rounded-md border border-line bg-surface2 px-3 py-2 font-mono text-xs text-ink-soft">
-              forge test --match-contract MEVProtectionTest -vv
-            </code>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── Security ─────────────────────────────────────────── */}
-      <section className="rule">
-        <div className="wrap py-20">
-          <Reveal>
-            <p className="eyebrow mb-3">Security</p>
-            <h2 className="max-w-2xl font-display text-3xl leading-tight tracking-tightest md:text-4xl">
-              Reviewed against Uniswap&rsquo;s own v4 security guidance.
-            </h2>
-            <p className="mt-4 max-w-2xl leading-relaxed text-ink-soft">
-              Reserve mutation is restricted to registered members. Both quote directions round against
-              the taker. Custody reduces to one equation, asserted as an invariant across 8,192 lifecycle
-              calls: <code className="font-mono text-sm text-marine">PoolManager claims = active reserves + inactive provider assets</code>.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a href={`${SITE.docs}/security`} target="_blank" rel="noopener noreferrer" className="btn-ghost">
-                Threat model &amp; limits ↗
-              </a>
-              <a href={`${SITE.github}/blob/main/research/mev-findings.md`} target="_blank" rel="noopener noreferrer" className="btn-ghost">
-                Adversarial results ↗
-              </a>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── Stack ────────────────────────────────────────────── */}
-      <section id="stack" className="rule scroll-mt-20">
-        <div className="wrap py-20">
-          <Reveal>
-            <p className="eyebrow mb-3">Stack</p>
-            <h2 className="mb-12 font-display text-3xl tracking-tightest md:text-4xl">What it is built on.</h2>
-          </Reveal>
-          <div className="grid gap-6 md:grid-cols-2">
-            <Reveal>
-              <div className="card h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
-                <p className="eyebrow mb-4">On-chain</p>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex justify-between gap-4 border-b border-line pb-3">
-                    <span className="text-ink-soft">Protocol</span><span className="font-mono text-ink">Uniswap v4</span>
-                  </li>
-                  <li className="flex justify-between gap-4 border-b border-line pb-3">
-                    <span className="text-ink-soft">Hook base</span><span className="font-mono text-ink">BaseCustomCurve</span>
-                  </li>
-                  <li className="flex justify-between gap-4 border-b border-line pb-3">
-                    <span className="text-ink-soft">Accounting</span><span className="font-mono text-ink">ERC-6909 claims</span>
-                  </li>
-                  <li className="flex justify-between gap-4 border-b border-line pb-3">
-                    <span className="text-ink-soft">Language</span><span className="font-mono text-ink">Solidity 0.8.26</span>
-                  </li>
-                  <li className="flex justify-between gap-4">
-                    <span className="text-ink-soft">Tooling</span><span className="font-mono text-ink">Foundry</span>
-                  </li>
-                </ul>
-              </div>
-            </Reveal>
-            <Reveal delay={110}>
-              <div className="card h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
-                <p className="eyebrow mb-4">Interface</p>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex justify-between gap-4 border-b border-line pb-3">
-                    <span className="text-ink-soft">Framework</span><span className="font-mono text-ink">Next.js 14</span>
-                  </li>
-                  <li className="flex justify-between gap-4 border-b border-line pb-3">
-                    <span className="text-ink-soft">Chain access</span><span className="font-mono text-ink">wagmi · viem</span>
-                  </li>
-                  <li className="flex justify-between gap-4 border-b border-line pb-3">
-                    <span className="text-ink-soft">Wallet</span><span className="font-mono text-ink">MetaMask</span>
-                  </li>
-                  <li className="flex justify-between gap-4 border-b border-line pb-3">
-                    <span className="text-ink-soft">Docs</span><span className="font-mono text-ink">Mintlify</span>
-                  </li>
-                  <li className="flex justify-between gap-4">
-                    <span className="text-ink-soft">No oracle</span><span className="font-mono text-marine">by design</span>
-                  </li>
-                </ul>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA ──────────────────────────────────────────────── */}
-      <section className="rule">
-        <div className="wrap py-20 text-center">
-          <Reveal>
-            <h2 className="mx-auto max-w-2xl font-display text-3xl leading-tight tracking-tightest md:text-4xl">
-              Connect a wallet and watch the bound bind.
-            </h2>
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <div className="mt-12 flex flex-wrap gap-4">
               <Link href="/app" className="btn">Launch app</Link>
-              <a href={SITE.github} target="_blank" rel="noopener noreferrer" className="btn-ghost">View source ↗</a>
+              <Link href="/demo" className="btn-ghost">The attack demo</Link>
             </div>
           </Reveal>
         </div>
