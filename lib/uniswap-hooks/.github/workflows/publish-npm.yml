@@ -1,0 +1,65 @@
+name: Publish to NPM
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run only (no actual publish)'
+        type: boolean
+        default: true
+      tag:
+        description: 'NPM dist-tag (latest=audited stable, dev=unaudited, next=RC)'
+        type: string
+        required: true
+        default: 'dev'
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up environment
+        uses: ./.github/actions/setup
+      
+      - name: Pack
+        id: pack
+        run: |
+          npm pack
+          TARBALL="$(ls -t *.tgz | head -1)"
+          echo "tarball=$TARBALL" >> $GITHUB_OUTPUT
+      
+      - name: Upload tarball artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: uniswap-hooks-${{ github.sha }}
+          path: ${{ steps.pack.outputs.tarball }}
+      
+      - name: Publish
+        if: inputs.dry_run == false
+        run: |
+          echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
+          npm publish ${{ steps.pack.outputs.tarball }} --tag ${{ inputs.tag }} --access public
+          rm .npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+      
+      - name: Create GitHub Release
+        if: inputs.dry_run == false
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { version } = require('./package.json');
+            await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: `v${version}`,
+              name: `v${version}`,
+              body: `Release of @openzeppelin/uniswap-hooks v${version}`
+            });
