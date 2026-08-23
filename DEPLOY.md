@@ -13,21 +13,33 @@ Addresses from [Uniswap's deployment registry](https://docs.uniswap.org/contract
 
 ## Before you start
 
-1. **A funded key.** Unichain Sepolia ETH comes from the [Unichain faucet](https://faucet.quicknode.com/unichain/sepolia)
-   or by bridging Sepolia ETH. A deployment costs well under 0.05 ETH.
-2. **Prefer a keystore over a raw key.** `cast wallet import knot --interactive` stores it
-   encrypted, then pass `--account knot` instead of `--private-key`.
+**Import your deployer key into an encrypted keystore.** This repository is public, and a raw
+key in a file is one `git add -A` away from permanent exposure. Foundry keeps the key encrypted
+at rest and asks for a password at broadcast time.
 
 ```bash
-cp .env.example .env   # then fill in PRIVATE_KEY
+cast wallet import uhi-deploy --interactive   # paste the private key, set a password
+cast wallet list                              # confirm it is there
+```
+
+Every command below passes `--account uhi-deploy`. Never `--private-key`.
+
+**Funding.** A full deployment costs well under 0.05 ETH. Unichain Sepolia ETH comes from
+bridging Sepolia ETH at [bridge.unichain.org](https://bridge.unichain.org) — more reliable than
+the direct faucets, which are usually rate-limited.
+
+```bash
+cp .env.example .env   # POOL_MANAGER and RPC_URL only; leave PRIVATE_KEY empty
 source .env
+cast balance $(cast wallet address --account uhi-deploy) --rpc-url $RPC_URL --ether
 ```
 
 ## Phase one — deploy and queue liquidity
 
 ```bash
 forge script script/DeployDemo.s.sol:DeployDemo \
-  --rpc-url $RPC_URL --broadcast -vvv
+  --rpc-url $RPC_URL --account uhi-deploy --sender $(cast wallet address --account uhi-deploy) \
+  --broadcast -vvv
 ```
 
 This deploys two demo ERC-20s, the federation, and **two** hook instances mined to
@@ -47,7 +59,8 @@ Wait one block, then:
 ```bash
 source .env
 forge script script/DeployDemo.s.sol:Activate \
-  --rpc-url $RPC_URL --broadcast -vvv
+  --rpc-url $RPC_URL --account uhi-deploy --sender $(cast wallet address --account uhi-deploy) \
+  --broadcast -vvv
 ```
 
 It prints both reserve pairs. Once the shallow pool reads 100/400, the bound is live.

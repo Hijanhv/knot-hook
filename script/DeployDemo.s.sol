@@ -47,12 +47,13 @@ contract DeployDemo is Script {
     error HookAddressMismatch(address expected, address actual);
 
     function run() external {
-        uint256 pk = vm.envUint("PRIVATE_KEY");
-        address me = vm.addr(pk);
+        // No key is read here. `--account <name>` supplies the signer, so the raw key never
+        // touches the filesystem or an environment variable.
+        address me = msg.sender;
         IPoolManager manager = IPoolManager(vm.envAddress("POOL_MANAGER"));
         uint256 maturity = vm.envOr("LIQUIDITY_MATURITY_BLOCKS", uint256(1));
 
-        vm.startBroadcast(pk);
+        vm.startBroadcast();
 
         // ── tokens, sorted so currency0 < currency1 as v4 requires ──
         address tA = address(new DemoToken("Knot Demo USD", "kUSD"));
@@ -125,11 +126,10 @@ contract DeployDemo is Script {
 /// @dev Phase two. Run once the maturity window has passed.
 contract Activate is Script {
     function run() external {
-        uint256 pk = vm.envUint("PRIVATE_KEY");
         KnotHook deep = KnotHook(payable(vm.envAddress("DEEP_POOL")));
         KnotHook shallow = KnotHook(payable(vm.envAddress("SHALLOW_POOL")));
 
-        vm.startBroadcast(pk);
+        vm.startBroadcast();
         deep.activatePendingLiquidity();
         shallow.activatePendingLiquidity();
         vm.stopBroadcast();
