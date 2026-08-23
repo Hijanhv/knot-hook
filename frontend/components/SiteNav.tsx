@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Connect from "./Connect";
+import KnotLogo from "./KnotLogo";
 import { SITE } from "@/lib/site";
 
 export default function SiteNav() {
@@ -11,10 +12,8 @@ export default function SiteNav() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-canvas/85 backdrop-blur">
       <div className="wrap flex h-16 items-center justify-between gap-6">
-        <Link href="/" className="flex items-center gap-2.5">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden className="text-marine">
-            <path d="M4 8c5 0 5 8 10 8s6-4 6-4M4 16c5 0 5-8 10-8s6 4 6 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
+        <Link href="/" className="group flex items-center gap-2.5">
+          <KnotLogo size={26} className="text-marine transition-transform duration-300 group-hover:rotate-[8deg]" />
           <span className="font-display text-lg tracking-tightest">Knot</span>
         </Link>
 

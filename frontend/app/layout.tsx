@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import SiteNav from "@/components/SiteNav";
+import ScrollProgress from "@/components/ScrollProgress";
 import SiteFooter from "@/components/SiteFooter";
 import Providers from "./providers";
 
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${sans.variable} ${display.variable} ${mono.variable}`}>
       <body className="min-h-screen bg-canvas font-sans text-ink antialiased">
         <Providers>
+          <ScrollProgress />
           <SiteNav />
           <main>{children}</main>
           <SiteFooter />

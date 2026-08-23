@@ -15,6 +15,11 @@
 
 **UHI10 Hookathon · Sustainable Liquidity & MEV Protection**
 
+**Live on Unichain Sepolia.** Federation [`0x91A0…A129`](https://sepolia.uniscan.xyz/address/0x91A0489A1BEA8030AC82351D52BDC3F97d6cA129) ·
+deep [`0x3469…6A88`](https://sepolia.uniscan.xyz/address/0x346930bcf767614a6C4654904739cBCF4A8f6A88) ·
+shallow [`0x6B8D…AA88`](https://sepolia.uniscan.xyz/address/0x6B8D77a921Adc5244bC0398fa6133841F3DFaA88) —
+[deployment record](deployments/unichain-sepolia-2026-08-23.md)
+
 > **Status:** unaudited hackathon software. The results below are constructed adversarial
 > scenarios against the canonical v4 `PoolManager`. They measure mechanics, not realised LP P&L.
 

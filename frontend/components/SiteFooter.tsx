@@ -1,4 +1,5 @@
 import Link from "next/link";
+import KnotLogo from "./KnotLogo";
 import { SITE, DEPLOYMENTS } from "@/lib/site";
 
 const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
@@ -9,9 +10,7 @@ export default function SiteFooter() {
       <div className="wrap grid gap-10 py-14 md:grid-cols-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden className="text-marine">
-              <path d="M4 8c5 0 5 8 10 8s6-4 6-4M4 16c5 0 5-8 10-8s6 4 6 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
+            <KnotLogo size={22} animate={false} className="text-marine" />
             <span className="font-display text-lg tracking-tightest">Knot</span>
           </div>
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">

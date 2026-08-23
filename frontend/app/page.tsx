@@ -11,7 +11,7 @@ export default function Home() {
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section className="wrap pt-20 pb-16 md:pt-28">
         <div className="grid items-center gap-12 md:grid-cols-[1.15fr_1fr]">
-          <div className="animate-rise">
+          <div className="animate-rise [animation-delay:80ms]">
             <div className="mb-5 flex flex-wrap items-center gap-2">
               <span className="rounded-full border border-marine/30 bg-marine/5 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-marine">
                 Uniswap v4 hook
@@ -54,8 +54,8 @@ export default function Home() {
               { n: "03", h: "The difference leaves", p: "An arbitrageur takes the generous quote. That value was funded by the pool's LPs." },
             ].map((c, i) => (
               <Reveal key={c.n} delay={i * 110}>
-                <div className="border-l-2 border-line pl-5">
-                  <span className="font-mono text-xs text-faint">{c.n}</span>
+                <div className="group border-l-2 border-line pl-5 transition-colors duration-300 hover:border-marine">
+                  <span className="font-mono text-xs text-faint transition-colors group-hover:text-marine">{c.n}</span>
                   <h3 className="mt-2 font-display text-xl tracking-tightest">{c.h}</h3>
                   <p className="mt-2 leading-relaxed text-muted">{c.p}</p>
                 </div>
@@ -85,13 +85,13 @@ export default function Home() {
 
           <Reveal delay={200} className="mt-10">
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="card">
+              <div className="card transition-all duration-300 hover:-translate-y-1 hover:border-marine hover:shadow-lift">
                 <p className="eyebrow mb-3">Exact input</p>
                 <code className="tnum block font-mono text-sm">
                   output = <span className="text-marine">min</span>(local, aggregate)
                 </code>
               </div>
-              <div className="card">
+              <div className="card transition-all duration-300 hover:-translate-y-1 hover:border-marine hover:shadow-lift">
                 <p className="eyebrow mb-3">Exact output</p>
                 <code className="tnum block font-mono text-sm">
                   input = <span className="text-marine">max</span>(local, aggregate)
@@ -112,9 +112,9 @@ export default function Home() {
             </h2>
           </Reveal>
           <div className="grid gap-10 md:grid-cols-3">
-            <Reveal><Stat label="Value kept with LPs" value="6,674" unit="bps" tone="marine"
+            <Reveal><Stat label="Value kept with LPs" numeric={6674} unit="bps" tone="marine"
               note="Withheld from a taker exploiting a skewed pool and left with LPs." /></Reveal>
-            <Reveal delay={110}><Stat label="Gain from splitting 8 ways" value="0"
+            <Reveal delay={110}><Stat label="Gain from splitting 8 ways" numeric={0}
               note="Sliced output is marginally worse than one large trade. Path independence holds." /></Reveal>
             <Reveal delay={220}><Stat label="Sandwich round trip" value="Unprofitable" tone="marine"
               note="An attacker sandwiching a victim through one pool ends the sequence down 1.484 currency0." /></Reveal>
@@ -161,7 +161,7 @@ export default function Home() {
           </Reveal>
           <div className="grid gap-6 md:grid-cols-2">
             <Reveal>
-              <div className="card h-full">
+              <div className="card h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
                 <p className="eyebrow mb-4">On-chain</p>
                 <ul className="space-y-3 text-sm">
                   <li className="flex justify-between gap-4 border-b border-line pb-3">
@@ -183,7 +183,7 @@ export default function Home() {
               </div>
             </Reveal>
             <Reveal delay={110}>
-              <div className="card h-full">
+              <div className="card h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
                 <p className="eyebrow mb-4">Interface</p>
                 <ul className="space-y-3 text-sm">
                   <li className="flex justify-between gap-4 border-b border-line pb-3">
