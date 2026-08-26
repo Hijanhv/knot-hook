@@ -23,7 +23,7 @@ const config: Config = {
         faint: "#98a09c",
         line: "#e2ddcf",
         edge: "#171c1a",
-        marine: { DEFAULT: "#0d4f4a", dim: "#083733", bright: "#136d66" },
+        marine: { DEFAULT: "#0d4f4a", dim: "#083733", bright: "#3fbfae" },
         hemp: { DEFAULT: "#a8763c", bright: "#c9944f", soft: "#f0e4cf" },
         clay: "#a8452f",
       },

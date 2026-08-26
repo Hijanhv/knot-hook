@@ -36,3 +36,38 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+@layer components {
+  /* Diagonal hatch, used on thin structural strips so the page reads as engineered
+     rather than laid out. Lifted in spirit from Lambda's top strip. */
+  .hatch {
+    background-color: theme("colors.canvas");
+    background-image: repeating-linear-gradient(
+      -45deg,
+      rgba(13, 79, 74, 0.12) 0 1.5px,
+      transparent 1.5px 9px
+    );
+  }
+
+  /* Faint engineering grid. Gives every section a substrate instead of empty paper. */
+  .gridfield {
+    background-image:
+      linear-gradient(to right, rgba(20, 24, 27, 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(20, 24, 27, 0.045) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  /* Hard hairline frame. Borders are the layout here, not shadows. */
+  .frame { @apply border border-edge; }
+  .frame-t { @apply border-t border-edge; }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee { animation: marquee 38s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee { animation: none; }
+}
