@@ -126,7 +126,7 @@ export default function Home() {
           {[
             { v: 6674, u: "bps", l: "kept with LPs", hl: true },
             { v: 1949, u: "×", l: "retained vs fees forgone", hl: true },
-            { v: 128, u: "", l: "passing tests" },
+            { v: 122, u: "", l: "passing tests" },
             { v: 96.21, u: "%", l: "line coverage", d: 2 },
           ].map((s, i) => (
             <div key={s.l} className={`py-5 ${i === 0 ? "sm:pr-8" : "sm:px-8"} ${i === 3 ? "sm:pr-0" : ""}`}>
