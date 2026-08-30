@@ -47,16 +47,16 @@ export default function CandleChart({
     <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className={className} aria-hidden>
       <defs>
         <linearGradient id="cc-area" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.30" />
-          <stop offset="100%" stopColor="#6d3df5" stopOpacity="0" />
+          <stop offset="0%" stopColor="#00e1ff" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="#7b2fff" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="cc-line" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#6d3df5" />
-          <stop offset="60%" stopColor="#8b5cf6" />
-          <stop offset="100%" stopColor="#22d3ee" />
+          <stop offset="0%" stopColor="#7b2fff" />
+          <stop offset="55%" stopColor="#ff0080" />
+          <stop offset="100%" stopColor="#00e1ff" />
         </linearGradient>
         <filter id="cc-glow" x="-60%" y="-60%" width="220%" height="220%">
-          <feGaussianBlur stdDeviation="0.7" result="b" />
+          <feGaussianBlur stdDeviation="0.9" result="b" />
           <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
       </defs>
@@ -64,14 +64,14 @@ export default function CandleChart({
       {showArea && (
         <>
           <path d={`${closePath} L${W},${H} L0,${H} Z`} fill="url(#cc-area)" />
-          <path d={closePath} stroke="url(#cc-line)" strokeWidth="0.45" fill="none" opacity="0.9" />
+          <path d={closePath} stroke="url(#cc-line)" strokeWidth="0.6" fill="none" opacity="1" />
         </>
       )}
 
       {candles.map((c, i) => {
         const x = i * slot + slot / 2;
         const up = c.c >= c.o;
-        const stroke = up ? "#22d3ee" : "#8b5cf6";
+        const stroke = up ? "#00e1ff" : "#a855f7";
         const last = i === candles.length - 1;
         return (
           <g key={i} opacity={last ? 1 : 0.3 + (i / candles.length) * 0.6} filter={last ? "url(#cc-glow)" : undefined}>
@@ -81,7 +81,7 @@ export default function CandleChart({
               y={y(Math.max(c.o, c.c))}
               width={bw}
               height={Math.max(0.5, Math.abs(y(c.o) - y(c.c)))}
-              fill={up ? stroke : "#2a1065"}
+              fill={up ? stroke : "#7b2fff"}
               stroke={stroke}
               strokeWidth="0.32"
               rx="0.25"

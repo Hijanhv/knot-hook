@@ -7,7 +7,7 @@
     -webkit-font-smoothing: antialiased;
     /* Belt and braces: the body className sets this too, but painting the root as well
        means an overscroll bounce never reveals a white strip under the cream page. */
-    background-color: #eeddc0;
+    background-color: #fdf4e3;
   }
 }
 
@@ -22,8 +22,8 @@
   .eyebrow { @apply font-mono text-[11px] uppercase tracking-[0.18em] text-muted; }
   .card { @apply rounded-lg border border-line bg-surface p-6 shadow-card; }
   .btn {
-    @apply inline-flex items-center justify-center rounded-md border border-edge bg-ink px-4 py-2
-           text-sm font-semibold text-sand-light transition-colors hover:bg-ocean
+    @apply inline-flex items-center justify-center rounded-md border border-edge bg-gradient-to-r from-violet to-pink px-4 py-2
+           text-sm font-semibold text-white shadow-neon transition-all hover:brightness-110
            focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean;
   }
   .btn-ghost {
@@ -44,7 +44,7 @@
     background-color: theme("colors.sand.deep");
     background-image: repeating-linear-gradient(
       -45deg,
-      rgba(109, 61, 245, 0.18) 0 1.5px,
+      rgba(123, 47, 255, 0.22) 0 1.5px,
       transparent 1.5px 9px
     );
   }
@@ -54,7 +54,7 @@
   .gridfield {
     background-image: repeating-linear-gradient(
       92deg,
-      rgba(201, 173, 131, 0.5) 0 1px,
+      rgba(220, 197, 156, 0.55) 0 1px,
       transparent 1px 7px
     );
   }

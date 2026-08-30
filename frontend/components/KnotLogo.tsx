@@ -25,17 +25,17 @@ export default function KnotLogo({
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={className} aria-label="Knot" role="img">
       <defs>
         <linearGradient id={`${uid}-a`} x1="8" y1="52" x2="56" y2="12" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#6d3df5" />
-          <stop offset="55%" stopColor="#8b5cf6" />
-          <stop offset="100%" stopColor="#22d3ee" />
+          <stop offset="0%" stopColor="#7b2fff" />
+          <stop offset="55%" stopColor="#a855f7" />
+          <stop offset="100%" stopColor="#00e1ff" />
         </linearGradient>
         <linearGradient id={`${uid}-b`} x1="56" y1="52" x2="8" y2="12" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#22d3ee" />
-          <stop offset="50%" stopColor="#ff007a" />
-          <stop offset="100%" stopColor="#6d3df5" />
+          <stop offset="0%" stopColor="#00e1ff" />
+          <stop offset="50%" stopColor="#ff0080" />
+          <stop offset="100%" stopColor="#7b2fff" />
         </linearGradient>
         <filter id={`${uid}-glow`} x="-40%" y="-40%" width="180%" height="180%">
-          <feGaussianBlur stdDeviation="2.4" result="b" />
+          <feGaussianBlur stdDeviation="2.8" result="b" />
           <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
       </defs>
@@ -62,14 +62,14 @@ export default function KnotLogo({
 
       {/* the crossing: where the bound is enforced */}
       <circle
-        cx="32" cy="32" r="5.5" fill="#ff007a"
+        cx="32" cy="32" r="5.5" fill="#ff0080"
         style={{
           transform: drawn ? "scale(1)" : "scale(0)",
           transformOrigin: "32px 32px",
           transition: "transform .55s cubic-bezier(.34,1.56,.64,1) 1.05s",
         }}
       />
-      <circle cx="32" cy="32" r="10" stroke="#22d3ee" strokeWidth="1.2" fill="none"
+      <circle cx="32" cy="32" r="10" stroke="#00e1ff" strokeWidth="1.4" fill="none"
         opacity={drawn ? 0.5 : 0} style={{ transition: "opacity .6s 1.2s" }} />
     </svg>
   );

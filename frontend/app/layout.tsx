@@ -3,6 +3,7 @@ import { IBM_Plex_Sans, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import SiteNav from "@/components/SiteNav";
 import ScrollProgress from "@/components/ScrollProgress";
+import GlowField from "@/components/GlowField";
 import SiteFooter from "@/components/SiteFooter";
 import Providers from "./providers";
 
@@ -21,9 +22,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${sans.variable} ${display.variable} ${mono.variable}`}>
       <body className="min-h-screen bg-canvas font-sans text-ink antialiased">
         <Providers>
+          <GlowField />
           <ScrollProgress />
-          <SiteNav />
-          <main>{children}</main>
+          <div className="relative z-20"><SiteNav /></div>
+          <main className="relative z-10">{children}</main>
           <SiteFooter />
         </Providers>
       </body>

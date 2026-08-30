@@ -14,27 +14,31 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // sand, warm and deeper than paper
-        canvas: "#eeddc0",
-        sand: { DEFAULT: "#eeddc0", light: "#f6ecd9", deep: "#dfc9a4", shadow: "#c9ad83" },
-        surface: "#f8f0e1",
-        surface2: "#e6d3b3",
+        // Sand, but bright. The previous ground was too low in value for neon to register
+        // against — accents only read as electric when the base gives them room.
+        canvas: "#fdf4e3",
+        sand: { DEFAULT: "#fdf4e3", light: "#fffaf2", deep: "#f2e2c4", shadow: "#dcc59c" },
+        surface: "#fffdf9",
+        surface2: "#f7ead2",
         // Web3-native accents on sand: electric violet as the brand, cyan as the live/positive
         // signal, Uniswap pink as the highlight. Violet+cyan is the dominant pairing across the
         // space, and the pink is a deliberate nod to the protocol this is built on.
-        ocean: { DEFAULT: "#6d3df5", dim: "#2a1065", bright: "#8b5cf6", surf: "#22d3ee", foam: "#a5f3fc" },
-        violet: { DEFAULT: "#6d3df5", deep: "#2a1065", light: "#a78bfa" },
-        cyan: { DEFAULT: "#22d3ee", deep: "#0891b2", light: "#a5f3fc" },
-        pink: { DEFAULT: "#ff007a", light: "#ff5aa8" },
-        marine: { DEFAULT: "#6d3df5", dim: "#2a1065", bright: "#22d3ee" },
-        coral: "#ff007a",
-        clay: "#e11d6b",
+        // Full-saturation, not tinted. Every one of these is at or near maximum chroma.
+        ocean: { DEFAULT: "#7b2fff", dim: "#1a0442", bright: "#a855f7", surf: "#00e1ff", foam: "#7df9ff" },
+        violet: { DEFAULT: "#7b2fff", deep: "#1a0442", light: "#b085ff" },
+        cyan: { DEFAULT: "#00e1ff", deep: "#00b8d4", light: "#7df9ff" },
+        pink: { DEFAULT: "#ff0080", light: "#ff4da6" },
+        lime: { DEFAULT: "#c4ff2f", deep: "#9ede00" },
+        amber: { DEFAULT: "#ffb800", light: "#ffd45c" },
+        marine: { DEFAULT: "#7b2fff", dim: "#1a0442", bright: "#00e1ff" },
+        coral: "#ff0080",
+        clay: "#ff0059",
         hemp: { DEFAULT: "#a8763c", bright: "#c9944f", soft: "#f0e4cf" },
-        ink: { DEFAULT: "#12212a", soft: "#33474f" },
-        muted: "#5d7078",
-        faint: "#8a9aa0",
-        line: "#d6bf9c",
-        edge: "#12212a",
+        ink: { DEFAULT: "#150b2e", soft: "#3d2f5c" },
+        muted: "#5a5470",
+        faint: "#9c93ad",
+        line: "#e8d5b4",
+        edge: "#150b2e",
       },
       fontFamily: {
         display: ["var(--font-display)", "system-ui", "sans-serif"],
@@ -45,7 +49,8 @@ const config: Config = {
       maxWidth: { content: "78rem" },
       boxShadow: {
         card: "0 1px 2px rgba(18,33,42,0.05), 0 12px 32px -16px rgba(18,33,42,0.2)",
-        lift: "0 2px 4px rgba(18,33,42,0.06), 0 24px 60px -24px rgba(10,101,112,0.35)",
+        lift: "0 2px 4px rgba(21,11,46,0.06), 0 24px 60px -24px rgba(123,47,255,0.45)",
+        neon: "0 0 24px -4px rgba(123,47,255,0.55), 0 0 60px -12px rgba(0,225,255,0.4)",
       },
       keyframes: {
         rise: { "0%": { opacity: "0", transform: "translateY(16px)" }, "100%": { opacity: "1", transform: "translateY(0)" } },
