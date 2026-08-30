@@ -46,12 +46,12 @@ export default function CandleChart({
     <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className={className} aria-hidden>
       <defs>
         <linearGradient id="cc-area" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#3D7BFF" stopOpacity="0.22" />
-          <stop offset="100%" stopColor="#3D7BFF" stopOpacity="0" />
+          <stop offset="0%" stopColor="#3B33D1" stopOpacity="0.16" />
+          <stop offset="100%" stopColor="#3B33D1" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="cc-line" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#2255C4" />
-          <stop offset="100%" stopColor="#7FA6FF" />
+          <stop offset="0%" stopColor="#241DA8" />
+          <stop offset="100%" stopColor="#6B63E8" />
         </linearGradient>
         <filter id="cc-glow" x="-60%" y="-60%" width="220%" height="220%">
           <feGaussianBlur stdDeviation="0.9" result="b" />
@@ -69,7 +69,7 @@ export default function CandleChart({
       {candles.map((c, i) => {
         const x = i * slot + slot / 2;
         const up = c.c >= c.o;
-        const stroke = up ? "#3D7BFF" : "#4A5568";
+        const stroke = up ? "#3B33D1" : "#B8B8C0";
         const last = i === candles.length - 1;
         return (
           <g key={i} opacity={last ? 1 : 0.22 + (i / candles.length) * 0.55} filter={last ? "url(#cc-glow)" : undefined}>
@@ -79,7 +79,7 @@ export default function CandleChart({
               y={y(Math.max(c.o, c.c))}
               width={bw}
               height={Math.max(0.5, Math.abs(y(c.o) - y(c.c)))}
-              fill={up ? stroke : "#2A3241"}
+              fill={up ? stroke : "#DCDCE2"}
               stroke={stroke}
               strokeWidth="0.32"
               rx="0.25"

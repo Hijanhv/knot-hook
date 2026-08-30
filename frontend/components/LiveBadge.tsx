@@ -15,7 +15,7 @@ export default function LiveBadge({ live }: { live: boolean }) {
   const [dot, text] = wrongNet
     ? ["bg-amber", "wrong network"]
     : live
-      ? ["bg-accent animate-pulse", "live · unichain sepolia"]
+      ? ["bg-blue animate-pulse", "live · unichain sepolia"]
       : ["bg-faint", "reference values"];
 
   return (

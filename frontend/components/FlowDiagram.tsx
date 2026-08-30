@@ -29,11 +29,11 @@ export default function FlowDiagram() {
           <button
             key={s.k}
             onClick={() => setActive(i)}
-            className={`group rounded-xl border p-6 text-left transition-all duration-500 ${
-              on ? "border-accent/50 bg-surface shadow-lift" : "border-line bg-surface/50 hover:border-edge"
+            className={`group rounded-md border p-6 text-left transition-all duration-300 ${
+              on ? "border-blue bg-blue-tint" : "border-line bg-canvas hover:border-edge"
             }`}
           >
-            <span className={`tnum font-mono text-xs transition-colors ${on ? "text-accent" : "text-faint"}`}>
+            <span className={`tnum font-mono text-xs transition-colors ${on ? "text-blue" : "text-faint"}`}>
               0{i + 1}
             </span>
             <p className={`mt-2 font-display text-lg leading-snug tracking-tightest transition-colors ${on ? "text-ink" : "text-ink-soft"}`}>
@@ -41,7 +41,7 @@ export default function FlowDiagram() {
             </p>
             <p className="mt-1.5 text-sm leading-snug text-muted">{s.detail}</p>
             <span
-              className={`mt-5 block h-0.5 origin-left rounded-full bg-accent transition-transform duration-[1800ms] ease-linear ${
+              className={`mt-5 block h-0.5 origin-left rounded-full bg-blue transition-transform duration-[1800ms] ease-linear ${
                 on ? "scale-x-100" : "scale-x-0"
               }`}
             />

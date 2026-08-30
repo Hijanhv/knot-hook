@@ -33,9 +33,9 @@ export default function KnotLogo({
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={className} role="img" aria-label="Knot">
       <defs>
         <linearGradient id={`${uid}-g`} x1="6" y1="58" x2="58" y2="6" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#2255C4" />
-          <stop offset="45%" stopColor="#3D7BFF" />
-          <stop offset="100%" stopColor="#A8C4FF" />
+          <stop offset="0%" stopColor="#241DA8" />
+          <stop offset="50%" stopColor="#3B33D1" />
+          <stop offset="100%" stopColor="#6B63E8" />
         </linearGradient>
         <filter id={`${uid}-glow`} x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="2.2" result="b" />
@@ -44,7 +44,7 @@ export default function KnotLogo({
       </defs>
 
       {/* pass 1: the page-coloured underlay that carves the gaps */}
-      <path d={TREFOIL} stroke="var(--knot-bg, #0A0E17)" strokeWidth="11" strokeLinecap="round" fill="none"
+      <path d={TREFOIL} stroke="var(--knot-bg, #FFFFFF)" strokeWidth="11" strokeLinecap="round" fill="none"
         opacity={drawn ? 1 : 0} style={{ transition: "opacity .3s" }} />
 
       {/* pass 2: the strand, dashed so it lifts away at the three crossings */}
@@ -62,7 +62,7 @@ export default function KnotLogo({
       </g>
 
       {/* the centre: where the three crossings resolve */}
-      <circle cx="32" cy="32" r="3.4" fill="#A8C4FF"
+      <circle cx="32" cy="32" r="3.4" fill="#241DA8"
         style={{
           transform: drawn ? "scale(1)" : "scale(0)",
           transformOrigin: "32px 32px",

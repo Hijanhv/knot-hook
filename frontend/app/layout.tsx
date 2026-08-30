@@ -4,6 +4,7 @@ import "./globals.css";
 import SiteNav from "@/components/SiteNav";
 import ScrollProgress from "@/components/ScrollProgress";
 import GlowField from "@/components/GlowField";
+import AnnounceBar from "@/components/AnnounceBar";
 import SiteFooter from "@/components/SiteFooter";
 import Providers from "./providers";
 
@@ -24,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <GlowField />
           <ScrollProgress />
-          <div className="relative z-20"><SiteNav /></div>
+          <div className="relative z-20"><AnnounceBar /><SiteNav /></div>
           <main className="relative z-10">{children}</main>
           <SiteFooter />
         </Providers>

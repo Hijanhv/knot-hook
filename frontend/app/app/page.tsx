@@ -75,7 +75,7 @@ export default function AppPage() {
             Quote a swap. Watch the bound.
           </h1>
           <p className="mt-2 max-w-xl text-[15px] leading-[1.55] text-ink-soft">
-            Quotes are read from <code className="font-mono text-[13px] text-accent">preview()</code> on the
+            Quotes are read from <code className="font-mono text-[13px] text-blue">preview()</code> on the
             deployed federation — the same call a swap executes against.
           </p>
         </div>
@@ -91,7 +91,7 @@ export default function AppPage() {
               {(["shallow", "deep"] as const).map((p) => (
                 <button key={p} onClick={() => setPool(p)}
                   className={`px-3 py-2 font-mono text-xs uppercase tracking-[0.1em] transition-colors ${
-                    pool === p ? "rounded-lg bg-accent text-white" : "rounded-lg bg-surface2 text-muted hover:text-ink"}`}>
+                    pool === p ? "rounded-[3px] bg-blue text-white" : "rounded-[3px] bg-surface2 text-muted hover:text-ink"}`}>
                   {p}
                 </button>
               ))}
@@ -143,7 +143,7 @@ export default function AppPage() {
                 {dr && <div className="flex justify-between"><dt className="text-faint">deep</dt><dd className="tnum">{fmt(dr[0], 0)} / {fmt(dr[1], 0)}</dd></div>}
                 {sr && <div className="flex justify-between"><dt className="text-faint">shallow</dt><dd className="tnum">{fmt(sr[0], 0)} / {fmt(sr[1], 0)}</dd></div>}
                 {dr && sr && (
-                  <div className="flex justify-between border-t border-line pt-1.5 text-accent">
+                  <div className="flex justify-between border-t border-line pt-1.5 text-blue">
                     <dt>aggregate</dt><dd className="tnum">{fmt(dr[0] + sr[0], 0)} / {fmt(dr[1] + sr[1], 0)}</dd>
                   </div>
                 )}
@@ -157,12 +157,12 @@ export default function AppPage() {
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="card">
               <p className="eyebrow mb-2">Local pool quote</p>
-              <p className="tnum font-display text-3xl font-semibold tracking-[-0.03em] text-ink">{fmt(localQ)}</p>
+              <p className="tnum figure text-[2rem]">{fmt(localQ)}</p>
               <p className="mt-1 text-[13px] text-muted">This pool&rsquo;s reserves alone</p>
             </div>
             <div className="card">
               <p className="eyebrow mb-2">Federation quote</p>
-              <p className="tnum font-display text-3xl font-semibold tracking-[-0.03em] text-ink">{fmt(aggQ)}</p>
+              <p className="tnum figure text-[2rem]">{fmt(aggQ)}</p>
               <p className="mt-1 text-[13px] text-muted">The pair&rsquo;s combined reserves</p>
             </div>
           </div>
@@ -171,7 +171,7 @@ export default function AppPage() {
             <div className="flex flex-wrap items-end justify-between gap-6">
               <div>
                 <p className="eyebrow mb-2">Enforced — {exactInput ? "what the taker receives" : "what the taker pays"}</p>
-                <p className="tnum font-display text-5xl font-semibold tracking-[-0.04em] text-accent">{fmt(enforcedQ)}</p>
+                <p className="tnum figure text-[3.25rem] text-blue">{fmt(enforcedQ)}</p>
                 <p className="mt-2 font-mono text-[11px] text-faint">
                   {exactInput ? "min(local, aggregate)" : "max(local, aggregate)"}
                 </p>
@@ -179,7 +179,7 @@ export default function AppPage() {
               {binds ? (
                 <div className="text-right">
                   <p className="eyebrow mb-1">Kept with LPs</p>
-                  <p className="tnum font-display text-3xl font-semibold tracking-[-0.03em] text-accent-light">{fmt(withheld)}</p>
+                  <p className="tnum figure text-[2rem] text-blue">{fmt(withheld)}</p>
                   <p className="tnum font-mono text-[11px] text-muted">{bps} bps of the local quote</p>
                 </div>
               ) : (
@@ -190,7 +190,7 @@ export default function AppPage() {
             </div>
 
             <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-surface2">
-              <div className="h-full rounded-full bg-accent transition-all duration-500"
+              <div className="h-full rounded-full bg-blue transition-all duration-500"
                 style={{ width: `${Math.max(2, 100 - bps / 100)}%` }} />
             </div>
             <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">

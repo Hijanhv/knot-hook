@@ -6,7 +6,7 @@ const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
 export default function SiteFooter() {
   return (
-    <footer className="mt-0 border-t border-line bg-surface/50">
+    <footer className="mt-0 border-t border-grid bg-paper">
       <div className="wrap grid gap-12 py-16 md:grid-cols-4">
         <div>
           <Wordmark size="sm" />
@@ -21,18 +21,18 @@ export default function SiteFooter() {
         <div>
           <p className="eyebrow mb-4">Product</p>
           <ul className="space-y-2.5 text-sm">
-            <li><Link href="/app" className="text-muted hover:text-accent">App</Link></li>
-            <li><a href={SITE.docs} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-accent">Docs ↗</a></li>
-            <li><a href={SITE.github} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-accent">GitHub ↗</a></li>
-            <li><Link href="/#how" className="text-muted hover:text-accent">How it works</Link></li>
+            <li><Link href="/app" className="text-muted hover:text-blue">App</Link></li>
+            <li><a href={SITE.docs} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-blue">Docs ↗</a></li>
+            <li><a href={SITE.github} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-blue">GitHub ↗</a></li>
+            <li><Link href="/#how" className="text-muted hover:text-blue">How it works</Link></li>
           </ul>
         </div>
 
         <div>
           <p className="eyebrow mb-4">Stack</p>
           <ul className="space-y-2.5 text-sm">
-            <li><a href={SITE.uniswapV4} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-accent">Uniswap v4 ↗</a></li>
-            <li><Link href="/contracts" className="text-muted hover:text-accent">Contracts</Link></li>
+            <li><a href={SITE.uniswapV4} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-blue">Uniswap v4 ↗</a></li>
+            <li><Link href="/contracts" className="text-muted hover:text-blue">Contracts</Link></li>
             <li className="text-ink-soft">Solidity 0.8.26 · Foundry</li>
             <li className="text-ink-soft">Next.js · wagmi · viem</li>
           </ul>
@@ -51,7 +51,7 @@ export default function SiteFooter() {
         </div>
       </div>
 
-      <div className="border-t border-line">
+      <div className="border-t border-grid">
         <div className="wrap flex flex-col gap-2 py-6 text-xs text-faint md:flex-row md:items-center md:justify-between">
           <p>Built for the Uniswap Hook Incubator · {SITE.theme}</p>
           <p>Unaudited hackathon software. Figures measure mechanics, not realised LP P&amp;L.</p>
