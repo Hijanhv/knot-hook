@@ -1,73 +1,38 @@
 "use client";
-import { useEffect, useState } from "react";
-
-/** Trefoil knot, traced parametrically: x = sin t + 2 sin 2t, y = cos t - 2 cos 2t. */
-const TREFOIL = "M 32.00,25.55 L 33.15,25.57 L 34.29,25.63 L 35.43,25.73 L 36.56,25.88 L 37.69,26.07 L 38.79,26.30 L 39.89,26.56 L 40.96,26.87 L 42.01,27.22 L 43.04,27.60 L 44.05,28.01 L 45.02,28.47 L 45.97,28.95 L 46.88,29.47 L 47.76,30.02 L 48.61,30.59 L 49.41,31.19 L 50.18,31.82 L 50.90,32.47 L 51.58,33.14 L 52.22,33.83 L 52.81,34.54 L 53.35,35.26 L 53.84,35.99 L 54.29,36.74 L 54.68,37.49 L 55.03,38.24 L 55.32,39.00 L 55.56,39.76 L 55.75,40.52 L 55.88,41.27 L 55.97,42.02 L 56.00,42.76 L 55.98,43.49 L 55.91,44.20 L 55.78,44.90 L 55.61,45.57 L 55.39,46.23 L 55.11,46.87 L 54.79,47.48 L 54.42,48.06 L 54.01,48.61 L 53.55,49.14 L 53.05,49.63 L 52.51,50.08 L 51.93,50.50 L 51.31,50.88 L 50.66,51.22 L 49.97,51.52 L 49.25,51.78 L 48.50,52.00 L 47.72,52.17 L 46.91,52.30 L 46.09,52.38 L 45.24,52.41 L 44.37,52.40 L 43.49,52.34 L 42.59,52.23 L 41.69,52.07 L 40.77,51.86 L 39.85,51.61 L 38.93,51.31 L 38.00,50.96 L 37.08,50.56 L 36.16,50.12 L 35.24,49.63 L 34.34,49.10 L 33.44,48.52 L 32.56,47.90 L 31.70,47.24 L 30.86,46.54 L 30.03,45.80 L 29.23,45.02 L 28.45,44.21 L 27.70,43.37 L 26.98,42.49 L 26.28,41.58 L 25.62,40.65 L 24.99,39.69 L 24.40,38.70 L 23.85,37.70 L 23.33,36.68 L 22.85,35.64 L 22.41,34.58 L 22.01,33.52 L 21.66,32.44 L 21.34,31.37 L 21.07,30.28 L 20.84,29.20 L 20.66,28.11 L 20.52,27.04 L 20.42,25.96 L 20.37,24.90 L 20.36,23.85 L 20.39,22.82 L 20.47,21.80 L 20.59,20.80 L 20.75,19.82 L 20.95,18.87 L 21.19,17.95 L 21.47,17.05 L 21.79,16.19 L 22.14,15.36 L 22.53,14.56 L 22.95,13.81 L 23.40,13.09 L 23.89,12.41 L 24.40,11.78 L 24.94,11.19 L 25.50,10.65 L 26.08,10.15 L 26.69,9.71 L 27.31,9.31 L 27.95,8.97 L 28.60,8.67 L 29.27,8.43 L 29.94,8.24 L 30.63,8.11 L 31.31,8.03 L 32.00,8.00 L 32.69,8.03 L 33.37,8.11 L 34.06,8.24 L 34.73,8.43 L 35.40,8.67 L 36.05,8.97 L 36.69,9.31 L 37.31,9.71 L 37.92,10.15 L 38.50,10.65 L 39.06,11.19 L 39.60,11.78 L 40.11,12.41 L 40.60,13.09 L 41.05,13.81 L 41.47,14.56 L 41.86,15.36 L 42.21,16.19 L 42.53,17.05 L 42.81,17.95 L 43.05,18.87 L 43.25,19.82 L 43.41,20.80 L 43.53,21.80 L 43.61,22.82 L 43.64,23.85 L 43.63,24.90 L 43.58,25.96 L 43.48,27.04 L 43.34,28.11 L 43.16,29.20 L 42.93,30.28 L 42.66,31.37 L 42.34,32.44 L 41.99,33.52 L 41.59,34.58 L 41.15,35.64 L 40.67,36.68 L 40.15,37.70 L 39.60,38.70 L 39.01,39.69 L 38.38,40.65 L 37.72,41.58 L 37.02,42.49 L 36.30,43.37 L 35.55,44.21 L 34.77,45.02 L 33.97,45.80 L 33.14,46.54 L 32.30,47.24 L 31.44,47.90 L 30.56,48.52 L 29.66,49.10 L 28.76,49.63 L 27.84,50.12 L 26.92,50.56 L 26.00,50.96 L 25.07,51.31 L 24.15,51.61 L 23.23,51.86 L 22.31,52.07 L 21.41,52.23 L 20.51,52.34 L 19.63,52.40 L 18.76,52.41 L 17.91,52.38 L 17.09,52.30 L 16.28,52.17 L 15.50,52.00 L 14.75,51.78 L 14.03,51.52 L 13.34,51.22 L 12.69,50.88 L 12.07,50.50 L 11.49,50.08 L 10.95,49.63 L 10.45,49.14 L 9.99,48.61 L 9.58,48.06 L 9.21,47.48 L 8.89,46.87 L 8.61,46.23 L 8.39,45.57 L 8.22,44.90 L 8.09,44.20 L 8.02,43.49 L 8.00,42.76 L 8.03,42.02 L 8.12,41.27 L 8.25,40.52 L 8.44,39.76 L 8.68,39.00 L 8.97,38.24 L 9.32,37.49 L 9.71,36.74 L 10.16,35.99 L 10.65,35.26 L 11.19,34.54 L 11.78,33.83 L 12.42,33.14 L 13.10,32.47 L 13.82,31.82 L 14.59,31.19 L 15.39,30.59 L 16.24,30.02 L 17.12,29.47 L 18.03,28.95 L 18.98,28.47 L 19.95,28.01 L 20.96,27.60 L 21.99,27.22 L 23.04,26.87 L 24.11,26.56 L 25.21,26.30 L 26.31,26.07 L 27.44,25.88 L 28.57,25.73 L 29.71,25.63 L 30.85,25.57 L 32.00,25.55 Z";
-const LEN = 224;
 
 /**
- * The mark is a TREFOIL — the simplest knot that cannot be untied, and the first real object
- * in knot theory. For a project called Knot that is the honest symbol, and unlike two crossed
- * arcs it has genuine three-fold symmetry, so it reads as a designed thing rather than a
- * default.
+ * The mark is a TREFOIL: the simplest knot that cannot be untied, and the first real object in
+ * knot theory. For a project called Knot that is the honest symbol, and its three-fold symmetry
+ * means it reads as a designed thing rather than a default.
  *
- * The weave is done in two passes: a wide stroke in the page colour is laid down first, then
- * the coloured strand is drawn over it with a dash pattern that opens gaps exactly where the
- * rope should pass UNDER. That is what makes it look woven instead of merely overlapped.
+ * Construction follows the brand language of the reference: a solid tile with the glyph knocked
+ * out in white. No gradient, no outline, no second colour.
  *
- * On mount the strand draws itself once around the knot, and stays.
+ * The weave is ONE continuous stroke. Layering an over-strand on top of an under-strand leaves a
+ * hairline seam wherever the two strokes end, so instead the three passes that go UNDER are just
+ * gaps in a single dash pattern. One stroke, three gaps, nothing overlapping, nothing to seam.
+ *
+ * Both the path and the gap positions were computed rather than drawn. The curve is
+ * x = sin t + 2 sin 2t, y = cos t - 2 cos 2t; its three self-crossings were solved for
+ * numerically; and over/under alternates around the strand, which is what makes this a knot
+ * rather than three arcs lying on one another. The three dash runs come out at 58.1, 62.8 and
+ * 62.8 units, which is the three-fold symmetry falling out of the arithmetic on its own.
  */
+const D = "M32.0 27.1L33.0 27.2L33.9 27.2L34.9 27.3L35.8 27.4L36.8 27.5L37.7 27.6L38.6 27.8L39.5 28.0L40.4 28.3L41.3 28.5L42.2 28.8L43.1 29.1L43.9 29.5L44.8 29.8L45.6 30.2L46.4 30.6L47.1 31.0L47.9 31.5L48.6 31.9L49.3 32.4L50.0 32.9L50.6 33.4L51.2 34.0L51.8 34.5L52.4 35.1L52.9 35.6L53.4 36.2L53.9 36.8L54.3 37.4L54.8 38.0L55.1 38.6L55.5 39.3L55.8 39.9L56.1 40.5L56.3 41.2L56.5 41.8L56.7 42.4L56.8 43.1L56.9 43.7L57.0 44.3L57.0 44.9L57.0 45.5L57.0 46.1L56.9 46.7L56.8 47.3L56.6 47.9L56.5 48.4L56.3 49.0L56.0 49.5L55.7 50.0L55.4 50.5L55.1 50.9L54.7 51.4L54.4 51.8L53.9 52.2L53.5 52.6L53.0 53.0L52.5 53.3L52.0 53.6L51.4 53.9L50.9 54.1L50.3 54.4L49.7 54.6L49.0 54.7L48.4 54.9L47.7 55.0L47.0 55.1L46.3 55.1L45.6 55.1L44.9 55.1L44.2 55.1L43.4 55.0L42.7 54.9L41.9 54.7L41.1 54.6L40.4 54.4L39.6 54.1L38.8 53.8L38.1 53.5L37.3 53.2L36.5 52.8L35.8 52.4L35.0 52.0L34.2 51.6L33.5 51.1L32.8 50.6L32.0 50.0L31.3 49.5L30.6 48.9L29.9 48.2L29.3 47.6L28.6 46.9L28.0 46.2L27.4 45.5L26.8 44.8L26.2 44.0L25.6 43.3L25.1 42.5L24.6 41.7L24.1 40.9L23.6 40.0L23.2 39.2L22.8 38.3L22.4 37.4L22.0 36.6L21.7 35.7L21.4 34.8L21.1 33.9L20.8 33.0L20.6 32.1L20.4 31.2L20.3 30.3L20.1 29.4L20.0 28.5L19.9 27.6L19.9 26.7L19.9 25.8L19.9 24.9L19.9 24.1L20.0 23.2L20.1 22.4L20.2 21.6L20.4 20.8L20.5 20.0L20.7 19.2L21.0 18.5L21.2 17.8L21.5 17.0L21.8 16.4L22.1 15.7L22.5 15.1L22.9 14.5L23.2 13.9L23.7 13.3L24.1 12.8L24.5 12.3L25.0 11.8L25.5 11.4L26.0 11.0L26.5 10.6L27.0 10.3L27.5 10.0L28.1 9.7L28.6 9.5L29.2 9.3L29.7 9.2L30.3 9.0L30.9 8.9L31.4 8.9L32.0 8.9L32.6 8.9L33.1 8.9L33.7 9.0L34.3 9.2L34.8 9.3L35.4 9.5L35.9 9.7L36.5 10.0L37.0 10.3L37.5 10.6L38.0 11.0L38.5 11.4L39.0 11.8L39.5 12.3L39.9 12.8L40.3 13.3L40.8 13.9L41.1 14.5L41.5 15.1L41.9 15.7L42.2 16.4L42.5 17.0L42.8 17.8L43.0 18.5L43.3 19.2L43.5 20.0L43.6 20.8L43.8 21.6L43.9 22.4L44.0 23.2L44.1 24.1L44.1 24.9L44.1 25.8L44.1 26.7L44.1 27.6L44.0 28.5L43.9 29.4L43.7 30.3L43.6 31.2L43.4 32.1L43.2 33.0L42.9 33.9L42.6 34.8L42.3 35.7L42.0 36.6L41.6 37.4L41.2 38.3L40.8 39.2L40.4 40.0L39.9 40.9L39.4 41.7L38.9 42.5L38.4 43.3L37.8 44.0L37.2 44.8L36.6 45.5L36.0 46.2L35.4 46.9L34.7 47.6L34.1 48.2L33.4 48.9L32.7 49.5L32.0 50.0L31.2 50.6L30.5 51.1L29.8 51.6L29.0 52.0L28.2 52.4L27.5 52.8L26.7 53.2L25.9 53.5L25.2 53.8L24.4 54.1L23.6 54.4L22.9 54.6L22.1 54.7L21.3 54.9L20.6 55.0L19.8 55.1L19.1 55.1L18.4 55.1L17.7 55.1L17.0 55.1L16.3 55.0L15.6 54.9L15.0 54.7L14.3 54.6L13.7 54.4L13.1 54.1L12.6 53.9L12.0 53.6L11.5 53.3L11.0 53.0L10.5 52.6L10.1 52.2L9.6 51.8L9.3 51.4L8.9 50.9L8.6 50.5L8.3 50.0L8.0 49.5L7.7 49.0L7.5 48.4L7.4 47.9L7.2 47.3L7.1 46.7L7.0 46.1L7.0 45.5L7.0 44.9L7.0 44.3L7.1 43.7L7.2 43.1L7.3 42.4L7.5 41.8L7.7 41.2L7.9 40.5L8.2 39.9L8.5 39.3L8.9 38.6L9.2 38.0L9.7 37.4L10.1 36.8L10.6 36.2L11.1 35.6L11.6 35.1L12.2 34.5L12.8 34.0L13.4 33.4L14.0 32.9L14.7 32.4L15.4 31.9L16.1 31.5L16.9 31.0L17.6 30.6L18.4 30.2L19.2 29.8L20.1 29.5L20.9 29.1L21.8 28.8L22.7 28.5L23.6 28.3L24.5 28.0L25.4 27.8L26.3 27.6L27.2 27.5L28.2 27.4L29.1 27.3L30.1 27.2L31.0 27.2Z";
+const DASH = "58.1 15.0 62.8 15.0 62.8 15.0 4.7";
+
 export default function KnotLogo({
-  size = 44, animate = true, className = "",
-}: { size?: number; animate?: boolean; className?: string }) {
-  const [drawn, setDrawn] = useState(!animate);
-  useEffect(() => {
-    if (!animate) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return setDrawn(true);
-    const t = setTimeout(() => setDrawn(true), 60);
-    return () => clearTimeout(t);
-  }, [animate]);
-
-  const uid = `tk${size}`;
+  size = 34, className = "", tile = true,
+}: { size?: number; className?: string; tile?: boolean }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={className} role="img" aria-label="Knot">
-      <defs>
-        <linearGradient id={`${uid}-g`} x1="6" y1="58" x2="58" y2="6" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#241DA8" />
-          <stop offset="50%" stopColor="#3B33D1" />
-          <stop offset="100%" stopColor="#6B63E8" />
-        </linearGradient>
-        <filter id={`${uid}-glow`} x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="2.2" result="b" />
-          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
-      </defs>
-
-      {/* pass 1: the page-coloured underlay that carves the gaps */}
-      <path d={TREFOIL} stroke="var(--knot-bg, #FFFFFF)" strokeWidth="11" strokeLinecap="round" fill="none"
-        opacity={drawn ? 1 : 0} style={{ transition: "opacity .3s" }} />
-
-      {/* pass 2: the strand, dashed so it lifts away at the three crossings */}
-      <g filter={`url(#${uid}-glow)`}>
-        <path
-          d={TREFOIL}
-          stroke={`url(#${uid}-g)`}
-          strokeWidth="6"
-          strokeLinecap="round"
-          fill="none"
-          strokeDasharray={drawn ? "58 16" : `${LEN} ${LEN}`}
-          strokeDashoffset={drawn ? 8 : LEN}
-          style={{ transition: "stroke-dashoffset 1.15s cubic-bezier(.4,0,.2,1), stroke-dasharray .5s ease 1.1s" }}
-        />
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={className}
+      role="img" aria-label="Knot">
+      {tile && <rect width="64" height="64" rx="10.5" fill="currentColor" />}
+      {/* a third of a turn lands the knot back onto its own symmetry */}
+      <g className="origin-center transition-transform duration-700 ease-out group-hover:rotate-120">
+        <path d={D} fill="none" stroke={tile ? "#fff" : "currentColor"} strokeWidth="8.6"
+          strokeLinecap="butt" strokeDasharray={DASH} />
       </g>
-
-      {/* the centre: where the three crossings resolve */}
-      <circle cx="32" cy="32" r="3.4" fill="#241DA8"
-        style={{
-          transform: drawn ? "scale(1)" : "scale(0)",
-          transformOrigin: "32px 32px",
-          transition: "transform .5s cubic-bezier(.34,1.56,.64,1) 1.25s",
-        }} />
     </svg>
   );
 }

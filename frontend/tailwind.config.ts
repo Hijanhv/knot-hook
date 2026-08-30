@@ -57,6 +57,7 @@ const config: Config = {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
+      rotate: { "120": "120deg" },
       letterSpacing: { tightest: "-0.03em" },
       maxWidth: { content: "84rem" },
       boxShadow: {

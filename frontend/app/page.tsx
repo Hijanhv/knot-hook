@@ -22,7 +22,7 @@ export default function Home() {
     <>
       {/* ── Hero: headline left, deck right, one rule between them ───────────────── */}
       <section className="relative border-b border-grid">
-        <div className="wrap grid items-start gap-0 py-16 md:py-20 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="wrap grid items-stretch gap-0 py-16 md:py-20 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="lg:pr-14">
             <h1 className="font-display text-[clamp(2.75rem,6.6vw,5.25rem)] font-semibold leading-[0.98] tracking-tightest text-blue">
               One pair. Several pools.<br />One price boundary.
