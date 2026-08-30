@@ -19,17 +19,21 @@ const config: Config = {
         sand: { DEFAULT: "#eeddc0", light: "#f6ecd9", deep: "#dfc9a4", shadow: "#c9ad83" },
         surface: "#f8f0e1",
         surface2: "#e6d3b3",
-        // ocean
-        ocean: { DEFAULT: "#0a6570", dim: "#063f47", bright: "#12909e", surf: "#3fc9d6", foam: "#a8e8ef" },
-        // marine kept as an alias so existing markup keeps resolving
-        marine: { DEFAULT: "#0a6570", dim: "#063f47", bright: "#3fc9d6" },
-        coral: "#e2703f",
-        clay: "#c9552f",
+        // Web3-native accents on sand: electric violet as the brand, cyan as the live/positive
+        // signal, Uniswap pink as the highlight. Violet+cyan is the dominant pairing across the
+        // space, and the pink is a deliberate nod to the protocol this is built on.
+        ocean: { DEFAULT: "#6d3df5", dim: "#2a1065", bright: "#8b5cf6", surf: "#22d3ee", foam: "#a5f3fc" },
+        violet: { DEFAULT: "#6d3df5", deep: "#2a1065", light: "#a78bfa" },
+        cyan: { DEFAULT: "#22d3ee", deep: "#0891b2", light: "#a5f3fc" },
+        pink: { DEFAULT: "#ff007a", light: "#ff5aa8" },
+        marine: { DEFAULT: "#6d3df5", dim: "#2a1065", bright: "#22d3ee" },
+        coral: "#ff007a",
+        clay: "#e11d6b",
         hemp: { DEFAULT: "#a8763c", bright: "#c9944f", soft: "#f0e4cf" },
         ink: { DEFAULT: "#12212a", soft: "#33474f" },
         muted: "#5d7078",
         faint: "#8a9aa0",
-        line: "#d3ba95",
+        line: "#d6bf9c",
         edge: "#12212a",
       },
       fontFamily: {

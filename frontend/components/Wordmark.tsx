@@ -1,15 +1,21 @@
 import Link from "next/link";
+import KnotLogo from "./KnotLogo";
 
 /**
- * No mark, by request. The wordmark carries the identity on its own: heavy, tight, with the
- * final letters in ocean so the word itself reads as sand meeting water.
+ * Mark plus wordmark. The letters carry the same violet-to-cyan run as the rope, so the two
+ * read as one object rather than an icon sitting beside some text.
  */
 export default function Wordmark({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
-  const cls = size === "lg" ? "text-3xl" : size === "sm" ? "text-xl" : "text-2xl";
+  const mark = size === "lg" ? 56 : size === "sm" ? 32 : 42;
+  const text = size === "lg" ? "text-4xl" : size === "sm" ? "text-xl" : "text-3xl";
   return (
-    <Link href="/" className={`font-display font-bold tracking-tightest ${cls} leading-none`}>
-      <span className="text-ink">KN</span>
-      <span className="text-ocean">OT</span>
+    <Link href="/" className="group flex items-center gap-2.5">
+      <KnotLogo size={mark} className="transition-transform duration-500 group-hover:rotate-[14deg]" />
+      <span
+        className={`font-display font-bold leading-none tracking-tightest ${text} bg-gradient-to-r from-violet via-violet-light to-cyan bg-clip-text text-transparent`}
+      >
+        KNOT
+      </span>
     </Link>
   );
 }

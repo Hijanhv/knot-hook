@@ -44,7 +44,7 @@
     background-color: theme("colors.sand.deep");
     background-image: repeating-linear-gradient(
       -45deg,
-      rgba(10, 101, 112, 0.16) 0 1.5px,
+      rgba(109, 61, 245, 0.18) 0 1.5px,
       transparent 1.5px 9px
     );
   }

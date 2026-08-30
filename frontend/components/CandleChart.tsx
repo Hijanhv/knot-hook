@@ -4,31 +4,32 @@ import { useEffect, useRef, useState } from "react";
 type Candle = { o: number; h: number; l: number; c: number };
 
 /**
- * A live-feeling market tape. Candles stream right to left on a fixed cadence and the last
- * one ticks between prints, so the page has a pulse without anything on screen being a lie:
- * this is decorative motion, not a claim about real prices.
+ * A live-feeling market tape. Candles stream right to left on a fixed cadence, with a glow on
+ * the leading candle so the eye lands on the present. Decorative motion only — this asserts
+ * nothing about real prices.
  *
- * Colour follows the shoreline palette rather than red/green, because in this project red and
- * green would read as profit and loss and mean the wrong thing.
+ * Cyan for up, violet for down, rather than green/red. In a project about LP value those two
+ * colours would read as profit and loss and imply a claim the chart is not making. Cyan and
+ * violet are also the pairing the Web3 space actually converged on.
  */
-export default function CandleChart({ count = 34, className = "" }: { count?: number; className?: string }) {
+export default function CandleChart({
+  count = 28, className = "", showArea = true,
+}: { count?: number; className?: string; showArea?: boolean }) {
   const [candles, setCandles] = useState<Candle[]>([]);
   const price = useRef(100);
 
   useEffect(() => {
     const step = (): Candle => {
       const o = price.current;
-      const drift = (Math.random() - 0.46) * 5.5;
-      const c = Math.max(55, Math.min(145, o + drift));
+      const drift = (Math.random() - 0.45) * 6.5;
+      const c = Math.max(52, Math.min(148, o + drift));
       price.current = c;
-      const pad = 0.6 + Math.random() * 3.2;
+      const pad = 0.8 + Math.random() * 4;
       return { o, c, h: Math.max(o, c) + pad, l: Math.min(o, c) - pad };
     };
-
     setCandles(Array.from({ length: count }, step));
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const id = setInterval(() => setCandles((prev) => [...prev.slice(1), step()]), 1400);
+    const id = setInterval(() => setCandles((p) => [...p.slice(1), step()]), 1500);
     return () => clearInterval(id);
   }, [count]);
 
@@ -37,27 +38,53 @@ export default function CandleChart({ count = 34, className = "" }: { count?: nu
   const lo = Math.min(...candles.map((c) => c.l));
   const hi = Math.max(...candles.map((c) => c.h));
   const span = hi - lo || 1;
-  const W = 100, H = 42, slot = W / candles.length, bw = slot * 0.55;
-  const y = (v: number) => H - ((v - lo) / span) * H;
+  const W = 100, H = 46, slot = W / candles.length, bw = slot * 0.6;
+  const y = (v: number) => 3 + (H - 6) - ((v - lo) / span) * (H - 6);
+
+  const closePath = candles.map((c, i) => `${i === 0 ? "M" : "L"}${i * slot + slot / 2},${y(c.c)}`).join(" ");
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className={className} aria-hidden>
+      <defs>
+        <linearGradient id="cc-area" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.30" />
+          <stop offset="100%" stopColor="#6d3df5" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="cc-line" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#6d3df5" />
+          <stop offset="60%" stopColor="#8b5cf6" />
+          <stop offset="100%" stopColor="#22d3ee" />
+        </linearGradient>
+        <filter id="cc-glow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="0.7" result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+
+      {showArea && (
+        <>
+          <path d={`${closePath} L${W},${H} L0,${H} Z`} fill="url(#cc-area)" />
+          <path d={closePath} stroke="url(#cc-line)" strokeWidth="0.45" fill="none" opacity="0.9" />
+        </>
+      )}
+
       {candles.map((c, i) => {
         const x = i * slot + slot / 2;
         const up = c.c >= c.o;
-        const stroke = up ? "#3fc9d6" : "#0a6570";
+        const stroke = up ? "#22d3ee" : "#8b5cf6";
         const last = i === candles.length - 1;
         return (
-          <g key={i} opacity={last ? 1 : 0.28 + (i / candles.length) * 0.55}>
-            <line x1={x} x2={x} y1={y(c.h)} y2={y(c.l)} stroke={stroke} strokeWidth="0.28" />
+          <g key={i} opacity={last ? 1 : 0.3 + (i / candles.length) * 0.6} filter={last ? "url(#cc-glow)" : undefined}>
+            <line x1={x} x2={x} y1={y(c.h)} y2={y(c.l)} stroke={stroke} strokeWidth="0.3" strokeLinecap="round" />
             <rect
               x={x - bw / 2}
               y={y(Math.max(c.o, c.c))}
               width={bw}
-              height={Math.max(0.4, Math.abs(y(c.o) - y(c.c)))}
-              fill={up ? stroke : "none"}
+              height={Math.max(0.5, Math.abs(y(c.o) - y(c.c)))}
+              fill={up ? stroke : "#2a1065"}
               stroke={stroke}
-              strokeWidth="0.28"
+              strokeWidth="0.32"
+              rx="0.25"
             />
           </g>
         );

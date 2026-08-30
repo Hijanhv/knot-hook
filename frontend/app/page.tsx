@@ -26,7 +26,7 @@ export default function Home() {
       {/* ── Hero: split frame, copy left, mechanism right ── */}
       <section className="gridfield relative overflow-hidden border-b border-edge">
         {/* live tape behind the hero — decorative motion, not a price claim */}
-        <CandleChart className="pointer-events-none absolute inset-x-0 bottom-0 h-52 w-full opacity-30" />
+        <CandleChart className="pointer-events-none absolute inset-x-0 bottom-0 h-[22rem] w-full opacity-[0.42] md:h-[26rem]" />
         <div className="wrap relative z-10 grid items-stretch lg:grid-cols-[1.05fr_1fr]">
           <div className="border-edge py-14 pr-0 lg:border-r lg:py-20 lg:pr-12">
             <div className="mb-6 flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em]">
