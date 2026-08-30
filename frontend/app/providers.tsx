@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { base, baseSepolia } from "wagmi/chains";
 import { defineChain } from "viem";
-import { injected } from "wagmi/connectors";
 import { useState } from "react";
 
 /** Unichain Sepolia is newer than wagmi 2.12.7's bundled chain list, so define it locally. */
@@ -19,10 +18,14 @@ export const unichainSepolia = defineChain({
 
 export const wagmiConfig = createConfig({
   chains: [unichainSepolia, baseSepolia, base],
-  // MetaMask only. `target: "metaMask"` pins the connector to the MetaMask provider rather
-  // than any injected wallet, so a browser with several wallets installed cannot silently
-  // connect through the wrong one.
-  connectors: [injected({ target: "metaMask" })],
+  // Deliberately EMPTY. Connectors come from EIP-6963 discovery instead, which wagmi runs
+  // by default. Declaring injected() here would register a connector bound to
+  // `window.ethereum`, and with several wallets installed that slot is won by whichever
+  // extension injected last — on this machine, the Uniswap extension. EIP-6963 sidesteps the
+  // race entirely: each wallet announces itself with a unique RDNS, so MetaMask can be
+  // addressed by identity rather than by hoping it owns the global.
+  connectors: [],
+  multiInjectedProviderDiscovery: true,
   transports: {
     [unichainSepolia.id]: http(),
     [baseSepolia.id]: http(),
