@@ -2,6 +2,9 @@ import Link from "next/link";
 import KnotMark from "@/components/KnotMark";
 import CandleChart from "@/components/CandleChart";
 import Shoreline from "@/components/Shoreline";
+import VaporGrid from "@/components/VaporGrid";
+import VaporSun from "@/components/VaporSun";
+import GlitchText from "@/components/GlitchText";
 import Reveal from "@/components/Reveal";
 import Counter from "@/components/Counter";
 import Ticker from "@/components/Ticker";
@@ -24,9 +27,11 @@ export default function Home() {
       <Ticker />
 
       {/* ── Hero: split frame, copy left, mechanism right ── */}
-      <section className="gridfield relative overflow-hidden border-b border-edge">
-        {/* live tape behind the hero — decorative motion, not a price claim */}
-        <CandleChart className="pointer-events-none absolute inset-x-0 bottom-0 h-[22rem] w-full opacity-[0.42] md:h-[26rem]" />
+      <section className="sunset relative overflow-hidden border-b border-edge">
+        {/* the horizon: banded sun, perspective grid running to it, market tape over the top */}
+        <VaporSun size={340} className="animate-bob pointer-events-none absolute right-[6%] top-6 opacity-70 md:right-[12%]" />
+        <VaporGrid className="absolute inset-x-0 bottom-0 h-64" />
+        <CandleChart className="pointer-events-none absolute inset-x-0 bottom-0 h-[22rem] w-full opacity-[0.5] md:h-[26rem]" />
         <div className="wrap relative z-10 grid items-stretch lg:grid-cols-[1.05fr_1fr]">
           <div className="border-edge py-14 pr-0 lg:border-r lg:py-20 lg:pr-12">
             <div className="mb-6 flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em]">
@@ -39,7 +44,9 @@ export default function Home() {
             </div>
 
             <h1 className="font-display text-[clamp(3.25rem,8vw,6.5rem)] font-bold leading-[0.9] tracking-tightest">
-              One pair.<br />Several pools.<br /><span className="text-ocean">One price boundary.</span>
+              <GlitchText>One pair.</GlitchText><br />
+              <GlitchText>Several pools.</GlitchText><br />
+              <span className="chrome"><GlitchText>One price boundary.</GlitchText></span>
             </h1>
 
             <p className="mt-7 max-w-xl text-[17px] leading-[1.6] text-ink-soft">
@@ -86,7 +93,7 @@ export default function Home() {
       <section id="how" className="gridfield scroll-mt-20 border-b border-edge">
         <div className="wrap py-14">
           <Reveal>
-            <p className="eyebrow mb-3">01 — The rule</p>
+            <p className="eyebrow mb-3 text-pink">01 — The rule</p>
             <h2 className="max-w-4xl font-display text-[clamp(2rem,4.6vw,3.6rem)] font-bold leading-[1.05] tracking-tightest">
               Every swap is quoted twice. The taker gets the worse one.
             </h2>
@@ -119,7 +126,7 @@ export default function Home() {
       {/* ── The problem, as a dense table ── */}
       <section id="problem" className="scroll-mt-20 border-b border-edge bg-surface">
         <div className="wrap py-14">
-          <Reveal><p className="eyebrow mb-6">02 — Why fragmentation leaks</p></Reveal>
+          <Reveal><p className="eyebrow mb-6 text-pink">02 — Why fragmentation leaks</p></Reveal>
           <div className="divide-y divide-line border-y border-line">
             {[
               ["One pool runs shallow", "Same tokens, far less depth. Cheaper to move, slower to correct."],
@@ -138,10 +145,11 @@ export default function Home() {
       </section>
 
       {/* ── Live on-chain readout, inverted for weight ── */}
-      <section className="relative border-b border-edge bg-ocean-dim text-sand-light">
-        <div className="wrap py-14">
+      <section className="relative overflow-hidden border-b border-edge bg-violet-deep text-sand-light">
+        <VaporGrid className="absolute inset-x-0 bottom-0 h-40 opacity-60" />
+        <div className="wrap relative z-10 py-14">
           <Reveal>
-            <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.16em] text-sand-light/55">
+            <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.16em] text-cyan">
               03 — Verified on Unichain Sepolia
             </p>
           </Reveal>
@@ -150,7 +158,7 @@ export default function Home() {
               { t: "Shallow pool · bound binds", rows: [["local quote", "18.993189"], ["aggregate quote", "6.315922"], ["enforced", "6.315922"], ["withheld → LPs", "12.677266"]], hl: 3 },
               { t: "Deep pool · bound inert", rows: [["local quote", "4.960273"], ["aggregate quote", "6.315922"], ["enforced", "4.960273"], ["withheld → LPs", "0"]], hl: 2 },
             ].map((c) => (
-              <div key={c.t} className="bg-ocean-dim p-6">
+              <div key={c.t} className="bg-violet-deep/80 p-6 backdrop-blur-sm">
                 <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.14em] text-sand-light/50">{c.t}</p>
                 <dl className="space-y-2">
                   {c.rows.map(([k, v], i) => (
@@ -177,7 +185,7 @@ export default function Home() {
         <div className="wrap grid gap-px bg-edge md:grid-cols-2">
           <div className="bg-canvas p-8">
             <div className="mb-5 flex items-baseline justify-between gap-3">
-              <p className="eyebrow">04 — Deployed contracts</p>
+              <p className="eyebrow text-pink">04 — Deployed contracts</p>
               <Link href="/contracts" className="font-mono text-[11px] uppercase tracking-[0.12em] text-ocean hover:underline">all contracts →</Link>
             </div>
             <div className="space-y-3">
@@ -193,7 +201,7 @@ export default function Home() {
             </div>
           </div>
           <div className="bg-canvas p-8">
-            <p className="eyebrow mb-5">05 — Stack</p>
+            <p className="eyebrow mb-5 text-pink">05 — Stack</p>
             <div className="grid grid-cols-2 gap-x-6">
               {[["Protocol", "Uniswap v4"], ["Base", "BaseCustomCurve"], ["Accounting", "ERC-6909"],
                 ["Solidity", "0.8.26"], ["Chain", "Unichain Sepolia"], ["Client", "wagmi · viem"],

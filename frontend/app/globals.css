@@ -73,3 +73,38 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee { animation: none; }
 }
+
+
+@layer components {
+  /* CRT scanlines. Very low contrast: the texture should be felt, not counted. */
+  .scanlines::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(21, 11, 46, 0.045) 0 1px,
+      transparent 1px 3px
+    );
+  }
+
+  /* Sunset sky above the sand: the gradient a vaporwave horizon is built on. */
+  .sunset {
+    background-image:
+      linear-gradient(to bottom,
+        rgba(123, 47, 255, 0.20) 0%,
+        rgba(255, 0, 128, 0.14) 32%,
+        rgba(255, 184, 0, 0.10) 58%,
+        transparent 82%);
+  }
+
+  /* Chrome text: the other half of the vaporwave type language. */
+  .chrome {
+    background-image: linear-gradient(180deg, #fffaf2 0%, #b085ff 38%, #7b2fff 55%, #00e1ff 78%, #fffaf2 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
