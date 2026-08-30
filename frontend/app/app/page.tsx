@@ -1,61 +1,97 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useAccount } from "wagmi";
-import { knotQuote, fmt } from "@/lib/knot";
+import { useReadContract, useReadContracts } from "wagmi";
+import { federationAbi, FEDERATION_ADDRESS, DEEP_POOL, SHALLOW_POOL, CHAIN_ID, knotQuote, fmt } from "@/lib/knot";
 import Connect from "@/components/Connect";
+import LiveBadge from "@/components/LiveBadge";
+
+const e18 = (n: number) => BigInt(Math.round(n * 1e6)) * 10n ** 12n;
 
 /**
- * The live hook. Reserves default to the configuration used across the test suite so the page
- * is explorable before anything is deployed; once addresses are set in env they are read live.
- * Every figure is derived from the same arithmetic the contract runs.
+ * Reads the deployed federation directly. `preview` is a view, so quotes come from the same
+ * contract a swap would execute against — no client-side approximation of the rule. If the
+ * contracts are unreachable the page falls back to the reference configuration rather than
+ * showing an error, so the mechanism stays explorable without a wallet.
  */
-const DEFAULTS = { d0: 1000, d1: 1000, s0: 100, s1: 400 };
-
 export default function AppPage() {
-  const { isConnected } = useAccount();
   const [pool, setPool] = useState<"shallow" | "deep">("shallow");
   const [amount, setAmount] = useState(5);
-  const [r, setR] = useState(DEFAULTS);
+  const [exactInput, setExactInput] = useState(true);
+  const [zeroForOne, setZeroForOne] = useState(true);
 
-  const q = useMemo(() => {
-    const e = (n: number) => BigInt(Math.floor(n * 1e6)) * 10n ** 12n;
-    const local: [bigint, bigint] = pool === "shallow" ? [e(r.s0), e(r.s1)] : [e(r.d0), e(r.d1)];
-    const agg: [bigint, bigint] = [e(r.d0 + r.s0), e(r.d1 + r.s1)];
-    return knotQuote(e(amount), local, agg);
-  }, [pool, amount, r]);
+  const hook = pool === "shallow" ? SHALLOW_POOL : DEEP_POOL;
+  const configured = Boolean(FEDERATION_ADDRESS && hook);
 
-  const binds = q.withheld > 0n;
-  const withheldBps = q.local > 0n ? Number((q.withheld * 10000n) / q.local) : 0;
+  // live reserves for both members, so the aggregate shown is the real one
+  const { data: reserveData } = useReadContracts({
+    contracts: configured
+      ? [
+          { address: FEDERATION_ADDRESS as `0x${string}`, abi: federationAbi, functionName: "reservesOf", args: [DEEP_POOL as `0x${string}`], chainId: CHAIN_ID },
+          { address: FEDERATION_ADDRESS as `0x${string}`, abi: federationAbi, functionName: "reservesOf", args: [SHALLOW_POOL as `0x${string}`], chainId: CHAIN_ID },
+        ]
+      : [],
+    query: { enabled: configured, refetchInterval: 12_000 },
+  });
+
+  const { data: preview, isSuccess: previewOk } = useReadContract({
+    address: FEDERATION_ADDRESS as `0x${string}`,
+    abi: federationAbi,
+    functionName: "preview",
+    args: [hook as `0x${string}`, zeroForOne, exactInput, e18(amount)],
+    chainId: CHAIN_ID,
+    query: { enabled: configured && amount > 0, refetchInterval: 12_000 },
+  });
+
+  // Fallback mirrors the deployed seed state so the page is never empty.
+  const fallback = useMemo(() => {
+    const local: [bigint, bigint] = pool === "shallow" ? [e18(100), e18(400)] : [e18(1000), e18(1000)];
+    const agg: [bigint, bigint] = [e18(1100), e18(1400)];
+    const q = knotQuote(e18(amount), local, agg);
+    return [q.local, q.aggregate, q.enforced] as const;
+  }, [pool, amount]);
+
+  const live = previewOk && Array.isArray(preview);
+  const [localQ, aggQ, enforcedQ] = (live ? (preview as readonly bigint[]) : fallback) as readonly bigint[];
+
+  const withheld = exactInput
+    ? (localQ > enforcedQ ? localQ - enforcedQ : 0n)
+    : (enforcedQ > localQ ? enforcedQ - localQ : 0n);
+  const bps = localQ > 0n ? Number((withheld * 10000n) / localQ) : 0;
+  const binds = withheld > 0n;
+
+  const dr = reserveData?.[0]?.result as readonly bigint[] | undefined;
+  const sr = reserveData?.[1]?.result as readonly bigint[] | undefined;
 
   return (
-    <div className="wrap py-14">
-      <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+    <div className="wrap py-12">
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-edge pb-6">
         <div>
-          <p className="eyebrow mb-2">Live hook</p>
-          <h1 className="font-display text-3xl tracking-tightest md:text-4xl">Quote a swap. Watch the bound.</h1>
-          <p className="mt-2 max-w-xl text-ink-soft">
-            Both quotes are computed from the same constant-product maths the contract runs. The taker
-            receives whichever is worse for them.
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <span className="eyebrow">Live hook</span>
+            <LiveBadge live={live} />
+          </div>
+          <h1 className="font-display text-3xl font-bold tracking-[-0.03em] md:text-4xl">
+            Quote a swap. Watch the bound.
+          </h1>
+          <p className="mt-2 max-w-xl text-[15px] leading-[1.55] text-ink-soft">
+            Quotes are read from <code className="font-mono text-[13px] text-marine">preview()</code> on the
+            deployed federation — the same call a swap executes against.
           </p>
         </div>
-        {!isConnected && <Connect />}
+        <Connect />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
+      <div className="grid gap-px bg-edge lg:grid-cols-[360px_1fr]">
         {/* ── controls ── */}
-        <div className="card space-y-6">
+        <div className="space-y-6 bg-canvas p-6">
           <div>
             <p className="eyebrow mb-3">Pool</p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-px bg-edge">
               {(["shallow", "deep"] as const).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => setPool(p)}
-                  className={`rounded-md border px-3 py-2 text-sm capitalize transition-colors ${
-                    pool === p ? "border-marine bg-marine/5 text-marine" : "border-line text-ink-soft hover:border-edge"
-                  }`}
-                >
+                <button key={p} onClick={() => setPool(p)}
+                  className={`px-3 py-2 font-mono text-xs uppercase tracking-[0.1em] transition-colors ${
+                    pool === p ? "bg-marine text-canvas" : "bg-canvas text-muted hover:text-ink"}`}>
                   {p}
                 </button>
               ))}
@@ -63,79 +99,102 @@ export default function AppPage() {
           </div>
 
           <div>
-            <div className="mb-2 flex items-baseline justify-between">
-              <p className="eyebrow">Amount in</p>
-              <span className="tnum font-mono text-sm">{amount.toFixed(1)} token0</span>
+            <p className="eyebrow mb-3">Direction</p>
+            <div className="grid grid-cols-2 gap-px bg-edge">
+              <button onClick={() => setZeroForOne(true)}
+                className={`px-3 py-2 font-mono text-xs transition-colors ${zeroForOne ? "bg-ink text-canvas" : "bg-canvas text-muted hover:text-ink"}`}>
+                token0 → token1
+              </button>
+              <button onClick={() => setZeroForOne(false)}
+                className={`px-3 py-2 font-mono text-xs transition-colors ${!zeroForOne ? "bg-ink text-canvas" : "bg-canvas text-muted hover:text-ink"}`}>
+                token1 → token0
+              </button>
             </div>
-            <input
-              type="range" min={0.5} max={20} step={0.5} value={amount}
-              onChange={(e) => setAmount(Number(e.target.value))}
-              className="w-full accent-marine"
-              aria-label="Amount in"
-            />
           </div>
 
           <div>
-            <p className="eyebrow mb-3">Reserves</p>
-            <div className="grid grid-cols-2 gap-3">
-              {([["s0", "shallow t0"], ["s1", "shallow t1"], ["d0", "deep t0"], ["d1", "deep t1"]] as const).map(
-                ([k, label]) => (
-                  <label key={k} className="flex flex-col gap-1">
-                    <span className="text-[11px] text-muted">{label}</span>
-                    <input
-                      type="number"
-                      value={r[k]}
-                      onChange={(e) => setR({ ...r, [k]: Math.max(1, Number(e.target.value)) })}
-                      className="tnum rounded-md border border-line bg-surface px-2 py-1.5 font-mono text-sm focus:border-marine focus:outline-none"
-                    />
-                  </label>
-                )
-              )}
+            <p className="eyebrow mb-3">Mode</p>
+            <div className="grid grid-cols-2 gap-px bg-edge">
+              <button onClick={() => setExactInput(true)}
+                className={`px-3 py-2 font-mono text-xs transition-colors ${exactInput ? "bg-ink text-canvas" : "bg-canvas text-muted hover:text-ink"}`}>
+                exact input
+              </button>
+              <button onClick={() => setExactInput(false)}
+                className={`px-3 py-2 font-mono text-xs transition-colors ${!exactInput ? "bg-ink text-canvas" : "bg-canvas text-muted hover:text-ink"}`}>
+                exact output
+              </button>
             </div>
           </div>
+
+          <div>
+            <div className="mb-2 flex items-baseline justify-between">
+              <p className="eyebrow">{exactInput ? "Amount in" : "Amount out"}</p>
+              <span className="tnum font-mono text-sm">{amount.toFixed(1)}</span>
+            </div>
+            <input type="range" min={0.5} max={25} step={0.5} value={amount}
+              onChange={(ev) => setAmount(Number(ev.target.value))}
+              className="w-full accent-marine" aria-label="Amount" />
+          </div>
+
+          {(dr || sr) && (
+            <div className="border-t border-line pt-5">
+              <p className="eyebrow mb-3">On-chain reserves</p>
+              <dl className="space-y-1.5 font-mono text-[11px]">
+                {dr && <div className="flex justify-between"><dt className="text-faint">deep</dt><dd className="tnum">{fmt(dr[0], 0)} / {fmt(dr[1], 0)}</dd></div>}
+                {sr && <div className="flex justify-between"><dt className="text-faint">shallow</dt><dd className="tnum">{fmt(sr[0], 0)} / {fmt(sr[1], 0)}</dd></div>}
+                {dr && sr && (
+                  <div className="flex justify-between border-t border-line pt-1.5 text-marine">
+                    <dt>aggregate</dt><dd className="tnum">{fmt(dr[0] + sr[0], 0)} / {fmt(dr[1] + sr[1], 0)}</dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+          )}
         </div>
 
-        {/* ── result ── */}
-        <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="card">
+        {/* ── readout ── */}
+        <div className="space-y-px bg-edge">
+          <div className="grid gap-px bg-edge sm:grid-cols-2">
+            <div className="bg-canvas p-6">
               <p className="eyebrow mb-2">Local pool quote</p>
-              <p className="tnum font-display text-3xl tracking-tightest">{fmt(q.local)}</p>
-              <p className="mt-1 text-sm text-muted">From this pool&rsquo;s reserves alone</p>
+              <p className="tnum font-display text-3xl font-bold tracking-[-0.03em]">{fmt(localQ)}</p>
+              <p className="mt-1 text-[13px] text-muted">This pool&rsquo;s reserves alone</p>
             </div>
-            <div className="card">
+            <div className="bg-canvas p-6">
               <p className="eyebrow mb-2">Federation quote</p>
-              <p className="tnum font-display text-3xl tracking-tightest">{fmt(q.aggregate)}</p>
-              <p className="mt-1 text-sm text-muted">From the pair&rsquo;s combined reserves</p>
+              <p className="tnum font-display text-3xl font-bold tracking-[-0.03em]">{fmt(aggQ)}</p>
+              <p className="mt-1 text-[13px] text-muted">The pair&rsquo;s combined reserves</p>
             </div>
           </div>
 
-          <div className={`card border-2 ${binds ? "border-marine" : "border-line"}`}>
-            <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="bg-canvas p-6">
+            <div className="flex flex-wrap items-end justify-between gap-6">
               <div>
-                <p className="eyebrow mb-2">Enforced — what the taker receives</p>
-                <p className="tnum font-display text-4xl tracking-tightest text-marine">{fmt(q.enforced)}</p>
+                <p className="eyebrow mb-2">Enforced — {exactInput ? "what the taker receives" : "what the taker pays"}</p>
+                <p className="tnum font-display text-5xl font-bold tracking-[-0.04em] text-marine">{fmt(enforcedQ)}</p>
+                <p className="mt-2 font-mono text-[11px] text-faint">
+                  {exactInput ? "min(local, aggregate)" : "max(local, aggregate)"}
+                </p>
               </div>
               {binds ? (
                 <div className="text-right">
                   <p className="eyebrow mb-1">Kept with LPs</p>
-                  <p className="tnum font-display text-2xl tracking-tightest text-hemp">{fmt(q.withheld)}</p>
-                  <p className="tnum font-mono text-xs text-muted">{withheldBps} bps of the local quote</p>
+                  <p className="tnum font-display text-3xl font-bold tracking-[-0.03em] text-hemp">{fmt(withheld)}</p>
+                  <p className="tnum font-mono text-[11px] text-muted">{bps} bps of the local quote</p>
                 </div>
               ) : (
-                <p className="max-w-[240px] text-sm text-muted">
-                  The bound is not binding here. This pool is in line with the pair, so it keeps its own quote.
+                <p className="max-w-[230px] text-[13px] leading-snug text-muted">
+                  Not binding here. This pool is in line with the pair, so it keeps its own quote.
                 </p>
               )}
             </div>
-            <div className="mt-5 h-2 overflow-hidden rounded-full bg-surface2">
-              <div
-                className="h-full rounded-full bg-marine transition-all duration-500"
-                style={{ width: `${Math.max(2, 100 - withheldBps / 100)}%` }}
-              />
+
+            <div className="mt-6 h-1.5 overflow-hidden bg-surface2">
+              <div className="h-full bg-marine transition-all duration-500"
+                style={{ width: `${Math.max(2, 100 - bps / 100)}%` }} />
             </div>
-            <p className="mt-2 font-mono text-[11px] text-faint">
-              enforced ÷ local — the shorter the bar, the harder the bound is biting
+            <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
+              enforced ÷ local — a shorter bar means the bound is biting harder
             </p>
           </div>
         </div>
