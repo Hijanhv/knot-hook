@@ -13,13 +13,13 @@ export default function LiveBadge({ live }: { live: boolean }) {
   const wrongNet = isConnected && chainId !== CHAIN_ID;
 
   const [dot, text] = wrongNet
-    ? ["bg-clay", "wrong network"]
+    ? ["bg-amber", "wrong network"]
     : live
-      ? ["bg-ocean animate-pulse", "live · unichain sepolia"]
+      ? ["bg-accent animate-pulse", "live · unichain sepolia"]
       : ["bg-faint", "reference values"];
 
   return (
-    <span className="inline-flex items-center gap-2 border border-edge px-2 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+    <span className="pill">
       <span className={`inline-block h-1.5 w-1.5 rounded-full ${dot}`} />
       {text}
     </span>

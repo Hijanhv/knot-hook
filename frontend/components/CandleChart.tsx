@@ -8,9 +8,8 @@ type Candle = { o: number; h: number; l: number; c: number };
  * the leading candle so the eye lands on the present. Decorative motion only — this asserts
  * nothing about real prices.
  *
- * Cyan for up, violet for down, rather than green/red. In a project about LP value those two
- * colours would read as profit and loss and imply a claim the chart is not making. Cyan and
- * violet are also the pairing the Web3 space actually converged on.
+ * Blue for up, grey for down, rather than green/red: in a project about LP value those two
+ * colours would read as profit and loss and imply a claim this chart is not making.
  */
 export default function CandleChart({
   count = 28, className = "", showArea = true,
@@ -47,13 +46,12 @@ export default function CandleChart({
     <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className={className} aria-hidden>
       <defs>
         <linearGradient id="cc-area" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#00e1ff" stopOpacity="0.45" />
-          <stop offset="100%" stopColor="#7b2fff" stopOpacity="0" />
+          <stop offset="0%" stopColor="#3D7BFF" stopOpacity="0.22" />
+          <stop offset="100%" stopColor="#3D7BFF" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="cc-line" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#7b2fff" />
-          <stop offset="55%" stopColor="#ff0080" />
-          <stop offset="100%" stopColor="#00e1ff" />
+          <stop offset="0%" stopColor="#2255C4" />
+          <stop offset="100%" stopColor="#7FA6FF" />
         </linearGradient>
         <filter id="cc-glow" x="-60%" y="-60%" width="220%" height="220%">
           <feGaussianBlur stdDeviation="0.9" result="b" />
@@ -71,17 +69,17 @@ export default function CandleChart({
       {candles.map((c, i) => {
         const x = i * slot + slot / 2;
         const up = c.c >= c.o;
-        const stroke = up ? "#00e1ff" : "#a855f7";
+        const stroke = up ? "#3D7BFF" : "#4A5568";
         const last = i === candles.length - 1;
         return (
-          <g key={i} opacity={last ? 1 : 0.3 + (i / candles.length) * 0.6} filter={last ? "url(#cc-glow)" : undefined}>
+          <g key={i} opacity={last ? 1 : 0.22 + (i / candles.length) * 0.55} filter={last ? "url(#cc-glow)" : undefined}>
             <line x1={x} x2={x} y1={y(c.h)} y2={y(c.l)} stroke={stroke} strokeWidth="0.3" strokeLinecap="round" />
             <rect
               x={x - bw / 2}
               y={y(Math.max(c.o, c.c))}
               width={bw}
               height={Math.max(0.5, Math.abs(y(c.o) - y(c.c)))}
-              fill={up ? stroke : "#7b2fff"}
+              fill={up ? stroke : "#2A3241"}
               stroke={stroke}
               strokeWidth="0.32"
               rx="0.25"

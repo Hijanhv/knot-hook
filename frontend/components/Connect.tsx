@@ -50,14 +50,14 @@ export default function Connect() {
         <button className="btn" disabled={isPending} onClick={() => metaMask && connect({ connector: metaMask })}>
           {isPending ? "Check MetaMask…" : "Connect MetaMask"}
         </button>
-        {error && <span className="max-w-[220px] text-right text-[11px] leading-tight text-clay">{error.message}</span>}
+        {error && <span className="max-w-[220px] text-right text-[11px] leading-tight text-amber">{error.message}</span>}
       </div>
     );
   }
 
   if (chainId !== CHAIN_ID) {
     return (
-      <button className="btn border-clay bg-clay hover:bg-clay/90" onClick={() => switchChain({ chainId: CHAIN_ID })}>
+      <button className="btn border-clay bg-amber hover:bg-amber/90" onClick={() => switchChain({ chainId: CHAIN_ID })}>
         Wrong network — switch
       </button>
     );
@@ -66,7 +66,7 @@ export default function Connect() {
   return (
     <button className="btn-ghost tnum font-mono text-xs" onClick={() => disconnect()}
       title={`Connected via ${connector?.name ?? "wallet"} — click to disconnect`}>
-      <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-ocean align-middle" />
+      <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-accent align-middle" />
       {short(address!)}
     </button>
   );

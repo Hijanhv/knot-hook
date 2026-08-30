@@ -12,14 +12,13 @@ const LINES = [
 export default function Ticker() {
   return (
     <>
-      <div className="hatch h-5 border-b border-edge" />
-      <div className="overflow-hidden border-b border-edge bg-surface">
+      <div className="overflow-hidden border-b border-line bg-surface/60">
         <div className="flex w-max animate-marquee">
           {[0, 1].map((copy) => (
             <div key={copy} aria-hidden={copy === 1} className="flex shrink-0 items-center">
               {LINES.map((t) => (
-                <span key={t} className="flex items-center whitespace-nowrap px-5 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-                  <span className="mr-3 inline-block h-1 w-1 rounded-full bg-ocean" />
+                <span key={t} className="flex items-center whitespace-nowrap px-5 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
+                  <span className="mr-3 inline-block h-1 w-1 rounded-full bg-accent" />
                   {t}
                 </span>
               ))}

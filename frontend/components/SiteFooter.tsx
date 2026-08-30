@@ -6,8 +6,8 @@ const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
 export default function SiteFooter() {
   return (
-    <footer className="mt-28 border-t border-line bg-surface2/40">
-      <div className="wrap grid gap-10 py-14 md:grid-cols-4">
+    <footer className="mt-0 border-t border-line bg-surface/50">
+      <div className="wrap grid gap-12 py-16 md:grid-cols-4">
         <div>
           <Wordmark size="sm" />
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
@@ -21,18 +21,18 @@ export default function SiteFooter() {
         <div>
           <p className="eyebrow mb-4">Product</p>
           <ul className="space-y-2.5 text-sm">
-            <li><Link href="/app" className="text-ink-soft hover:text-ocean">App</Link></li>
-            <li><a href={SITE.docs} target="_blank" rel="noopener noreferrer" className="text-ink-soft hover:text-ocean">Docs ↗</a></li>
-            <li><a href={SITE.github} target="_blank" rel="noopener noreferrer" className="text-ink-soft hover:text-ocean">GitHub ↗</a></li>
-            <li><Link href="/#how" className="text-ink-soft hover:text-ocean">How it works</Link></li>
+            <li><Link href="/app" className="text-muted hover:text-accent">App</Link></li>
+            <li><a href={SITE.docs} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-accent">Docs ↗</a></li>
+            <li><a href={SITE.github} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-accent">GitHub ↗</a></li>
+            <li><Link href="/#how" className="text-muted hover:text-accent">How it works</Link></li>
           </ul>
         </div>
 
         <div>
           <p className="eyebrow mb-4">Stack</p>
           <ul className="space-y-2.5 text-sm">
-            <li><a href={SITE.uniswapV4} target="_blank" rel="noopener noreferrer" className="text-ink-soft hover:text-ocean">Uniswap v4 ↗</a></li>
-            <li><Link href="/contracts" className="text-ink-soft hover:text-ocean">Contracts</Link></li>
+            <li><a href={SITE.uniswapV4} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-accent">Uniswap v4 ↗</a></li>
+            <li><Link href="/contracts" className="text-muted hover:text-accent">Contracts</Link></li>
             <li className="text-ink-soft">Solidity 0.8.26 · Foundry</li>
             <li className="text-ink-soft">Next.js · wagmi · viem</li>
           </ul>

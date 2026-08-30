@@ -5,10 +5,11 @@
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
-    /* Belt and braces: the body className sets this too, but painting the root as well
-       means an overscroll bounce never reveals a white strip under the cream page. */
-    background-color: #fdf4e3;
+    /* Painted on the root as well as the body, so an overscroll bounce never reveals a white
+       strip beneath the navy page. */
+    background-color: #0a0e17;
   }
+  ::selection { background-color: rgba(61, 123, 255, 0.3); color: #fff; }
 }
 
 @layer utilities {
@@ -17,94 +18,50 @@
 }
 
 @layer components {
-  .wrap { @apply mx-auto w-full max-w-content px-6; }
+  .wrap { @apply mx-auto w-full max-w-content px-6 md:px-10; }
+
+  /* Vertical rhythm lives in one place. Sections are generous by default — the space is the
+     design, and overriding it per-section is how a page loses its rhythm. */
+  .section { @apply py-20 md:py-28; }
+
   .rule { @apply border-t border-line; }
-  .eyebrow { @apply font-mono text-[11px] uppercase tracking-[0.18em] text-muted; }
-  .card { @apply rounded-lg border border-line bg-surface p-6 shadow-card; }
+
+  .eyebrow { @apply font-mono text-[11px] uppercase tracking-[0.16em] text-faint; }
+
+  /* Cards read by soft depth, not by outline. The border is a half-step off the ground and
+     only firms up on hover. */
+  .card {
+    @apply rounded-xl border border-line bg-surface p-7 shadow-card transition-colors duration-300;
+  }
+  .card-hover { @apply hover:border-edge; }
+
   .btn {
-    @apply inline-flex items-center justify-center rounded-md border border-edge bg-gradient-to-r from-violet to-pink px-4 py-2
-           text-sm font-semibold text-white shadow-neon transition-all hover:brightness-110
-           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean;
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg bg-accent px-5 py-2.5
+           text-sm font-medium text-white transition-all duration-200
+           hover:bg-accent-light hover:shadow-glow
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center rounded-md border border-line bg-surface px-4 py-2
-           text-sm font-semibold text-ink transition-colors hover:border-edge
-           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
-}
-
-@layer components {
-  /* Diagonal hatch, used on thin structural strips so the page reads as engineered
-     rather than laid out. Lifted in spirit from Lambda's top strip. */
-  .hatch {
-    background-color: theme("colors.sand.deep");
-    background-image: repeating-linear-gradient(
-      -45deg,
-      rgba(123, 47, 255, 0.22) 0 1.5px,
-      transparent 1.5px 9px
-    );
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg border border-edge bg-transparent px-5 py-2.5
+           text-sm font-medium text-ink-soft transition-all duration-200
+           hover:border-accent hover:text-ink
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
   }
 
-  /* Faint engineering grid. Gives every section a substrate instead of empty paper. */
-  /* Rippled sand: the texture a receding tide leaves behind. */
-  .gridfield {
-    background-image: repeating-linear-gradient(
-      92deg,
-      rgba(220, 197, 156, 0.55) 0 1px,
-      transparent 1px 7px
-    );
+  /* A pill for state — live, reference, wrong network. Reads at a glance without a legend. */
+  .pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1
+           font-mono text-[10px] uppercase tracking-[0.14em] text-muted;
   }
-
-  /* Hard hairline frame. Borders are the layout here, not shadows. */
-  .frame { @apply border border-edge; }
-  .frame-t { @apply border-t border-edge; }
 }
 
 @keyframes marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
-.animate-marquee { animation: marquee 38s linear infinite; }
+.animate-marquee { animation: marquee 46s linear infinite; }
 
 @media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
   .animate-marquee { animation: none; }
-}
-
-
-@layer components {
-  /* CRT scanlines. Very low contrast: the texture should be felt, not counted. */
-  .scanlines::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 60;
-    pointer-events: none;
-    background-image: repeating-linear-gradient(
-      to bottom,
-      rgba(21, 11, 46, 0.045) 0 1px,
-      transparent 1px 3px
-    );
-  }
-
-  /* Sunset sky above the sand: the gradient a vaporwave horizon is built on. */
-  .sunset {
-    background-image:
-      linear-gradient(to bottom,
-        rgba(123, 47, 255, 0.20) 0%,
-        rgba(255, 0, 128, 0.14) 32%,
-        rgba(255, 184, 0, 0.10) 58%,
-        transparent 82%);
-  }
-
-  /* Chrome text: the other half of the vaporwave type language. */
-  .chrome {
-    background-image: linear-gradient(180deg, #fffaf2 0%, #b085ff 38%, #7b2fff 55%, #00e1ff 78%, #fffaf2 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
 }

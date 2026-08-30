@@ -15,7 +15,7 @@ const LEN = 224;
  * the coloured strand is drawn over it with a dash pattern that opens gaps exactly where the
  * rope should pass UNDER. That is what makes it look woven instead of merely overlapped.
  *
- * On mount the strand draws itself once around the knot, then the chrome sheen sweeps.
+ * On mount the strand draws itself once around the knot, and stays.
  */
 export default function KnotLogo({
   size = 44, animate = true, className = "",
@@ -33,10 +33,9 @@ export default function KnotLogo({
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={className} role="img" aria-label="Knot">
       <defs>
         <linearGradient id={`${uid}-g`} x1="6" y1="58" x2="58" y2="6" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#7b2fff" />
-          <stop offset="35%" stopColor="#ff0080" />
-          <stop offset="70%" stopColor="#a855f7" />
-          <stop offset="100%" stopColor="#00e1ff" />
+          <stop offset="0%" stopColor="#2255C4" />
+          <stop offset="45%" stopColor="#3D7BFF" />
+          <stop offset="100%" stopColor="#A8C4FF" />
         </linearGradient>
         <filter id={`${uid}-glow`} x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="2.2" result="b" />
@@ -45,7 +44,7 @@ export default function KnotLogo({
       </defs>
 
       {/* pass 1: the page-coloured underlay that carves the gaps */}
-      <path d={TREFOIL} stroke="var(--knot-bg, #fdf4e3)" strokeWidth="11" strokeLinecap="round" fill="none"
+      <path d={TREFOIL} stroke="var(--knot-bg, #0A0E17)" strokeWidth="11" strokeLinecap="round" fill="none"
         opacity={drawn ? 1 : 0} style={{ transition: "opacity .3s" }} />
 
       {/* pass 2: the strand, dashed so it lifts away at the three crossings */}
@@ -63,7 +62,7 @@ export default function KnotLogo({
       </g>
 
       {/* the centre: where the three crossings resolve */}
-      <circle cx="32" cy="32" r="3.4" fill="#00e1ff"
+      <circle cx="32" cy="32" r="3.4" fill="#A8C4FF"
         style={{
           transform: drawn ? "scale(1)" : "scale(0)",
           transformOrigin: "32px 32px",
