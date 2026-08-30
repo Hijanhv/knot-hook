@@ -1,70 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.26;
 
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {IHooks} from "@uniswap/v4-core/src/interfaces/IHooks.sol";
-import {Hooks} from "@uniswap/v4-core/src/libraries/Hooks.sol";
 import {LPFeeLibrary} from "@uniswap/v4-core/src/libraries/LPFeeLibrary.sol";
 import {PoolSwapTest} from "@uniswap/v4-core/src/test/PoolSwapTest.sol";
 import {Currency, CurrencyLibrary} from "@uniswap/v4-core/src/types/Currency.sol";
 import {PoolKey} from "@uniswap/v4-core/src/types/PoolKey.sol";
-import {SwapParams} from "@uniswap/v4-core/src/types/PoolOperation.sol";
 import {BaseCustomAccounting} from "ozhooks/base/BaseCustomAccounting.sol";
-import {HookTest} from "oztest/utils/HookTest.sol";
 import {KnotFederation} from "../src/KnotFederation.sol";
 import {KnotHook} from "../src/KnotHook.sol";
+import {KnotTestBase} from "./utils/KnotTestBase.sol";
 
-contract KnotHookTest is HookTest {
+contract KnotHookTest is KnotTestBase {
     using CurrencyLibrary for Currency;
 
-    uint256 private constant MAX_DEADLINE = 12_329_839_823;
-    int24 private constant MIN_TICK = -887220;
-    int24 private constant MAX_TICK = 887220;
-    uint160 private constant REQUIRED_FLAGS = uint160(
-        Hooks.BEFORE_INITIALIZE_FLAG | Hooks.BEFORE_SWAP_FLAG | Hooks.BEFORE_SWAP_RETURNS_DELTA_FLAG
-            | Hooks.BEFORE_ADD_LIQUIDITY_FLAG | Hooks.BEFORE_REMOVE_LIQUIDITY_FLAG
-    );
-
-    KnotFederation internal federation;
-    KnotHook internal hookA;
-    KnotHook internal hookB;
-    PoolKey internal keyA;
-    PoolKey internal keyB;
-
     function setUp() public {
-        deployFreshManagerAndRouters();
-        deployMintAndApprove2Currencies();
-        federation =
-            new KnotFederation(Currency.unwrap(currency0), Currency.unwrap(currency1), 997, 1000, 3, address(this));
-
-        hookA = KnotHook(payable(address(REQUIRED_FLAGS | uint160(1 << 80))));
-        hookB = KnotHook(payable(address(REQUIRED_FLAGS | uint160(2 << 80))));
-        deployCodeTo(
-            "src/KnotHook.sol:KnotHook",
-            abi.encode(address(manager), address(federation), "Knot Pool A", "KNOT-A", 1),
-            address(hookA)
-        );
-        deployCodeTo(
-            "src/KnotHook.sol:KnotHook",
-            abi.encode(address(manager), address(federation), "Knot Pool B", "KNOT-B", 1),
-            address(hookB)
-        );
-        federation.register(address(hookA));
-        federation.register(address(hookB));
-
-        (keyA,) = initPool(currency0, currency1, IHooks(address(hookA)), LPFeeLibrary.DYNAMIC_FEE_FLAG, SQRT_PRICE_1_1);
-        (keyB,) = initPool(currency0, currency1, IHooks(address(hookB)), LPFeeLibrary.DYNAMIC_FEE_FLAG, SQRT_PRICE_1_1);
-
-        ERC20(Currency.unwrap(currency0)).approve(address(hookA), type(uint256).max);
-        ERC20(Currency.unwrap(currency1)).approve(address(hookA), type(uint256).max);
-        ERC20(Currency.unwrap(currency0)).approve(address(hookB), type(uint256).max);
-        ERC20(Currency.unwrap(currency1)).approve(address(hookB), type(uint256).max);
-
-        hookA.addLiquidity(_addParams(1000 ether, 1500 ether));
-        hookB.addLiquidity(_addParams(1000 ether, 500 ether));
-        vm.roll(block.number + 1);
-        hookA.activatePendingLiquidity();
-        hookB.activatePendingLiquidity();
+        _deployKnotFixture(997, 1000, 3, 1, 1000 ether, 1500 ether, 1000 ether, 500 ether);
     }
 
     function test_exactInputUsesTheLessFavorableOfLocalAndAggregateQuotes() public {
@@ -104,6 +55,23 @@ contract KnotHookTest is HookTest {
 
         assertLt(currency0.balanceOf(address(this)), starting0, "round trip cannot create token0");
         assertEq(currency1.balanceOf(address(this)), starting1, "all bought token1 was reversed");
+        _assertAggregateMatchesMembers();
+    }
+
+    function test_poolManagerClaimSettlementModesPreserveFederationCustody() public {
+        uint256 inputAmount = 10 ether;
+        (,, uint256 expectedOutput) = federation.preview(address(hookA), true, true, inputAmount);
+
+        _swapWithSettings(
+            keyA, true, -int256(inputAmount), PoolSwapTest.TestSettings({takeClaims: true, settleUsingBurn: false})
+        );
+        assertEq(manager.balanceOf(address(this), currency1.toId()), expectedOutput);
+
+        manager.setOperator(address(swapRouter), true);
+        _swapWithSettings(
+            keyA, false, -int256(expectedOutput), PoolSwapTest.TestSettings({takeClaims: false, settleUsingBurn: true})
+        );
+        assertEq(manager.balanceOf(address(this), currency1.toId()), 0);
         _assertAggregateMatchesMembers();
     }
 
@@ -163,12 +131,7 @@ contract KnotHookTest is HookTest {
     }
 
     function test_onlyFederationOwnerCanSeedAnEmptyMember() public {
-        KnotHook emptyHook = KnotHook(payable(address(REQUIRED_FLAGS | uint160(3 << 80))));
-        deployCodeTo(
-            "src/KnotHook.sol:KnotHook",
-            abi.encode(address(manager), address(federation), "Knot Pool C", "KNOT-C", 1),
-            address(emptyHook)
-        );
+        KnotHook emptyHook = _deployHook(3, "Knot Pool C", "KNOT-C", 1);
         federation.register(address(emptyHook));
         initPool(currency0, currency1, IHooks(address(emptyHook)), LPFeeLibrary.DYNAMIC_FEE_FLAG, SQRT_PRICE_1_1);
 
@@ -183,7 +146,7 @@ contract KnotHookTest is HookTest {
 
     function test_permissionlessProviderCanQueueWithoutBlockingSwapsOrWithdrawals() public {
         address provider = address(0xA77AC);
-        _fundAndApprove(provider, hookA, 2 ether, 2 ether);
+        _fundAndApproveLiquidity(provider, hookA, 2 ether, 2 ether);
         vm.prank(provider);
         hookA.addLiquidity(_addParamsLoose(1 ether, 1 ether));
 
@@ -199,7 +162,7 @@ contract KnotHookTest is HookTest {
 
     function test_activationUsesCurrentRatioAndRefundsOriginalProvider() public {
         address provider = address(0xB0B);
-        _fundAndApprove(provider, hookA, 100 ether, 150 ether);
+        _fundAndApproveLiquidity(provider, hookA, 100 ether, 150 ether);
         vm.prank(provider);
         hookA.addLiquidity(_addParams(100 ether, 150 ether));
 
@@ -224,8 +187,8 @@ contract KnotHookTest is HookTest {
     function test_multipleProvidersQueueIndependentlyAndCannotFreezePool() public {
         address alice = address(0xA11CE);
         address bob = address(0xB0B);
-        _fundAndApprove(alice, hookA, 100 ether, 150 ether);
-        _fundAndApprove(bob, hookA, 100 ether, 150 ether);
+        _fundAndApproveLiquidity(alice, hookA, 100 ether, 150 ether);
+        _fundAndApproveLiquidity(bob, hookA, 100 ether, 150 ether);
 
         vm.prank(alice);
         hookA.addLiquidity(_addParams(100 ether, 150 ether));
@@ -256,7 +219,7 @@ contract KnotHookTest is HookTest {
     function test_cancelReturnsAssetsOnlyToOriginalProvider() public {
         address provider = address(0xB0B);
         address attacker = address(0xA77AC);
-        _fundAndApprove(provider, hookA, 100 ether, 150 ether);
+        _fundAndApproveLiquidity(provider, hookA, 100 ether, 150 ether);
         vm.prank(provider);
         hookA.addLiquidity(_addParams(100 ether, 150 ether));
 
@@ -283,7 +246,7 @@ contract KnotHookTest is HookTest {
 
     function test_providerMustResolveExistingRequestBeforeQueueingAgain() public {
         address provider = address(0xB0B);
-        _fundAndApprove(provider, hookA, 200 ether, 300 ether);
+        _fundAndApproveLiquidity(provider, hookA, 200 ether, 300 ether);
         vm.startPrank(provider);
         hookA.addLiquidity(_addParams(100 ether, 150 ether));
         vm.expectRevert(KnotHook.PendingLiquidityExists.selector);
@@ -293,7 +256,7 @@ contract KnotHookTest is HookTest {
 
     function test_providerMustClaimRefundBeforeQueueingAgain() public {
         address provider = address(0xB0B);
-        _fundAndApprove(provider, hookA, 200 ether, 300 ether);
+        _fundAndApproveLiquidity(provider, hookA, 200 ether, 300 ether);
         vm.startPrank(provider);
         hookA.addLiquidity(_addParams(100 ether, 150 ether));
         hookA.cancelPendingLiquidity();
@@ -306,12 +269,7 @@ contract KnotHookTest is HookTest {
     }
 
     function test_onlyFederationOwnerCanInitializeARegisteredMember() public {
-        KnotHook emptyHook = KnotHook(payable(address(REQUIRED_FLAGS | uint160(3 << 80))));
-        deployCodeTo(
-            "src/KnotHook.sol:KnotHook",
-            abi.encode(address(manager), address(federation), "Knot Pool C", "KNOT-C", 1),
-            address(emptyHook)
-        );
+        KnotHook emptyHook = _deployHook(3, "Knot Pool C", "KNOT-C", 1);
         federation.register(address(emptyHook));
 
         PoolKey memory attemptedKey = PoolKey({
@@ -330,20 +288,10 @@ contract KnotHookTest is HookTest {
     }
 
     function test_federationEnforcesConfiguredMemberLimit() public {
-        KnotHook thirdHook = KnotHook(payable(address(REQUIRED_FLAGS | uint160(3 << 80))));
-        deployCodeTo(
-            "src/KnotHook.sol:KnotHook",
-            abi.encode(address(manager), address(federation), "Knot Pool C", "KNOT-C", 1),
-            address(thirdHook)
-        );
+        KnotHook thirdHook = _deployHook(3, "Knot Pool C", "KNOT-C", 1);
         federation.register(address(thirdHook));
 
-        KnotHook fourthHook = KnotHook(payable(address(REQUIRED_FLAGS | uint160(4 << 80))));
-        deployCodeTo(
-            "src/KnotHook.sol:KnotHook",
-            abi.encode(address(manager), address(federation), "Knot Pool D", "KNOT-D", 1),
-            address(fourthHook)
-        );
+        KnotHook fourthHook = _deployHook(4, "Knot Pool D", "KNOT-D", 1);
         vm.expectRevert(KnotFederation.MemberLimitReached.selector);
         federation.register(address(fourthHook));
         assertEq(federation.memberCount(), federation.maxMembers());
@@ -379,7 +327,7 @@ contract KnotHookTest is HookTest {
 
     function test_abandonedPendingRequestCannotHoldFederationSlot() public {
         address provider = address(0xB0B);
-        _fundAndApprove(provider, hookA, 100 ether, 150 ether);
+        _fundAndApproveLiquidity(provider, hookA, 100 ether, 150 ether);
         vm.prank(provider);
         hookA.addLiquidity(_addParams(100 ether, 150 ether));
 
@@ -405,19 +353,49 @@ contract KnotHookTest is HookTest {
         assertEq(currency1.balanceOf(provider) - token1Before, 150 ether);
     }
 
-    function test_failedOversizedSwapRollsBackBothReserveBooks() public {
+    function test_failedSettlementRollsBackBothReserveBooksAndClaims() public {
         (uint256 a0Before, uint256 a1Before) = federation.reservesOf(address(hookA));
         uint256 aggregate0Before = federation.aggregateReserve0();
         uint256 aggregate1Before = federation.aggregateReserve1();
+        uint256 claim0Before = manager.balanceOf(address(hookA), currency0.toId());
+        uint256 claim1Before = manager.balanceOf(address(hookA), currency1.toId());
 
+        vm.prank(address(0xBAD));
         vm.expectRevert();
-        _swap(keyA, true, int256(1600 ether));
+        _swap(keyA, true, -int256(10 ether));
 
         (uint256 a0After, uint256 a1After) = federation.reservesOf(address(hookA));
         assertEq(a0After, a0Before);
         assertEq(a1After, a1Before);
         assertEq(federation.aggregateReserve0(), aggregate0Before);
         assertEq(federation.aggregateReserve1(), aggregate1Before);
+        assertEq(manager.balanceOf(address(hookA), currency0.toId()), claim0Before);
+        assertEq(manager.balanceOf(address(hookA), currency1.toId()), claim1Before);
+        _assertAggregateMatchesMembers();
+    }
+
+    function test_liquiditySlippageFailuresRollBackEveryLedger() public {
+        (uint256 reserve0Before, uint256 reserve1Before) = federation.reservesOf(address(hookA));
+        uint256 supplyBefore = hookA.totalSupply();
+        uint256 claim0Before = manager.balanceOf(address(hookA), currency0.toId());
+        uint256 claim1Before = manager.balanceOf(address(hookA), currency1.toId());
+
+        BaseCustomAccounting.AddLiquidityParams memory add = _addParamsLoose(100 ether, 150 ether);
+        add.amount0Min = 100 ether + 1;
+        vm.expectRevert(BaseCustomAccounting.TooMuchSlippage.selector);
+        hookA.addLiquidity(add);
+
+        vm.expectRevert(BaseCustomAccounting.TooMuchSlippage.selector);
+        hookA.removeLiquidity(_removeParams(1 ether, 1 ether + 1, 0));
+
+        (uint256 reserve0After, uint256 reserve1After) = federation.reservesOf(address(hookA));
+        (,, uint256 activatesAtBlock) = hookA.pendingLiquidity(address(this));
+        assertEq(reserve0After, reserve0Before);
+        assertEq(reserve1After, reserve1Before);
+        assertEq(hookA.totalSupply(), supplyBefore);
+        assertEq(activatesAtBlock, 0);
+        assertEq(manager.balanceOf(address(hookA), currency0.toId()), claim0Before);
+        assertEq(manager.balanceOf(address(hookA), currency1.toId()), claim1Before);
         _assertAggregateMatchesMembers();
     }
 
@@ -438,96 +416,50 @@ contract KnotHookTest is HookTest {
         federation.register(address(0xBEEF));
     }
 
-    function testFuzz_quoteNeverBeatsEitherReferenceForExactInput(uint96 rawAmount) public view {
-        uint256 amount = bound(uint256(rawAmount), 1e6, 100 ether);
-        (uint256 localQuote, uint256 aggregateQuote, uint256 knotQuote) =
-            federation.preview(address(hookA), true, true, amount);
-        assertLe(knotQuote, localQuote);
-        assertLe(knotQuote, aggregateQuote);
+    function test_initialQuoteMatrixExercisesBothLocalAndAggregateBounds() public view {
+        for (uint256 memberIndex; memberIndex < 2; memberIndex++) {
+            KnotHook selectedHook = memberIndex == 0 ? hookA : hookB;
+            for (uint256 directionIndex; directionIndex < 2; directionIndex++) {
+                bool zeroForOne = directionIndex == 0;
+                bool aggregateStrict = (memberIndex == 0) == zeroForOne;
+                for (uint256 modeIndex; modeIndex < 2; modeIndex++) {
+                    bool exactInput = modeIndex == 0;
+                    (uint256 localQuote, uint256 aggregateQuote, uint256 knotQuote) =
+                        federation.preview(address(selectedHook), zeroForOne, exactInput, 10 ether);
+                    uint256 expected = aggregateStrict ? aggregateQuote : localQuote;
+                    assertEq(knotQuote, expected);
+                    if (exactInput) {
+                        assertEq(aggregateStrict, aggregateQuote < localQuote);
+                    } else {
+                        assertEq(aggregateStrict, aggregateQuote > localQuote);
+                    }
+                }
+            }
+        }
     }
 
-    function testFuzz_quoteNeverUnderchargesEitherReferenceForExactOutput(uint96 rawAmount) public view {
-        uint256 amount = bound(uint256(rawAmount), 1e6, 100 ether);
-        (uint256 localQuote, uint256 aggregateQuote, uint256 knotQuote) =
-            federation.preview(address(hookA), true, false, amount);
-        assertGe(knotQuote, localQuote);
-        assertGe(knotQuote, aggregateQuote);
-    }
-
-    function testFuzz_liveExactInputMatchesPreviewAndPreservesCustody(uint96 rawAmount, bool zeroForOne) public {
-        uint256 amount = bound(uint256(rawAmount), 1e6, 50 ether);
-        (,, uint256 expectedOutput) = federation.preview(address(hookA), zeroForOne, true, amount);
+    function testFuzz_liveSwapMatrixMatchesPreviewAndPreservesCustody(
+        uint96 rawAmount,
+        bool useA,
+        bool zeroForOne,
+        bool exactInput
+    ) public {
+        KnotHook selectedHook = useA ? hookA : hookB;
+        PoolKey memory selectedKey = useA ? keyA : keyB;
+        (uint256 reserve0, uint256 reserve1) = federation.reservesOf(address(selectedHook));
+        uint256 reserveOut = zeroForOne ? reserve1 : reserve0;
+        uint256 amount =
+            exactInput ? bound(uint256(rawAmount), 1e6, 25 ether) : bound(uint256(rawAmount), 1e6, reserveOut / 20);
+        (,, uint256 unspecifiedAmount) = federation.preview(address(selectedHook), zeroForOne, exactInput, amount);
+        Currency input = zeroForOne ? currency0 : currency1;
         Currency output = zeroForOne ? currency1 : currency0;
+        uint256 inputBefore = input.balanceOf(address(this));
         uint256 outputBefore = output.balanceOf(address(this));
 
-        _swap(keyA, zeroForOne, -int256(amount));
+        _swap(selectedKey, zeroForOne, exactInput ? -int256(amount) : int256(amount));
 
-        assertEq(output.balanceOf(address(this)) - outputBefore, expectedOutput);
+        assertEq(inputBefore - input.balanceOf(address(this)), exactInput ? amount : unspecifiedAmount);
+        assertEq(output.balanceOf(address(this)) - outputBefore, exactInput ? unspecifiedAmount : amount);
         _assertAggregateMatchesMembers();
-    }
-
-    function _swap(PoolKey memory targetKey, bool zeroForOne, int256 amountSpecified) internal {
-        swapRouter.swap(
-            targetKey,
-            SwapParams({
-                zeroForOne: zeroForOne,
-                amountSpecified: amountSpecified,
-                sqrtPriceLimitX96: zeroForOne ? SQRT_PRICE_1_2 : SQRT_PRICE_2_1
-            }),
-            PoolSwapTest.TestSettings({takeClaims: false, settleUsingBurn: false}),
-            bytes("")
-        );
-    }
-
-    function _addParams(uint256 amount0, uint256 amount1)
-        internal
-        pure
-        returns (BaseCustomAccounting.AddLiquidityParams memory)
-    {
-        return BaseCustomAccounting.AddLiquidityParams(
-            amount0, amount1, amount0, amount1, MAX_DEADLINE, MIN_TICK, MAX_TICK, bytes32(0)
-        );
-    }
-
-    function _removeParams(uint256 shares) internal pure returns (BaseCustomAccounting.RemoveLiquidityParams memory) {
-        return BaseCustomAccounting.RemoveLiquidityParams(shares, 0, 0, MAX_DEADLINE, MIN_TICK, MAX_TICK, bytes32(0));
-    }
-
-    function _addParamsLoose(uint256 amount0, uint256 amount1)
-        internal
-        pure
-        returns (BaseCustomAccounting.AddLiquidityParams memory)
-    {
-        return BaseCustomAccounting.AddLiquidityParams(
-            amount0, amount1, 0, 0, MAX_DEADLINE, MIN_TICK, MAX_TICK, bytes32(0)
-        );
-    }
-
-    function _fundAndApprove(address provider, KnotHook hook, uint256 amount0, uint256 amount1) internal {
-        assertTrue(ERC20(Currency.unwrap(currency0)).transfer(provider, amount0));
-        assertTrue(ERC20(Currency.unwrap(currency1)).transfer(provider, amount1));
-        vm.startPrank(provider);
-        ERC20(Currency.unwrap(currency0)).approve(address(hook), type(uint256).max);
-        ERC20(Currency.unwrap(currency1)).approve(address(hook), type(uint256).max);
-        vm.stopPrank();
-    }
-
-    function _assertAggregateMatchesMembers() internal view {
-        (uint256 a0, uint256 a1) = federation.reservesOf(address(hookA));
-        (uint256 b0, uint256 b1) = federation.reservesOf(address(hookB));
-        assertEq(federation.aggregateReserve0(), a0 + b0, "aggregate token0");
-        assertEq(federation.aggregateReserve1(), a1 + b1, "aggregate token1");
-        assertEq(
-            manager.balanceOf(address(hookA), currency0.toId()), a0 + hookA.inactiveAssets0(), "pool A token0 claims"
-        );
-        assertEq(
-            manager.balanceOf(address(hookA), currency1.toId()), a1 + hookA.inactiveAssets1(), "pool A token1 claims"
-        );
-        assertEq(
-            manager.balanceOf(address(hookB), currency0.toId()), b0 + hookB.inactiveAssets0(), "pool B token0 claims"
-        );
-        assertEq(
-            manager.balanceOf(address(hookB), currency1.toId()), b1 + hookB.inactiveAssets1(), "pool B token1 claims"
-        );
     }
 }

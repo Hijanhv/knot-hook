@@ -2,19 +2,16 @@
 pragma solidity ^0.8.26;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {IHooks} from "@uniswap/v4-core/src/interfaces/IHooks.sol";
-import {Hooks} from "@uniswap/v4-core/src/libraries/Hooks.sol";
-import {LPFeeLibrary} from "@uniswap/v4-core/src/libraries/LPFeeLibrary.sol";
 import {TickMath} from "@uniswap/v4-core/src/libraries/TickMath.sol";
 import {PoolSwapTest} from "@uniswap/v4-core/src/test/PoolSwapTest.sol";
 import {Currency, CurrencyLibrary} from "@uniswap/v4-core/src/types/Currency.sol";
 import {PoolKey} from "@uniswap/v4-core/src/types/PoolKey.sol";
 import {SwapParams} from "@uniswap/v4-core/src/types/PoolOperation.sol";
 import {BaseCustomAccounting} from "ozhooks/base/BaseCustomAccounting.sol";
-import {HookTest} from "oztest/utils/HookTest.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {KnotFederation} from "../src/KnotFederation.sol";
 import {KnotHook} from "../src/KnotHook.sol";
+import {KnotTestBase} from "./utils/KnotTestBase.sol";
 
 contract FederatedSwapDriver {
     uint256 private constant MAX_DEADLINE = 12_329_839_823;
@@ -68,7 +65,7 @@ contract FederatedSwapDriver {
             amount = _bound(uint256(rawAmount), 1e6, reserveOut / 20);
         }
 
-        try router.swap(
+        router.swap(
             selectedKey,
             SwapParams({
                 zeroForOne: zeroForOne,
@@ -77,7 +74,7 @@ contract FederatedSwapDriver {
             }),
             PoolSwapTest.TestSettings({takeClaims: false, settleUsingBurn: false}),
             bytes("")
-        ) {} catch {}
+        );
     }
 
     function queueLiquidity(uint8 route, uint96 rawAmount0, uint96 rawAmount1) external {
@@ -87,10 +84,7 @@ contract FederatedSwapDriver {
 
         (uint256 refund0, uint256 refund1) = selectedHook.claimableLiquidityRefund(address(this));
         if (refund0 != 0 || refund1 != 0) {
-            try selectedHook.claimLiquidityRefund() {}
-            catch {
-                return;
-            }
+            selectedHook.claimLiquidityRefund();
         }
 
         uint256 amount0 = _bound(uint256(rawAmount0), 1e12, 5 ether);
@@ -98,7 +92,7 @@ contract FederatedSwapDriver {
         BaseCustomAccounting.AddLiquidityParams memory params = BaseCustomAccounting.AddLiquidityParams(
             amount0, amount1, 0, 0, MAX_DEADLINE, MIN_TICK, MAX_TICK, bytes32(0)
         );
-        try selectedHook.addLiquidity(params) {} catch {}
+        selectedHook.addLiquidity(params);
     }
 
     function matureAndActivate(uint8 route) external {
@@ -106,16 +100,19 @@ contract FederatedSwapDriver {
         (,, uint256 activatesAtBlock) = selectedHook.pendingLiquidity(address(this));
         if (activatesAtBlock == 0) return;
         if (block.number < activatesAtBlock) VM.roll(activatesAtBlock);
-        try selectedHook.activatePendingLiquidity() {} catch {}
+        selectedHook.activatePendingLiquidity();
     }
 
     function cancelAndClaim(uint8 route) external {
         KnotHook selectedHook = route & 1 == 0 ? hookA : hookB;
         (,, uint256 activatesAtBlock) = selectedHook.pendingLiquidity(address(this));
         if (activatesAtBlock != 0) {
-            try selectedHook.cancelPendingLiquidity() {} catch {}
+            selectedHook.cancelPendingLiquidity();
         }
-        try selectedHook.claimLiquidityRefund() {} catch {}
+        (uint256 refund0, uint256 refund1) = selectedHook.claimableLiquidityRefund(address(this));
+        if (refund0 != 0 || refund1 != 0) {
+            selectedHook.claimLiquidityRefund();
+        }
     }
 
     function _bound(uint256 value, uint256 minimum, uint256 maximum) private pure returns (uint256) {
@@ -123,20 +120,9 @@ contract FederatedSwapDriver {
     }
 }
 
-contract KnotFederationStateMachineTest is HookTest {
+contract KnotFederationStateMachineTest is KnotTestBase {
     using CurrencyLibrary for Currency;
 
-    uint256 private constant MAX_DEADLINE = 12_329_839_823;
-    int24 private constant MIN_TICK = -887220;
-    int24 private constant MAX_TICK = 887220;
-    uint160 private constant REQUIRED_FLAGS = uint160(
-        Hooks.BEFORE_INITIALIZE_FLAG | Hooks.BEFORE_SWAP_FLAG | Hooks.BEFORE_SWAP_RETURNS_DELTA_FLAG
-            | Hooks.BEFORE_ADD_LIQUIDITY_FLAG | Hooks.BEFORE_REMOVE_LIQUIDITY_FLAG
-    );
-
-    KnotFederation internal federation;
-    KnotHook internal hookA;
-    KnotHook internal hookB;
     FederatedSwapDriver internal driver;
 
     uint256 internal initialProductA;
@@ -144,40 +130,7 @@ contract KnotFederationStateMachineTest is HookTest {
     uint256 internal initialAggregateProduct;
 
     function setUp() public {
-        deployFreshManagerAndRouters();
-        deployMintAndApprove2Currencies();
-        federation =
-            new KnotFederation(Currency.unwrap(currency0), Currency.unwrap(currency1), 997, 1000, 2, address(this));
-
-        hookA = KnotHook(payable(address(REQUIRED_FLAGS | uint160(11 << 80))));
-        hookB = KnotHook(payable(address(REQUIRED_FLAGS | uint160(12 << 80))));
-        deployCodeTo(
-            "src/KnotHook.sol:KnotHook",
-            abi.encode(address(manager), address(federation), "Knot Pool A", "KNOT-A", 1),
-            address(hookA)
-        );
-        deployCodeTo(
-            "src/KnotHook.sol:KnotHook",
-            abi.encode(address(manager), address(federation), "Knot Pool B", "KNOT-B", 1),
-            address(hookB)
-        );
-        federation.register(address(hookA));
-        federation.register(address(hookB));
-
-        PoolKey memory keyA;
-        PoolKey memory keyB;
-        (keyA,) = initPool(currency0, currency1, IHooks(address(hookA)), LPFeeLibrary.DYNAMIC_FEE_FLAG, SQRT_PRICE_1_1);
-        (keyB,) = initPool(currency0, currency1, IHooks(address(hookB)), LPFeeLibrary.DYNAMIC_FEE_FLAG, SQRT_PRICE_1_1);
-
-        ERC20(Currency.unwrap(currency0)).approve(address(hookA), type(uint256).max);
-        ERC20(Currency.unwrap(currency1)).approve(address(hookA), type(uint256).max);
-        ERC20(Currency.unwrap(currency0)).approve(address(hookB), type(uint256).max);
-        ERC20(Currency.unwrap(currency1)).approve(address(hookB), type(uint256).max);
-        hookA.addLiquidity(_addParams(1000 ether, 1500 ether));
-        hookB.addLiquidity(_addParams(1000 ether, 500 ether));
-        vm.roll(block.number + 1);
-        hookA.activatePendingLiquidity();
-        hookB.activatePendingLiquidity();
+        _deployKnotFixture(997, 1000, 2, 1, 1000 ether, 1500 ether, 1000 ether, 500 ether);
 
         initialProductA = 1000 ether * 1500 ether;
         initialProductB = 1000 ether * 500 ether;
@@ -234,15 +187,5 @@ contract KnotFederationStateMachineTest is HookTest {
             assertEq(pending0, 0);
             assertEq(pending1, 0);
         }
-    }
-
-    function _addParams(uint256 amount0, uint256 amount1)
-        internal
-        pure
-        returns (BaseCustomAccounting.AddLiquidityParams memory)
-    {
-        return BaseCustomAccounting.AddLiquidityParams(
-            amount0, amount1, amount0, amount1, MAX_DEADLINE, MIN_TICK, MAX_TICK, bytes32(0)
-        );
     }
 }
