@@ -66,7 +66,7 @@ export default function Connect() {
   return (
     <button className="btn-ghost tnum font-mono text-xs" onClick={() => disconnect()}
       title={`Connected via ${connector?.name ?? "wallet"} — click to disconnect`}>
-      <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-marine align-middle" />
+      <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-ocean align-middle" />
       {short(address!)}
     </button>
   );

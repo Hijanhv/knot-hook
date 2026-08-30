@@ -7,7 +7,7 @@
     -webkit-font-smoothing: antialiased;
     /* Belt and braces: the body className sets this too, but painting the root as well
        means an overscroll bounce never reveals a white strip under the cream page. */
-    background-color: #f7f5ef;
+    background-color: #eeddc0;
   }
 }
 
@@ -23,13 +23,13 @@
   .card { @apply rounded-lg border border-line bg-surface p-6 shadow-card; }
   .btn {
     @apply inline-flex items-center justify-center rounded-md border border-edge bg-ink px-4 py-2
-           text-sm font-medium text-canvas transition-colors hover:bg-marine
-           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine;
+           text-sm font-semibold text-sand-light transition-colors hover:bg-ocean
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean;
   }
   .btn-ghost {
     @apply inline-flex items-center justify-center rounded-md border border-line bg-surface px-4 py-2
-           text-sm font-medium text-ink transition-colors hover:border-edge
-           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine;
+           text-sm font-semibold text-ink transition-colors hover:border-edge
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean;
   }
 }
 
@@ -41,20 +41,22 @@
   /* Diagonal hatch, used on thin structural strips so the page reads as engineered
      rather than laid out. Lifted in spirit from Lambda's top strip. */
   .hatch {
-    background-color: theme("colors.canvas");
+    background-color: theme("colors.sand.deep");
     background-image: repeating-linear-gradient(
       -45deg,
-      rgba(13, 79, 74, 0.12) 0 1.5px,
+      rgba(10, 101, 112, 0.16) 0 1.5px,
       transparent 1.5px 9px
     );
   }
 
   /* Faint engineering grid. Gives every section a substrate instead of empty paper. */
+  /* Rippled sand: the texture a receding tide leaves behind. */
   .gridfield {
-    background-image:
-      linear-gradient(to right, rgba(20, 24, 27, 0.045) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(20, 24, 27, 0.045) 1px, transparent 1px);
-    background-size: 44px 44px;
+    background-image: repeating-linear-gradient(
+      92deg,
+      rgba(201, 173, 131, 0.5) 0 1px,
+      transparent 1px 7px
+    );
   }
 
   /* Hard hairline frame. Borders are the layout here, not shadows. */

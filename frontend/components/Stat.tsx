@@ -11,16 +11,16 @@ export default function Stat({
   tone?: "ink" | "marine" | "clay" | "hemp";
 }) {
   const toneClass =
-    tone === "marine" ? "text-marine" : tone === "clay" ? "text-clay" : tone === "hemp" ? "text-hemp" : "text-ink";
+    tone === "marine" ? "text-ocean" : tone === "clay" ? "text-clay" : tone === "hemp" ? "text-hemp" : "text-ink";
   return (
     <div className="group flex flex-col gap-1.5">
-      <span className="eyebrow transition-colors group-hover:text-marine">{label}</span>
+      <span className="eyebrow transition-colors group-hover:text-ocean">{label}</span>
       <span className={`font-display text-4xl tracking-tightest ${toneClass}`}>
         {numeric !== undefined ? <Counter to={numeric} /> : <span className="tnum">{value}</span>}
         {unit && <span className="ml-1 font-sans text-base text-muted">{unit}</span>}
       </span>
       {note && <span className="text-sm leading-snug text-muted">{note}</span>}
-      <span className="mt-2 h-px w-0 bg-marine transition-all duration-500 group-hover:w-full" />
+      <span className="mt-2 h-px w-0 bg-ocean transition-all duration-500 group-hover:w-full" />
     </div>
   );
 }

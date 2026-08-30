@@ -45,7 +45,7 @@ export default function DemoPage() {
         <input
           type="range" min={0.5} max={20} step={0.5} value={stake}
           onChange={(ev) => setStake(Number(ev.target.value))}
-          className="w-full accent-marine" aria-label="Attacker stake"
+          className="w-full accent-ocean" aria-label="Attacker stake"
         />
       </div>
 
@@ -54,7 +54,7 @@ export default function DemoPage() {
           { title: "Independent pools", sub: "No federation. Each pool quotes alone.", r: un, bad: true },
           { title: "Under Knot", sub: "Both legs bounded by the aggregate.", r: kn, bad: false },
         ].map((c) => (
-          <div key={c.title} className={`card border-2 ${c.bad ? "border-clay/40" : "border-marine"}`}>
+          <div key={c.title} className={`card border-2 ${c.bad ? "border-clay/40" : "border-ocean"}`}>
             <p className="font-display text-xl tracking-tightest">{c.title}</p>
             <p className="mt-1 text-sm text-muted">{c.sub}</p>
             <dl className="mt-5 space-y-2.5 text-sm">
@@ -69,7 +69,7 @@ export default function DemoPage() {
             </dl>
             <div className="mt-5">
               <p className="eyebrow mb-1">Attacker P&amp;L</p>
-              <p className={`tnum font-display text-3xl tracking-tightest ${c.r.pnl > 0n ? "text-clay" : "text-marine"}`}>
+              <p className={`tnum font-display text-3xl tracking-tightest ${c.r.pnl > 0n ? "text-clay" : "text-ocean"}`}>
                 {c.r.pnl > 0n ? "+" : "−"}{fmt(c.r.pnl > 0n ? c.r.pnl : -c.r.pnl)}
               </p>
               <p className="mt-1 text-sm text-muted">{c.r.pnl > 0n ? "Profitable attack" : "The attack loses money"}</p>
@@ -78,9 +78,9 @@ export default function DemoPage() {
         ))}
       </div>
 
-      <div className="mt-6 rounded-lg border border-marine bg-marine/5 p-6">
+      <div className="mt-6 rounded-lg border border-ocean bg-ocean/5 p-6">
         <p className="eyebrow mb-2">Attacker profit removed by Knot</p>
-        <p className="tnum font-display text-4xl tracking-tightest text-marine">{fmt(removed)}</p>
+        <p className="tnum font-display text-4xl tracking-tightest text-ocean">{fmt(removed)}</p>
         <p className="mt-2 max-w-2xl text-sm text-ink-soft">
           That value did not disappear. It stayed in the pool, with the LPs who would otherwise have funded it.
         </p>

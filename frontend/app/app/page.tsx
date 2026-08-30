@@ -75,7 +75,7 @@ export default function AppPage() {
             Quote a swap. Watch the bound.
           </h1>
           <p className="mt-2 max-w-xl text-[15px] leading-[1.55] text-ink-soft">
-            Quotes are read from <code className="font-mono text-[13px] text-marine">preview()</code> on the
+            Quotes are read from <code className="font-mono text-[13px] text-ocean">preview()</code> on the
             deployed federation — the same call a swap executes against.
           </p>
         </div>
@@ -91,7 +91,7 @@ export default function AppPage() {
               {(["shallow", "deep"] as const).map((p) => (
                 <button key={p} onClick={() => setPool(p)}
                   className={`px-3 py-2 font-mono text-xs uppercase tracking-[0.1em] transition-colors ${
-                    pool === p ? "bg-marine text-canvas" : "bg-canvas text-muted hover:text-ink"}`}>
+                    pool === p ? "bg-ocean text-canvas" : "bg-canvas text-muted hover:text-ink"}`}>
                   {p}
                 </button>
               ))}
@@ -133,7 +133,7 @@ export default function AppPage() {
             </div>
             <input type="range" min={0.5} max={25} step={0.5} value={amount}
               onChange={(ev) => setAmount(Number(ev.target.value))}
-              className="w-full accent-marine" aria-label="Amount" />
+              className="w-full accent-ocean" aria-label="Amount" />
           </div>
 
           {(dr || sr) && (
@@ -143,7 +143,7 @@ export default function AppPage() {
                 {dr && <div className="flex justify-between"><dt className="text-faint">deep</dt><dd className="tnum">{fmt(dr[0], 0)} / {fmt(dr[1], 0)}</dd></div>}
                 {sr && <div className="flex justify-between"><dt className="text-faint">shallow</dt><dd className="tnum">{fmt(sr[0], 0)} / {fmt(sr[1], 0)}</dd></div>}
                 {dr && sr && (
-                  <div className="flex justify-between border-t border-line pt-1.5 text-marine">
+                  <div className="flex justify-between border-t border-line pt-1.5 text-ocean">
                     <dt>aggregate</dt><dd className="tnum">{fmt(dr[0] + sr[0], 0)} / {fmt(dr[1] + sr[1], 0)}</dd>
                   </div>
                 )}
@@ -171,7 +171,7 @@ export default function AppPage() {
             <div className="flex flex-wrap items-end justify-between gap-6">
               <div>
                 <p className="eyebrow mb-2">Enforced — {exactInput ? "what the taker receives" : "what the taker pays"}</p>
-                <p className="tnum font-display text-5xl font-bold tracking-[-0.04em] text-marine">{fmt(enforcedQ)}</p>
+                <p className="tnum font-display text-5xl font-bold tracking-[-0.04em] text-ocean">{fmt(enforcedQ)}</p>
                 <p className="mt-2 font-mono text-[11px] text-faint">
                   {exactInput ? "min(local, aggregate)" : "max(local, aggregate)"}
                 </p>
@@ -190,7 +190,7 @@ export default function AppPage() {
             </div>
 
             <div className="mt-6 h-1.5 overflow-hidden bg-surface2">
-              <div className="h-full bg-marine transition-all duration-500"
+              <div className="h-full bg-ocean transition-all duration-500"
                 style={{ width: `${Math.max(2, 100 - bps / 100)}%` }} />
             </div>
             <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">

@@ -30,10 +30,10 @@ export default function FlowDiagram() {
             key={s.k}
             onClick={() => setActive(i)}
             className={`group rounded-lg border p-5 text-left transition-all duration-500 ${
-              on ? "border-marine bg-surface shadow-lift" : "border-line bg-surface/60"
+              on ? "border-ocean bg-surface shadow-lift" : "border-line bg-surface/60"
             }`}
           >
-            <span className={`tnum font-mono text-xs transition-colors ${on ? "text-marine" : "text-faint"}`}>
+            <span className={`tnum font-mono text-xs transition-colors ${on ? "text-ocean" : "text-faint"}`}>
               0{i + 1}
             </span>
             <p className={`mt-2 font-display text-lg leading-snug tracking-tightest transition-colors ${on ? "text-ink" : "text-ink-soft"}`}>
@@ -41,7 +41,7 @@ export default function FlowDiagram() {
             </p>
             <p className="mt-1.5 text-sm leading-snug text-muted">{s.detail}</p>
             <span
-              className={`mt-4 block h-0.5 origin-left rounded-full bg-marine transition-transform duration-[1800ms] ease-linear ${
+              className={`mt-4 block h-0.5 origin-left rounded-full bg-ocean transition-transform duration-[1800ms] ease-linear ${
                 on ? "scale-x-100" : "scale-x-0"
               }`}
             />

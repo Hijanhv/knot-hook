@@ -19,7 +19,7 @@ export default function Ticker() {
             <div key={copy} aria-hidden={copy === 1} className="flex shrink-0 items-center">
               {LINES.map((t) => (
                 <span key={t} className="flex items-center whitespace-nowrap px-5 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-                  <span className="mr-3 inline-block h-1 w-1 rounded-full bg-marine" />
+                  <span className="mr-3 inline-block h-1 w-1 rounded-full bg-ocean" />
                   {t}
                 </span>
               ))}
