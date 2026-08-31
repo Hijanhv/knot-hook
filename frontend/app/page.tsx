@@ -26,7 +26,7 @@ export default function Home() {
           object you can watch turn. It sits behind the headline on wide screens and above it
           on narrow ones, so the type is never fighting the render for the first line. */}
       <section className="relative overflow-hidden border-b border-grid">
-        <CandleTape className="top-0" height="h-40" opacity="opacity-[0.07]" count={52} />
+        <CandleTape className="top-0" height="h-56" opacity="opacity-[0.20]" count={22} />
 
         <div className="wrap relative grid items-center gap-0 py-14 md:py-20 lg:grid-cols-[1.02fr_0.98fr]">
           <div className="relative z-10 lg:pr-10">
@@ -73,7 +73,7 @@ export default function Home() {
 
       {/* ── Full-bleed black: the mechanism, on a white panel floating on the field ── */}
       <section className="inkfield relative overflow-hidden">
-        <CandleTape className="bottom-0" height="h-44" opacity="opacity-[0.13]" tone="paper" count={60} />
+        <CandleTape className="bottom-0" height="h-52" opacity="opacity-[0.30]" tone="paper" count={24} />
         <div className="wrap relative py-20 md:py-24">
           <p className="text-center font-mono text-[11px] uppercase tracking-[0.18em] text-white/70">
             What does the hook actually do?
@@ -144,7 +144,7 @@ export default function Home() {
 
       {/* ── The numbers ───────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden border-b border-grid">
-        <CandleTape className="top-0" height="h-full" opacity="opacity-[0.055]" count={70} />
+        <CandleTape className="top-0" height="h-full" opacity="opacity-[0.14]" count={20} />
         <div className="wrap relative grid divide-y divide-grid py-14 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
           {[
             { v: 6674, u: "bps", l: "kept with LPs", hl: true },
@@ -276,8 +276,8 @@ export default function Home() {
           Centred and given room, with the tape pushed to the floor and masked so the
           candles read as a horizon under the type instead of noise behind it. */}
       <section className="relative overflow-hidden border-t border-grid">
-        <CandleTape className="bottom-0" height="h-56" opacity="opacity-[0.10]" count={64} />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-canvas via-canvas/75 to-transparent" />
+        <CandleTape className="bottom-0" height="h-64" opacity="opacity-[0.26]" count={26} />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-canvas via-canvas/70 to-transparent" />
 
         <div className="wrap relative z-10 flex flex-col items-center py-24 text-center md:py-32">
           <p className="eyebrow mb-5">Try it</p>

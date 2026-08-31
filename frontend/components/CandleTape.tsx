@@ -5,9 +5,9 @@ import CandleChart from "./CandleChart";
 /**
  * The candle tape as a section motif rather than a chart.
  *
- * Same component as the hero uses, but sunk into the background at low opacity and masked so
- * it fades out before it reaches the text sitting on top. It gives each band the feeling of a
- * live market running underneath the page without ever competing with the copy.
+ * Same component as the hero uses, masked so it fades out before it reaches the text sitting on
+ * top. Candle counts are kept low on purpose: at fifty-plus across a full-bleed band the bodies
+ * collapse into a grey wash, and the point is that they read as candles.
  *
  * It is decorative and says nothing about real prices, so it is aria-hidden and never carries
  * a label or an axis. The one place a reader could mistake it for data is if it sat next to a
@@ -15,10 +15,10 @@ import CandleChart from "./CandleChart";
  */
 export default function CandleTape({
   className = "",
-  height = "h-32",
-  opacity = "opacity-[0.09]",
+  height = "h-44",
+  opacity = "opacity-[0.22]",
   tone = "ink",
-  count = 44,
+  count = 26,
 }: {
   className?: string;
   height?: string;
