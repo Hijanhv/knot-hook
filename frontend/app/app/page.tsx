@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useReadContract, useReadContracts } from "wagmi";
-import { federationAbi, FEDERATION_ADDRESS, DEEP_POOL, SHALLOW_POOL, CHAIN_ID, knotQuote, fmt } from "@/lib/knot";
+import { federationAbi, FEDERATION_ADDRESS, DEEP_POOL, SHALLOW_POOL, CHAIN_ID, previewQuote, fmt } from "@/lib/knot";
 import Connect from "@/components/Connect";
 import LiveBadge from "@/components/LiveBadge";
 
@@ -43,13 +43,14 @@ export default function AppPage() {
     query: { enabled: configured && amount > 0, refetchInterval: 12_000 },
   });
 
-  // Fallback mirrors the deployed seed state so the page is never empty.
+  // Fallback mirrors the deployed seed state so the page is never empty. It tracks the
+  // direction and mode toggles too, so the illustrative numbers match the labels above them.
   const fallback = useMemo(() => {
     const local: [bigint, bigint] = pool === "shallow" ? [e18(100), e18(400)] : [e18(1000), e18(1000)];
     const agg: [bigint, bigint] = [e18(1100), e18(1400)];
-    const q = knotQuote(e18(amount), local, agg);
+    const q = previewQuote(e18(amount), local, agg, zeroForOne, exactInput);
     return [q.local, q.aggregate, q.enforced] as const;
-  }, [pool, amount]);
+  }, [pool, amount, zeroForOne, exactInput]);
 
   const live = previewOk && Array.isArray(preview);
   const [localQ, aggQ, enforcedQ] = (live ? (preview as readonly bigint[]) : fallback) as readonly bigint[];
