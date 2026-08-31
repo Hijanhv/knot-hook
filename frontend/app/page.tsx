@@ -35,7 +35,7 @@ export default function Home() {
 
               <h1 className="opsz-display font-display text-[clamp(2.9rem,7.4vw,6rem)] font-light leading-[0.94] tracking-[-0.035em] text-ink">
                 <span className="line-clip">One pair.</span>
-                <span className="line-clip italic">Several pools.</span>
+                <span className="line-clip">Several pools.</span>
                 <span className="line-clip">One price boundary.</span>
               </h1>
             </div>
@@ -283,7 +283,7 @@ export default function Home() {
           <p className="eyebrow mb-5">Try it</p>
 
           <h2 className="opsz-display max-w-2xl font-display text-[clamp(2rem,4.4vw,3.4rem)] font-light leading-[1.04] tracking-[-0.03em] text-ink">
-            Connect a wallet and watch <span className="italic">the bound bind.</span>
+            Connect a wallet and watch the bound bind.
           </h2>
 
           <p className="mt-6 max-w-md text-[15.5px] leading-[1.6] text-muted">

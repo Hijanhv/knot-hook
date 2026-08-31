@@ -18,10 +18,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        canvas: "#FFFFFF",
-        paper: "#FAFAFA",
+        canvas: "#FCFCFD",
+        paper: "#F7F7F9",
         surface: "#FFFFFF",
-        surface2: "#F5F5F7",
+        surface2: "#F2F2F5",
 
         // The ruled grid, and the two hairline weights above it. All three sit close together
         // on purpose: structure should be found when looked for, never seen first.
