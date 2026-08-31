@@ -1,13 +1,15 @@
+import { DEPLOYED } from "./contracts";
+
 /**
  * Contract surface and deployment config.
  *
- * Addresses are read from env so the same build points at whichever testnet the demo is
- * live on. Absent an address the UI runs in illustrative mode rather than throwing, so a
- * judge can still explore the mechanism before anything is deployed.
+ * Addresses come from env so one build can point at any deployment, and fall back to the live
+ * one so a fresh clone reads the real chain with no setup. If the RPC is unreachable the UI
+ * still drops to reference values rather than throwing, so the mechanism stays explorable.
  */
-export const FEDERATION_ADDRESS = (process.env.NEXT_PUBLIC_FEDERATION ?? "") as `0x${string}` | "";
-export const DEEP_POOL = (process.env.NEXT_PUBLIC_DEEP_POOL ?? "") as `0x${string}` | "";
-export const SHALLOW_POOL = (process.env.NEXT_PUBLIC_SHALLOW_POOL ?? "") as `0x${string}` | "";
+export const FEDERATION_ADDRESS = (process.env.NEXT_PUBLIC_FEDERATION ?? DEPLOYED.federation) as `0x${string}`;
+export const DEEP_POOL = (process.env.NEXT_PUBLIC_DEEP_POOL ?? DEPLOYED.deep) as `0x${string}`;
+export const SHALLOW_POOL = (process.env.NEXT_PUBLIC_SHALLOW_POOL ?? DEPLOYED.shallow) as `0x${string}`;
 export const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? 1301); // unichain sepolia
 
 export const federationAbi = [

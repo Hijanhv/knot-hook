@@ -2,7 +2,6 @@ import Link from "next/link";
 import KnotMark from "@/components/KnotMark";
 import KnotStage from "@/components/KnotStage";
 import CandleTape from "@/components/CandleTape";
-import CandleChart from "@/components/CandleChart";
 import Reveal from "@/components/Reveal";
 import Counter from "@/components/Counter";
 import Ticker from "@/components/Ticker";
@@ -272,18 +271,35 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Close ─────────────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden">
-        <CandleChart className="pointer-events-none absolute inset-x-0 bottom-0 h-[18rem] w-full opacity-[0.22]" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[18rem] bg-gradient-to-t from-canvas via-canvas/60 to-transparent" />
-        <div className="wrap relative z-10 flex flex-wrap items-center justify-between gap-8 py-20 md:py-24">
-          <h2 className="max-w-xl font-display text-[clamp(1.75rem,3.6vw,2.9rem)] font-semibold leading-[1.06] tracking-tightest text-ink">
-            Connect a wallet and<br /><span className="text-blue">watch the bound bind.</span>
+      {/* ── Close ─────────────────────────────────────────────────────────────────
+          The last thing on the page, so it is set as a statement rather than a strip.
+          Centred and given room, with the tape pushed to the floor and masked so the
+          candles read as a horizon under the type instead of noise behind it. */}
+      <section className="relative overflow-hidden border-t border-grid">
+        <CandleTape className="bottom-0" height="h-56" opacity="opacity-[0.10]" count={64} />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-canvas via-canvas/75 to-transparent" />
+
+        <div className="wrap relative z-10 flex flex-col items-center py-24 text-center md:py-32">
+          <p className="eyebrow mb-5">Try it</p>
+
+          <h2 className="opsz-display max-w-2xl font-display text-[clamp(2rem,4.4vw,3.4rem)] font-light leading-[1.04] tracking-[-0.03em] text-ink">
+            Connect a wallet and watch <span className="italic">the bound bind.</span>
           </h2>
-          <div className="flex flex-wrap gap-3">
+
+          <p className="mt-6 max-w-md text-[15.5px] leading-[1.6] text-muted">
+            Quotes are read from <code className="font-mono text-[13.5px] text-ink">preview()</code> on
+            the deployed federation, the same call a swap executes against.
+          </p>
+
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <Link href="/app" className="btn">Launch app</Link>
             <a href={SITE.github} target="_blank" rel="noopener noreferrer" className="btn-ghost">Source ↗</a>
           </div>
+
+          <span className="mt-14 block h-px w-24 bg-line" />
+          <p className="mt-5 font-mono text-[10px] uppercase tracking-ultra text-faint">
+            unaudited · testnet only
+          </p>
         </div>
       </section>
     </>
