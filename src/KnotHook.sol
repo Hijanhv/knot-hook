@@ -219,10 +219,15 @@ contract KnotHook is BaseCustomCurve, ERC20 {
         int128 delta1 = callerDelta.amount1();
         if (delta0 >= 0 || delta1 >= 0) revert EmptyDeposit();
 
+        // casting is safe because the check above proves both deltas are strictly negative, and
+        // negating int128.min reverts under checked arithmetic rather than wrapping
+        // forge-lint: disable-next-line(unsafe-typecast)
         uint256 amount0 = uint256(uint128(-delta0));
+        // forge-lint: disable-next-line(unsafe-typecast)
         uint256 amount1 = uint256(uint128(-delta1));
         uint256 activatesAtBlock = block.number + liquidityMaturityBlocks;
-        pendingLiquidity[msg.sender] = PendingLiquidity(amount0, amount1, activatesAtBlock);
+        pendingLiquidity[msg.sender] =
+            PendingLiquidity({amount0: amount0, amount1: amount1, activatesAtBlock: activatesAtBlock});
         inactiveAssets0 += amount0;
         inactiveAssets1 += amount1;
 
@@ -246,6 +251,8 @@ contract KnotHook is BaseCustomCurve, ERC20 {
 
     function _toInt128(uint256 amount) private pure returns (int128) {
         if (amount > uint256(uint128(type(int128).max))) revert AmountTooLarge();
+        // casting is safe because the line above bounds `amount` to int128's positive range
+        // forge-lint: disable-next-line(unsafe-typecast)
         return int128(uint128(amount));
     }
 }

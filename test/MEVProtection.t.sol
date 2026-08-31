@@ -14,7 +14,6 @@ import {BaseCustomAccounting} from "ozhooks/base/BaseCustomAccounting.sol";
 import {HookTest} from "oztest/utils/HookTest.sol";
 import {KnotFederation} from "../src/KnotFederation.sol";
 import {KnotHook} from "../src/KnotHook.sol";
-import {KnotMath} from "../src/KnotMath.sol";
 
 /// @dev Fires several swaps inside ONE external call, so every slice shares a transaction.
 contract SplitTrader {

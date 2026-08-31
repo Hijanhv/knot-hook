@@ -44,14 +44,14 @@ contract EconomicViabilityTest is Test {
         uint256 stake = 5e18; // token0 in
 
         // ── unfederated: each pool quotes alone ──
-        uint256 legA_un = _local(stake, S0, S1);          // token0 -> token1 via shallow
-        uint256 legB_un = _local(legA_un, D1, D0);        // token1 -> token0 via deep
-        int256 pnlUnfederated = int256(legB_un) - int256(stake);
+        uint256 legAUn = _local(stake, S0, S1);   // token0 -> token1 via shallow
+        uint256 legBUn = _local(legAUn, D1, D0);  // token1 -> token0 via deep
+        int256 pnlUnfederated = int256(legBUn) - int256(stake);
 
         // ── under Knot: both legs bounded by the aggregate ──
-        uint256 legA_kn = _knot(stake, S0, S1, A0, A1);
-        uint256 legB_kn = _knot(legA_kn, D1, D0, A1, A0);
-        int256 pnlKnot = int256(legB_kn) - int256(stake);
+        uint256 legAKn = _knot(stake, S0, S1, A0, A1);
+        uint256 legBKn = _knot(legAKn, D1, D0, A1, A0);
+        int256 pnlKnot = int256(legBKn) - int256(stake);
 
         emit log_named_int("round-trip P&L, unfederated (wei)", pnlUnfederated);
         emit log_named_int("round-trip P&L, under Knot   (wei)", pnlKnot);

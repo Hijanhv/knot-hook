@@ -181,8 +181,12 @@ contract KnotFederation is Ownable {
     }
 
     function _apply(uint256 value, int256 delta) private pure returns (uint256 result) {
+        // casting is safe because the branch only runs for a non-negative `delta`
+        // forge-lint: disable-next-line(unsafe-typecast)
         if (delta >= 0) return value + uint256(delta);
         if (delta == type(int256).min) revert AmountTooLarge();
+        // casting is safe because `delta` is negative and int256.min was rejected above
+        // forge-lint: disable-next-line(unsafe-typecast)
         uint256 decrease = uint256(-delta);
         if (decrease > value) revert ReserveUnderflow();
         return value - decrease;
