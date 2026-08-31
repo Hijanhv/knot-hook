@@ -58,12 +58,12 @@ const config: Config = {
         coral: "#B4670A",
       },
       fontFamily: {
-        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Georgia", "Times New Roman", "serif"],
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       rotate: { "120": "120deg" },
-      letterSpacing: { tightest: "-0.03em" },
+      letterSpacing: { tightest: "-0.03em", ultra: "0.24em" },
       maxWidth: { content: "84rem" },
       boxShadow: {
         card: "0 1px 2px rgba(10,10,11,0.04)",

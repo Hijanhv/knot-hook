@@ -36,7 +36,7 @@ export default function FlowDiagram() {
             <span className={`tnum font-mono text-xs transition-colors ${on ? "text-blue" : "text-faint"}`}>
               0{i + 1}
             </span>
-            <p className={`mt-2 font-display text-lg leading-snug tracking-tightest transition-colors ${on ? "text-ink" : "text-ink-soft"}`}>
+            <p className={`mt-2 opsz-text font-display text-lg font-semibold leading-snug tracking-[-0.01em] transition-colors ${on ? "text-ink" : "text-ink-soft"}`}>
               {s.label}
             </p>
             <p className="mt-1.5 text-sm leading-snug text-muted">{s.detail}</p>

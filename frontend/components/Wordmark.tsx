@@ -11,7 +11,7 @@ export default function Wordmark({ size = "md" }: { size?: "sm" | "md" | "lg" })
   return (
     <Link href="/" className="group flex items-center gap-2.5">
       <KnotLogo size={mark} className="text-ink" />
-      <span className={`font-display font-semibold leading-none tracking-tightest text-ink ${text}`}>Knot</span>
+      <span className={`opsz-text font-display font-semibold leading-none tracking-[-0.02em] text-ink ${text}`}>Knot</span>
     </Link>
   );
 }

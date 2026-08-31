@@ -42,7 +42,7 @@ export default function ContractsPage() {
               <div key={c.address} className="card card-hover md:p-8">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <h2 className="font-display text-2xl font-semibold tracking-tightest text-ink">{c.name}</h2>
+                    <h2 className="opsz-text font-display text-2xl font-semibold tracking-[-0.015em] text-ink">{c.name}</h2>
                     <p className="mt-1.5 max-w-xl text-[15px] leading-[1.5] text-muted">{c.role}</p>
                   </div>
                   {r && (

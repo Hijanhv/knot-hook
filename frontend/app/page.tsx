@@ -1,5 +1,7 @@
 import Link from "next/link";
 import KnotMark from "@/components/KnotMark";
+import KnotStage from "@/components/KnotStage";
+import CandleTape from "@/components/CandleTape";
 import CandleChart from "@/components/CandleChart";
 import Reveal from "@/components/Reveal";
 import Counter from "@/components/Counter";
@@ -20,29 +22,49 @@ const scan = (a: string) => `https://sepolia.uniscan.xyz/address/${a}`;
 export default function Home() {
   return (
     <>
-      {/* ── Hero: headline left, deck right, one rule between them ───────────────── */}
-      <section className="relative border-b border-grid">
-        <div className="wrap grid items-stretch gap-0 py-16 md:py-20 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="lg:pr-14">
-            <h1 className="font-display text-[clamp(2.75rem,6.6vw,5.25rem)] font-semibold leading-[0.98] tracking-tightest text-ink">
-              One pair. Several pools.<br />One price boundary.
-            </h1>
-          </div>
+      {/* ── Hero ──────────────────────────────────────────────────────────────────
+          The knot is rendered rather than drawn: the same trefoil the logo traces, as a real
+          object you can watch turn. It sits behind the headline on wide screens and above it
+          on narrow ones, so the type is never fighting the render for the first line. */}
+      <section className="relative overflow-hidden border-b border-grid">
+        <CandleTape className="top-0" height="h-40" opacity="opacity-[0.07]" count={52} />
 
-          <div className="mt-8 border-grid pt-8 lg:mt-0 lg:border-l lg:border-t-0 lg:pl-14 lg:pt-2">
-            <p className="text-[17px] leading-[1.6] text-ink">
-              A shallow pool can quote better than the pair&rsquo;s combined liquidity supports.
-              Knot checks both reserve states before every trade and leaves the difference with
-              the LPs who would otherwise have funded it.
-            </p>
-            <div className="mt-7 flex flex-wrap items-center gap-2">
+        <div className="wrap relative grid items-center gap-0 py-14 md:py-20 lg:grid-cols-[1.02fr_0.98fr]">
+          <div className="relative z-10 lg:pr-10">
+            <div className="stagger">
+              <p className="eyebrow mb-7">Uniswap v4 hook</p>
+
+              <h1 className="opsz-display font-display text-[clamp(2.9rem,7.4vw,6rem)] font-light leading-[0.94] tracking-[-0.035em] text-ink">
+                <span className="line-clip">One pair.</span>
+                <span className="line-clip italic">Several pools.</span>
+                <span className="line-clip">One price boundary.</span>
+              </h1>
+            </div>
+
+            <div className="mt-9 max-w-lg border-l border-ink/15 pl-5">
+              <p className="text-[16.5px] leading-[1.62] text-ink-soft">
+                A shallow pool can quote better than the pair&rsquo;s combined liquidity supports.
+                Knot checks both reserve states before every trade and leaves the difference with
+                the LPs who would otherwise have funded it.
+              </p>
+            </div>
+
+            <div className="mt-8 flex flex-wrap items-center gap-2">
               <span className="pill">{SITE.cohort}</span>
               <span className="pill">{SITE.projectId}</span>
               <span className="pill">
-                <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-blue" />
+                <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-ink" />
                 live on unichain sepolia
               </span>
             </div>
+          </div>
+
+          {/* The render. Tall enough to read as an object, capped so it never pushes the fold. */}
+          <div className="relative order-first h-[300px] w-full lg:order-none lg:h-[560px]">
+            <KnotStage className="absolute inset-0 h-full w-full" />
+            <p className="pointer-events-none absolute bottom-1 right-0 hidden font-mono text-[10px] uppercase tracking-ultra text-faint lg:block">
+              trefoil · the simplest knot that cannot be untied
+            </p>
           </div>
         </div>
       </section>
@@ -51,13 +73,14 @@ export default function Home() {
       <div className="grid-band" aria-hidden />
 
       {/* ── Full-bleed black: the mechanism, on a white panel floating on the field ── */}
-      <section className="inkfield relative">
-        <div className="wrap py-20 md:py-24">
+      <section className="inkfield relative overflow-hidden">
+        <CandleTape className="bottom-0" height="h-44" opacity="opacity-[0.13]" tone="paper" count={60} />
+        <div className="wrap relative py-20 md:py-24">
           <p className="text-center font-mono text-[11px] uppercase tracking-[0.18em] text-white/70">
             What does the hook actually do?
           </p>
 
-          <h2 className="mx-auto mt-6 max-w-3xl text-center font-display text-[clamp(1.9rem,4vw,3.1rem)] font-semibold leading-[1.08] tracking-tightest text-white">
+          <h2 className="opsz-display mx-auto mt-6 max-w-3xl text-center font-display text-[clamp(2.1rem,4.4vw,3.5rem)] font-light leading-[1.05] tracking-[-0.03em] text-white">
             Every swap is quoted twice. The taker gets the worse one.
           </h2>
 
@@ -81,7 +104,7 @@ export default function Home() {
               ].map((c) => (
                 <div key={c.t} className="p-8">
                   <div className="mb-7 flex items-baseline justify-between gap-3">
-                    <p className="font-display text-xl font-semibold tracking-tightest text-ink">{c.t}</p>
+                    <p className="opsz-text font-display text-xl font-semibold tracking-[-0.01em] text-ink">{c.t}</p>
                     <span className={`rounded-full px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] ${
                       c.bind ? "bg-ink text-white" : "bg-surface2 text-faint"}`}>
                       {c.s}
@@ -121,8 +144,9 @@ export default function Home() {
       <Ticker />
 
       {/* ── The numbers ───────────────────────────────────────────────────────────── */}
-      <section className="border-b border-grid">
-        <div className="wrap grid divide-y divide-grid py-14 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
+      <section className="relative overflow-hidden border-b border-grid">
+        <CandleTape className="top-0" height="h-full" opacity="opacity-[0.055]" count={70} />
+        <div className="wrap relative grid divide-y divide-grid py-14 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
           {[
             { v: 6674, u: "bps", l: "kept with LPs", hl: true },
             { v: 1949, u: "×", l: "retained vs fees forgone", hl: true },
@@ -145,8 +169,9 @@ export default function Home() {
         <div className="wrap">
           <div className="grid gap-10 lg:grid-cols-[1fr_1fr]">
             <Reveal>
-              <p className="eyebrow mb-5">How it works</p>
-              <h2 className="font-display text-[clamp(1.9rem,4vw,3.1rem)] font-semibold leading-[1.06] tracking-tightest text-ink">
+              <p className="eyebrow mb-2">How it works</p>
+              <span className="animate-draw-rule mb-6 block h-px w-16 bg-ink" />
+              <h2 className="opsz-display font-display text-[clamp(2rem,4.2vw,3.35rem)] font-light leading-[1.04] tracking-[-0.03em] text-ink">
                 Arithmetic, not a prediction.
               </h2>
               <p className="mt-6 max-w-lg text-[16px] leading-[1.65] text-muted">
@@ -182,8 +207,9 @@ export default function Home() {
       <section id="problem" className="section scroll-mt-20 border-b border-grid">
         <div className="wrap">
           <Reveal>
-            <p className="eyebrow mb-5">The problem</p>
-            <h2 className="max-w-3xl font-display text-[clamp(1.9rem,4vw,3.1rem)] font-semibold leading-[1.06] tracking-tightest text-ink">
+            <p className="eyebrow mb-2">The problem</p>
+            <span className="animate-draw-rule mb-6 block h-px w-16 bg-ink" />
+            <h2 className="opsz-display max-w-3xl font-display text-[clamp(2rem,4.2vw,3.35rem)] font-light leading-[1.04] tracking-[-0.03em] text-ink">
               Why fragmented liquidity leaks value
             </h2>
           </Reveal>
@@ -198,7 +224,7 @@ export default function Home() {
                 <div className={`h-full py-8 ${i === 0 ? "md:pr-8" : "md:px-8"} ${i === 2 ? "md:pr-0" : ""}`}>
                   {/* numbered because this is a sequence: each step is caused by the one above */}
                   <span className="tnum font-mono text-xs text-blue">0{i + 1}</span>
-                  <p className="mt-4 font-display text-xl font-semibold leading-snug tracking-tightest text-ink">{h}</p>
+                  <p className="opsz-text mt-4 font-display text-xl font-semibold leading-snug tracking-[-0.01em] text-ink">{h}</p>
                   <p className="mt-3 text-[15px] leading-[1.6] text-muted">{p}</p>
                 </div>
               </Reveal>

@@ -30,7 +30,7 @@ export default function DemoPage() {
   return (
     <div className="wrap py-20 md:py-24">
       <p className="eyebrow mb-2">Demo</p>
-      <h1 className="font-display text-3xl tracking-tightest md:text-4xl">The cross-pool round trip</h1>
+      <h1 className="opsz-display font-display text-[2.4rem] font-light leading-[1.02] tracking-[-0.03em] md:text-[3rem]">The cross-pool round trip</h1>
       <p className="mt-3 max-w-2xl text-ink-soft">
         Sell token0 into the skewed pool at its generous rate, then sell the proceeds back through the
         deep pool. When the pools are independent this ends in profit. Run the identical sequence under
@@ -55,7 +55,7 @@ export default function DemoPage() {
           { title: "Under Knot", sub: "Both legs bounded by the aggregate.", r: kn, bad: false },
         ].map((c) => (
           <div key={c.title} className={`card border-2 ${c.bad ? "border-clay/40" : "border-blue"}`}>
-            <p className="font-display text-xl tracking-tightest">{c.title}</p>
+            <p className="opsz-text font-display text-xl font-semibold tracking-[-0.01em]">{c.title}</p>
             <p className="mt-1 text-sm text-muted">{c.sub}</p>
             <dl className="mt-5 space-y-2.5 text-sm">
               <div className="flex justify-between border-b border-line pb-2">

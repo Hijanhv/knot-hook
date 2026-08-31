@@ -72,7 +72,7 @@ export default function AppPage() {
             <span className="eyebrow">Live hook</span>
             <LiveBadge live={live} />
           </div>
-          <h1 className="font-display text-3xl font-bold tracking-[-0.03em] md:text-4xl">
+          <h1 className="opsz-display font-display text-[2.4rem] font-light leading-[1.02] tracking-[-0.03em] md:text-[3rem]">
             Quote a swap. Watch the bound.
           </h1>
           <p className="mt-2 max-w-xl text-[15px] leading-[1.55] text-ink-soft">
