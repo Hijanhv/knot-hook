@@ -78,7 +78,7 @@ export default function ContractsPage() {
                 className="tnum font-mono text-xs text-blue hover:underline">{POOL_MANAGER} ↗</a>
             </div>
             <p className="text-[14px] leading-[1.5] text-muted">
-              <code className="font-mono text-[13px]">KnotMath</code> has no address of its own — it is a
+              <code className="font-mono text-[13px]">KnotMath</code> has no address of its own. It is a
               library, inlined into both hooks at compile time.
             </p>
           </div>

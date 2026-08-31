@@ -19,7 +19,7 @@
 
 **Live on Unichain Sepolia.** Federation [`0x91A0…A129`](https://sepolia.uniscan.xyz/address/0x91A0489A1BEA8030AC82351D52BDC3F97d6cA129) ·
 deep [`0x3469…6A88`](https://sepolia.uniscan.xyz/address/0x346930bcf767614a6C4654904739cBCF4A8f6A88) ·
-shallow [`0x6B8D…AA88`](https://sepolia.uniscan.xyz/address/0x6B8D77a921Adc5244bC0398fa6133841F3DFaA88) —
+shallow [`0x6B8D…AA88`](https://sepolia.uniscan.xyz/address/0x6B8D77a921Adc5244bC0398fa6133841F3DFaA88) ·
 [deployment record](deployments/unichain-sepolia-2026-08-23.md)
 
 > **Status:** unaudited hackathon software. The results below are constructed adversarial
@@ -34,7 +34,7 @@ becomes the weak link: easier to move, and an attacker can take the generous quo
 in isolation even though the pair's combined liquidity does not support it.
 
 Knot connects participating pools through one shared reserve ledger. Every swap is quoted
-twice — against the local pool and against the federation aggregate — and the trader receives
+twice, against the local pool and against the federation aggregate, and the trader receives
 the **less favourable** of the two. The clipped difference stays with the local pool's LPs.
 
 ```text
@@ -54,7 +54,7 @@ Measured in `test/MEVProtection.t.sol`, except the gas and size rows, which come
 | | Value |
 |---|---|
 | Value withheld from a taker exploiting a skewed pool | **6,674 bps** of the isolated quote |
-| Advantage from splitting a trade 8 ways | **none** — sliced output is marginally worse |
+| Advantage from splitting a trade 8 ways | **none**, sliced output is marginally worse |
 | Attacker P&L sandwiching through one pool | **−1.484** currency0 (a loss) |
 | **Protection loosened by a coalition-controlled member pool** | **4,722 bps (≈47%)** |
 | Full swap through v4's `PoolSwapTest` router | 169,596 gas median |
@@ -65,9 +65,9 @@ purpose. See [Known limits](#known-limits).
 
 ## How it works
 
-- **`KnotHook.sol`** — a hook-owned constant-product pool with proportional ERC-20 LP shares.
-- **`KnotFederation.sol`** — authenticated per-member reserves plus the O(1) aggregate pair.
-- **`KnotMath.sol`** — fee-aware exact-input and exact-output quoting, rounding against the taker
+- **`KnotHook.sol`**: a hook-owned constant-product pool with proportional ERC-20 LP shares.
+- **`KnotFederation.sol`**: authenticated per-member reserves plus the O(1) aggregate pair.
+- **`KnotMath.sol`**: fee-aware exact-input and exact-output quoting, rounding against the taker
   in both directions.
 
 Membership is bounded and permissioned: the federation owner registers reviewed hook instances,
@@ -80,10 +80,10 @@ and release their slot.
 Each provider has an **independent** pending request. There is no global lock, which means one
 provider's pending deposit can never stall swaps, withdrawals, or anyone else's deposit.
 
-1. **Queue** — assets are taken and held inactive. No shares are minted.
-2. **Activate** — after the maturity window, shares mint at the *current* reserve ratio, so
+1. **Queue**: assets are taken and held inactive. No shares are minted.
+2. **Activate**: after the maturity window, shares mint at the *current* reserve ratio, so
    pending capital cannot capture gains that accrued before it entered.
-3. **Cancel / claim** — only the provider can activate, cancel or claim, and any excess is
+3. **Cancel / claim**: only the provider can activate, cancel or claim, and any excess is
    refundable to them alone.
 
 Custody reduces to one equation: `PoolManager claims = active reserves + inactive provider assets`.
@@ -133,7 +133,7 @@ guidance.
 
 | Category | Knot |
 |---|---|
-| `beforeSwapReturnDelta` | **Enabled** — required for a custom curve. Uniswap rates this flag CRITICAL, so it is the highest-scrutiny part of the design |
+| `beforeSwapReturnDelta` | **Enabled**. Required for a custom curve. Uniswap rates this flag CRITICAL, so it is the highest-scrutiny part of the design |
 | Reentrancy | `nonReentrant` on federation state changes; no callbacks during a quote |
 | Access control | Reserve mutation restricted to registered members; membership restricted to the owner |
 | Rounding | Both quote directions round against the taker |

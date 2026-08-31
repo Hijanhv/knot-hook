@@ -3,7 +3,7 @@ pragma solidity ^0.8.26;
 
 import {BaseFixture} from "./BaseFixture.sol";
 
-/// @title Happy paths — every expected hook effect, asserted rather than assumed.
+/// @title Happy paths: every expected hook effect, asserted rather than assumed.
 /// @dev Each test states one thing. Shared setup lives in BaseFixture.
 contract SuccessPathsTest is BaseFixture {
     // ── swaps ────────────────────────────────────────────────────────────

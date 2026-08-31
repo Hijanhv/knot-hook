@@ -1,4 +1,4 @@
-# Unichain Sepolia — 23 August 2026
+# Unichain Sepolia, 23 August 2026
 
 Chain 1301 · PoolManager `0x00b036b58a818b1bc34d502d3fe730db729e62ac`
 
@@ -33,16 +33,16 @@ cast call 0x91A0489A1BEA8030AC82351D52BDC3F97d6cA129 \
   --rpc-url https://sepolia.unichain.org
 ```
 
-**Shallow pool**, 5 tokens in — the bound binds:
+**Shallow pool**, 5 tokens in. The bound binds:
 
 | | |
 | --- | --- |
 | Local quote | 18.993189503262370814 |
 | Aggregate quote | 6.315922840581546355 |
 | **Enforced** | **6.315922840581546355** |
-| **Withheld, kept with LPs** | **12.677 — 6,674 bps** |
+| **Withheld, kept with LPs** | **12.677, 6,674 bps** |
 
-**Deep pool**, same size — the bound is inert, as designed:
+**Deep pool**, same size. The bound is inert, as designed:
 
 | | |
 | --- | --- |

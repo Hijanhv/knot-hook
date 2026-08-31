@@ -1,4 +1,4 @@
-# MEV protection — measured, not asserted
+# MEV protection: measured, not asserted
 
 Every number here comes from `test/MEVProtection.t.sol`. Reproduce with:
 
@@ -21,7 +21,7 @@ bind against:
 | Pool | reserve0 | reserve1 | Role |
 |---|---|---|---|
 | Deep | 1000 | 1000 | Balanced |
-| Shallow | 100 | 400 | Rich in currency1 — the "weak link" an attacker would target |
+| Shallow | 100 | 400 | Rich in currency1, the "weak link" an attacker would target |
 
 In isolation the shallow pool would hand a currency0 seller an unusually generous amount of
 currency1. That is precisely the leak Knot claims to close.
@@ -53,12 +53,12 @@ gains nothing by fragmenting. Had this gone the other way the protection would b
 
 Front-run 2e18, victim 1e18, back-run 2e18, all through the shallow pool:
 
-**Attacker currency0 delta: −1.484220902439273232** — a loss.
+**Attacker currency0 delta: −1.484220902439273232**, a loss.
 
 Sandwiching is not Knot's target (it protects LPs, not swappers), but a protection that
 *inverted* under sandwiching would be a real defect. It does not.
 
-## 4. The coalition attack — our weakest result, quantified
+## 4. The coalition attack: our weakest result, quantified
 
 `SECURITY.md` discloses this qualitatively: *"Liquidity-based buddy coalitions can weaken the
 aggregate reference. This version does not claim coalition-proof MEV prevention."*

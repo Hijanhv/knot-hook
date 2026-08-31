@@ -11,7 +11,7 @@ cd docs-site && mint dev
 
 ## Deploying
 
-Mintlify deploys through a GitHub app, authorised in a browser — there is no CLI path for it.
+Mintlify deploys through a GitHub app, authorised in a browser. There is no CLI path for it.
 One-time setup:
 
 1. Sign in at [mintlify.com](https://mintlify.com)

@@ -58,14 +58,14 @@ export default function Connect() {
   if (chainId !== CHAIN_ID) {
     return (
       <button className="btn bg-amber hover:bg-amber-light" onClick={() => switchChain({ chainId: CHAIN_ID })}>
-        Wrong network — switch
+        Wrong network · switch
       </button>
     );
   }
 
   return (
     <button className="btn-ghost tnum font-mono text-xs" onClick={() => disconnect()}
-      title={`Connected via ${connector?.name ?? "wallet"} — click to disconnect`}>
+      title={`Connected via ${connector?.name ?? "wallet"}. Click to disconnect`}>
       <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-blue align-middle" />
       {short(address!)}
     </button>

@@ -138,7 +138,7 @@ contract MEVProtectionTest is HookTest {
     // ── 2. Does the bound survive the standard evasions? ─────────────────
 
     /// @dev Path independence. If slicing a trade beat one large trade, the protection would be
-    ///      cosmetic — an attacker would simply always slice. Reserves move per slice, so the
+    ///      cosmetic. An attacker would simply always slice. Reserves move per slice, so the
     ///      sliced total is not expected to be identical, only NOT BETTER for the attacker.
     function test_evasion_splittingDoesNotBeatOneLargeTrade() public {
         uint256 snap = vm.snapshotState();

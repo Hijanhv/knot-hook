@@ -32,7 +32,7 @@ const sans = Instrument_Sans({ subsets: ["latin"], variable: "--font-sans", disp
 const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Knot — one pair, several pools, one price boundary",
+  title: "Knot: one pair, several pools, one price boundary",
   description:
     "A Uniswap v4 hook. No participating pool can quote more favourably than both its own reserves and the pair's combined reserves allow. The difference stays with LPs.",
 };

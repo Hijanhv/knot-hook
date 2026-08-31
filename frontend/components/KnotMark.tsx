@@ -38,7 +38,7 @@ export default function KnotMark({ className = "" }: { className?: string }) {
         </circle>
       ))}
 
-      {/* the crossing — where the bound is enforced */}
+      {/* the crossing, where the bound is enforced */}
       <circle cx="180" cy="130" r={bound ? 9 : 5} fill="currentColor"
         style={{ transition: "r .5s cubic-bezier(.34,1.56,.64,1)" }} />
       <circle cx="180" cy="130" r="22" stroke="currentColor" strokeWidth="1"

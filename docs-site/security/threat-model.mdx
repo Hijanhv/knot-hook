@@ -11,7 +11,7 @@ The value was funded by that pool's LPs.
 
 ## Explicitly not the target
 
-**Sandwich attacks.** They hurt the swapper, not the LP — LPs earn fees on both legs and the price
+**Sandwich attacks.** They hurt the swapper, not the LP. LPs earn fees on both legs and the price
 round-trips. Measured across real Base flow, sandwich attacker legs carry roughly **10× less**
 toxicity to LPs than average flow. Scoping honestly here is a design decision, not an omission.
 
@@ -25,7 +25,7 @@ toxicity to LPs than average flow. Scoping honestly here is a design decision, n
 | JIT liquidity | **Blocked.** Fresh deposits cannot back a same-block quote |
 | Multi-block extraction | **Bound holds.** Quotes tighten as the pool drains, never loosen |
 | Reserve manipulation | **Fuzzed**, 1,000 runs, no underflow, aggregate never drifts |
-| Coalition of members | **Partially open** — see [Limits](/security/limits) |
+| Coalition of members | **Partially open**, see [Limits](/security/limits) |
 
 ## Permissions
 

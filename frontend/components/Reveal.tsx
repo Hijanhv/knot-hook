@@ -2,8 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Scroll-triggered reveal. Motion is used as a reading cue — each section arrives as you
- * reach it — rather than as decoration. Honours prefers-reduced-motion by rendering
+ * Scroll-triggered reveal. Motion is used as a reading cue, each section arriving as you
+ * reach it, rather than as decoration. Honours prefers-reduced-motion by rendering
  * immediately visible.
  */
 export default function Reveal({

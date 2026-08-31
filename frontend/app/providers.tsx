@@ -21,7 +21,7 @@ export const wagmiConfig = createConfig({
   // Deliberately EMPTY. Connectors come from EIP-6963 discovery instead, which wagmi runs
   // by default. Declaring injected() here would register a connector bound to
   // `window.ethereum`, and with several wallets installed that slot is won by whichever
-  // extension injected last — on this machine, the Uniswap extension. EIP-6963 sidesteps the
+  // extension injected last, on this machine the Uniswap extension. EIP-6963 sidesteps the
   // race entirely: each wallet announces itself with a unique RDNS, so MetaMask can be
   // addressed by identity rather than by hoping it owns the global.
   connectors: [],

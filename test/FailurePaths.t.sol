@@ -9,7 +9,7 @@ import {KnotFederation} from "../src/KnotFederation.sol";
 import {KnotHook} from "../src/KnotHook.sol";
 import {KnotMath} from "../src/KnotMath.sol";
 
-/// @title Failure paths — every guard, proven to actually guard.
+/// @title Failure paths: every guard, proven to actually guard.
 /// @dev A revert that is never tested is a revert you are only assuming exists.
 contract FailurePathsTest is BaseFixture {
     // ── access control ───────────────────────────────────────────────────
@@ -161,7 +161,7 @@ contract FailurePathsTest is BaseFixture {
     }
 
     /// @dev The revert surfaces through v4's unlock callback, which `expectRevert` cannot
-    ///      match by selector. Catch it and assert the selector directly — more precise than a
+    ///      match by selector. Catch it and assert the selector directly, which is more precise than a
     ///      bare expectRevert, which would pass on any failure at all.
     function test_revert_removingMoreSharesThanTotalSupply() public {
         try this.tryRemove(deep.totalSupply() + 1) {

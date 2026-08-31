@@ -25,7 +25,7 @@ cast wallet list                              # confirm it is there
 Every command below passes `--account uhi-deploy`. Never `--private-key`.
 
 **Funding.** A full deployment costs well under 0.05 ETH. Unichain Sepolia ETH comes from
-bridging Sepolia ETH at [bridge.unichain.org](https://bridge.unichain.org) — more reliable than
+bridging Sepolia ETH at [bridge.unichain.org](https://bridge.unichain.org), which is more reliable than
 the direct faucets, which are usually rate-limited.
 
 ```bash
@@ -34,7 +34,7 @@ source .env
 cast balance $(cast wallet address --account uhi-deploy) --rpc-url $RPC_URL --ether
 ```
 
-## Phase one — deploy and queue liquidity
+## Phase one: deploy and queue liquidity
 
 ```bash
 forge script script/DeployDemo.s.sol:DeployDemo \
@@ -52,7 +52,7 @@ single-hook deployment demonstrates nothing.
 
 The script prints the three addresses. Put them in `.env` as `DEEP_POOL` and `SHALLOW_POOL`.
 
-## Phase two — activate
+## Phase two: activate
 
 Wait one block, then:
 
@@ -88,7 +88,7 @@ cast call $NEXT_PUBLIC_FEDERATION \
 ```
 
 Three numbers: local quote, aggregate quote, enforced quote. On the shallow pool the third
-should equal the second and sit well below the first — that gap is the value staying with LPs.
+should equal the second and sit well below the first. That gap is the value staying with LPs.
 
 ## Record the deployment
 

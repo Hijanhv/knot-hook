@@ -8,8 +8,8 @@ import {KnotMath} from "../src/KnotMath.sol";
 ///
 /// @dev THE QUESTION
 ///      Knot binds when the local pool quotes MORE generously than the federation aggregate.
-///      A proposed improvement was to exempt "corrective" trades — ones that move the local
-///      pool's ratio back toward the aggregate — so the pool stays price-competitive on flow
+///      A proposed improvement was to exempt "corrective" trades, ones that move the local
+///      pool's ratio back toward the aggregate, so the pool stays price-competitive on flow
 ///      that realigns it.
 ///
 ///      That improvement is only worth building if the two categories are actually distinct.

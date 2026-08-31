@@ -2,7 +2,7 @@ import Counter from "./Counter";
 
 /**
  * A measured figure. The value counts up on entry so the number reads as something arrived at
- * rather than asserted — which is the whole posture of this project.
+ * rather than asserted, which is the whole posture of this project.
  */
 export default function Stat({
   label, value, numeric, unit, note, tone = "ink",

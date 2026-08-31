@@ -10,7 +10,7 @@ const e18 = (n: number) => BigInt(Math.round(n * 1e6)) * 10n ** 12n;
 
 /**
  * Reads the deployed federation directly. `preview` is a view, so quotes come from the same
- * contract a swap would execute against — no client-side approximation of the rule. If the
+ * contract a swap would execute against, with no client-side approximation of the rule. If the
  * contracts are unreachable the page falls back to the reference configuration rather than
  * showing an error, so the mechanism stays explorable without a wallet.
  */
@@ -77,7 +77,7 @@ export default function AppPage() {
           </h1>
           <p className="mt-2 max-w-xl text-[15px] leading-[1.55] text-ink-soft">
             Quotes are read from <code className="font-mono text-[13px] text-blue">preview()</code> on the
-            deployed federation — the same call a swap executes against.
+            deployed federation, the same call a swap executes against.
           </p>
         </div>
         <Connect />
@@ -171,7 +171,7 @@ export default function AppPage() {
           <div className="card">
             <div className="flex flex-wrap items-end justify-between gap-6">
               <div>
-                <p className="eyebrow mb-2">Enforced — {exactInput ? "what the taker receives" : "what the taker pays"}</p>
+                <p className="eyebrow mb-2">Enforced · {exactInput ? "what the taker receives" : "what the taker pays"}</p>
                 <p className="tnum figure text-[3.25rem] text-blue">{fmt(enforcedQ)}</p>
                 <p className="mt-2 font-mono text-[11px] text-faint">
                   {exactInput ? "min(local, aggregate)" : "max(local, aggregate)"}
@@ -195,7 +195,7 @@ export default function AppPage() {
                 style={{ width: `${Math.max(2, 100 - bps / 100)}%` }} />
             </div>
             <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
-              enforced ÷ local — a shorter bar means the bound is biting harder
+              enforced ÷ local · a shorter bar means the bound is biting harder
             </p>
           </div>
         </div>

@@ -59,11 +59,11 @@ export default function DemoPage() {
             <p className="mt-1 text-sm text-muted">{c.sub}</p>
             <dl className="mt-5 space-y-2.5 text-sm">
               <div className="flex justify-between border-b border-line pb-2">
-                <dt className="text-ink-soft">Leg A — token1 out</dt>
+                <dt className="text-ink-soft">Leg A · token1 out</dt>
                 <dd className="tnum font-mono">{fmt(c.r.legA)}</dd>
               </div>
               <div className="flex justify-between border-b border-line pb-2">
-                <dt className="text-ink-soft">Leg B — token0 back</dt>
+                <dt className="text-ink-soft">Leg B · token0 back</dt>
                 <dd className="tnum font-mono">{fmt(c.r.legB)}</dd>
               </div>
             </dl>

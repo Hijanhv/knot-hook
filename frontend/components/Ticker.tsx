@@ -8,7 +8,7 @@ const LINES = [
   "No oracle · no keeper · no off-chain component",
 ];
 
-/** A live status band. Dense, factual, always moving — the page's pulse. */
+/** A live status band. Dense, factual, always moving. The page's pulse. */
 export default function Ticker() {
   return (
     <>

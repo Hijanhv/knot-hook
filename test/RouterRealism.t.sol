@@ -9,7 +9,7 @@ import {KnotMath} from "../src/KnotMath.sol";
 /// @dev WHY THE EARLIER "LOSES 40 OF 40 ROUTES" NUMBER WAS THE WRONG QUESTION
 ///      That test compared a Knot pool against an imaginary unfederated twin holding identical
 ///      reserves. No such twin exists. In reality a router compares the Knot pool against the
-///      OTHER POOLS THAT ACTUALLY EXIST — and for a federated pair, the deep member pool is one
+///      OTHER POOLS THAT ACTUALLY EXIST, and for a federated pair the deep member pool is one
 ///      of them. Flow that leaves the skewed member for the deep member has not left the
 ///      federation at all: the same LP set still earns the fee.
 ///

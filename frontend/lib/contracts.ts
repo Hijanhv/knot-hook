@@ -21,13 +21,13 @@ export const CONTRACTS = [
     reads: ["preview(address,bool,bool,uint256)", "reservesOf(address)", "aggregateReserve0()", "aggregateReserve1()", "memberCount()"],
   },
   {
-    name: "KnotHook — deep",
+    name: "KnotHook · deep",
     address: DEPLOYED.deep,
     role: "Balanced member, seeded 1000 / 1000. The bound is inert here, which is the control case.",
     reads: ["reserves()", "balanceOf(address)", "totalSupply()"],
   },
   {
-    name: "KnotHook — shallow",
+    name: "KnotHook · shallow",
     address: DEPLOYED.shallow,
     role: "Skewed member, seeded 100 / 400. The bound binds here, withholding 6,674 bps.",
     reads: ["reserves()", "balanceOf(address)", "totalSupply()"],
