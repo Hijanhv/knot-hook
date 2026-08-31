@@ -10,7 +10,7 @@
 [![Foundry](https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg)](https://getfoundry.sh/)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.26-363636.svg?logo=solidity)](https://soliditylang.org/)
 [![Tests](https://img.shields.io/badge/tests-122%20passing-3FB950.svg)](#verify)
-[![Coverage](https://img.shields.io/badge/line%20coverage-96.26%25-3FB950.svg)](#verify)
+[![Coverage](https://img.shields.io/badge/line%20coverage-96.21%25-3FB950.svg)](#verify)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **UHI10 Hookathon · Sustainable Liquidity & MEV Protection**
@@ -47,7 +47,9 @@ stops one of them becoming the easy exit.
 
 ## Key numbers
 
-Measured in `test/MEVProtection.t.sol`. Full write-up: [`research/mev-findings.md`](research/mev-findings.md).
+Measured in `test/MEVProtection.t.sol`, except the gas and size rows, which come from
+`forge test --gas-report` and `forge build --sizes`. Full write-up:
+[`research/mev-findings.md`](research/mev-findings.md).
 
 | | Value |
 |---|---|
@@ -55,7 +57,7 @@ Measured in `test/MEVProtection.t.sol`. Full write-up: [`research/mev-findings.m
 | Advantage from splitting a trade 8 ways | **none** — sliced output is marginally worse |
 | Attacker P&L sandwiching through one pool | **−1.484** currency0 (a loss) |
 | **Protection loosened by a coalition-controlled member pool** | **4,722 bps (≈47%)** |
-| Full router swap | 96,809 gas |
+| Full swap through v4's `PoolSwapTest` router | 169,596 gas median |
 | `KnotHook` runtime size | 12,936 bytes (24,576 limit) |
 
 That fourth row is the weakest result in the project and it is in the headline table on
@@ -88,13 +90,17 @@ Custody reduces to one equation: `PoolManager claims = active reserves + inactiv
 
 ## Verify
 
-```bash
-forge install OpenZeppelin/uniswap-hooks@rev=01a87ba5e69a3f75d0157cbf8ea49971ad83599a
-git -C lib/uniswap-hooks submodule update --init --recursive
+Dependencies are vendored under `lib/`, so a fresh clone needs no install step.
 
-forge test                                        # full suite
+```bash
+git clone https://github.com/Hijanhv/KNOT-hook-.git && cd KNOT-hook-
+
+forge test                                        # full suite, 122 tests
 forge test --match-contract MEVProtectionTest -vv # the adversarial results above
-forge coverage
+
+# Coverage needs --ir-minimum. The unoptimised build that coverage forces
+# otherwise hits "stack too deep" in script/Deploy.s.sol.
+forge coverage --ir-minimum --no-match-coverage "^(test|script)/"
 ```
 
 ## Why this needs to be a hook

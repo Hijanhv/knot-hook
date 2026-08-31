@@ -51,8 +51,8 @@
   "navbar": {
     "links": [
       {
-        "label": "App",
-        "href": "http://localhost:3000/app"
+        "label": "Run the app",
+        "href": "/quickstart"
       }
     ],
     "primary": {
