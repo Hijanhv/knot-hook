@@ -13,9 +13,9 @@ const SHALLOW = "0x6B8D77a921Adc5244bC0398fa6133841F3DFaA88";
 const scan = (a: string) => `https://sepolia.uniscan.xyz/address/${a}`;
 
 /**
- * White paper, a ruled grid, one royal blue. The structure follows the reference: a split
- * hero divided by a single vertical rule, a band of open grid squares beneath it, then a
- * full-bleed blue field with white panels floating on it.
+ * White paper, a ruled grid, black ink. A split hero divided by a single vertical rule, a
+ * band of open grid squares beneath it, then a full-bleed black field with white panels
+ * floating on it.
  */
 export default function Home() {
   return (
@@ -24,7 +24,7 @@ export default function Home() {
       <section className="relative border-b border-grid">
         <div className="wrap grid items-stretch gap-0 py-16 md:py-20 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="lg:pr-14">
-            <h1 className="font-display text-[clamp(2.75rem,6.6vw,5.25rem)] font-semibold leading-[0.98] tracking-tightest text-blue">
+            <h1 className="font-display text-[clamp(2.75rem,6.6vw,5.25rem)] font-semibold leading-[0.98] tracking-tightest text-ink">
               One pair. Several pools.<br />One price boundary.
             </h1>
           </div>
@@ -50,8 +50,8 @@ export default function Home() {
       {/* the reference separates major blocks with a band of open grid squares, not a rule */}
       <div className="grid-band" aria-hidden />
 
-      {/* ── Full-bleed blue: the mechanism, on a white panel floating on the field ── */}
-      <section className="bluefield relative">
+      {/* ── Full-bleed black: the mechanism, on a white panel floating on the field ── */}
+      <section className="inkfield relative">
         <div className="wrap py-20 md:py-24">
           <p className="text-center font-mono text-[11px] uppercase tracking-[0.18em] text-white/70">
             What does the hook actually do?
@@ -83,7 +83,7 @@ export default function Home() {
                   <div className="mb-7 flex items-baseline justify-between gap-3">
                     <p className="font-display text-xl font-semibold tracking-tightest text-ink">{c.t}</p>
                     <span className={`rounded-full px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] ${
-                      c.bind ? "bg-blue-tint text-blue" : "bg-surface2 text-faint"}`}>
+                      c.bind ? "bg-ink text-white" : "bg-surface2 text-faint"}`}>
                       {c.s}
                     </span>
                   </div>
@@ -93,7 +93,7 @@ export default function Home() {
                       return (
                         <div key={k} className="flex items-baseline justify-between gap-4">
                           <dt className="font-mono text-[10px] uppercase tracking-[0.12em] text-faint">{k}</dt>
-                          <dd className={`tnum font-display text-[1.6rem] font-light leading-none ${on ? "text-blue" : "text-ink"}`}>{v}</dd>
+                          <dd className={`tnum font-display text-[1.6rem] leading-none ${on ? "font-medium text-ink" : "font-light text-muted"}`}>{v}</dd>
                         </div>
                       );
                     })}
@@ -131,7 +131,7 @@ export default function Home() {
           ].map((s, i) => (
             <div key={s.l} className={`py-5 ${i === 0 ? "sm:pr-8" : "sm:px-8"} ${i === 3 ? "sm:pr-0" : ""}`}>
               <p className="eyebrow mb-3">{s.l}</p>
-              <p className={`figure ${s.hl ? "text-blue" : "text-ink"}`}>
+              <p className={`figure ${s.hl ? "font-normal text-ink" : "text-muted"}`}>
                 <Counter to={s.v} decimals={s.d ?? 0} />
                 <span className="ml-1 text-lg text-faint">{s.u}</span>
               </p>

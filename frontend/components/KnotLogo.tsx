@@ -5,8 +5,9 @@
  * knot theory. For a project called Knot that is the honest symbol, and its three-fold symmetry
  * means it reads as a designed thing rather than a default.
  *
- * Construction follows the brand language of the reference: a solid tile with the glyph knocked
- * out in white. No gradient, no outline, no second colour.
+ * Drawn as the bare glyph: a black stroke on whatever it sits on, no tile behind it and no
+ * second colour. `tile` is kept for anywhere a knocked-out badge is wanted, but it is off by
+ * default, so the mark is black and white.
  *
  * The weave is ONE continuous stroke. Layering an over-strand on top of an under-strand leaves a
  * hairline seam wherever the two strokes end, so instead the three passes that go UNDER are just
@@ -22,7 +23,7 @@ const D = "M32.0 27.1L33.0 27.2L33.9 27.2L34.9 27.3L35.8 27.4L36.8 27.5L37.7 27.
 const DASH = "58.1 15.0 62.8 15.0 62.8 15.0 4.7";
 
 export default function KnotLogo({
-  size = 34, className = "", tile = true,
+  size = 34, className = "", tile = false,
 }: { size?: number; className?: string; tile?: boolean }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={className}

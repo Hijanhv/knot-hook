@@ -8,8 +8,8 @@ type Candle = { o: number; h: number; l: number; c: number };
  * the leading candle so the eye lands on the present. Decorative motion only — this asserts
  * nothing about real prices.
  *
- * Blue for up, grey for down, rather than green/red: in a project about LP value those two
- * colours would read as profit and loss and imply a claim this chart is not making.
+ * Black for up, light grey for down, rather than green/red: in a project about LP value those
+ * two colours would read as profit and loss and imply a claim this chart is not making.
  */
 export default function CandleChart({
   count = 28, className = "", showArea = true,
@@ -46,12 +46,12 @@ export default function CandleChart({
     <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className={className} aria-hidden>
       <defs>
         <linearGradient id="cc-area" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#3B33D1" stopOpacity="0.16" />
-          <stop offset="100%" stopColor="#3B33D1" stopOpacity="0" />
+          <stop offset="0%" stopColor="#0A0A0B" stopOpacity="0.14" />
+          <stop offset="100%" stopColor="#0A0A0B" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="cc-line" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#241DA8" />
-          <stop offset="100%" stopColor="#6B63E8" />
+          <stop offset="0%" stopColor="#0A0A0B" />
+          <stop offset="100%" stopColor="#6E6E76" />
         </linearGradient>
         <filter id="cc-glow" x="-60%" y="-60%" width="220%" height="220%">
           <feGaussianBlur stdDeviation="0.9" result="b" />
@@ -69,7 +69,7 @@ export default function CandleChart({
       {candles.map((c, i) => {
         const x = i * slot + slot / 2;
         const up = c.c >= c.o;
-        const stroke = up ? "#3B33D1" : "#B8B8C0";
+        const stroke = up ? "#0A0A0B" : "#C4C4CB";
         const last = i === candles.length - 1;
         return (
           <g key={i} opacity={last ? 1 : 0.22 + (i / candles.length) * 0.55} filter={last ? "url(#cc-glow)" : undefined}>

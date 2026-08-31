@@ -7,7 +7,7 @@
     -webkit-font-smoothing: antialiased;
     background-color: #ffffff;
   }
-  ::selection { background-color: rgba(59, 51, 209, 0.18); color: #0a0a0b; }
+  ::selection { background-color: rgba(10, 10, 11, 0.14); color: #0a0a0b; }
 }
 
 @layer utilities {
@@ -60,18 +60,18 @@
   .card-hover { @apply hover:border-edge; }
 
   /* ── Controls ──
-     Squared off, near-flat, with the blue reserved for the primary action only. */
+     Squared off, near-flat, with solid black reserved for the primary action only. */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-[3px] bg-blue-dark px-5 py-2.5
+    @apply inline-flex items-center justify-center gap-2 rounded-[3px] bg-ink px-5 py-2.5
            text-sm font-medium text-white transition-colors duration-200
-           hover:bg-blue
-           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue;
+           hover:bg-ink-soft
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink;
   }
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 rounded-[3px] border border-ink bg-canvas px-5 py-2.5
            text-sm font-medium text-ink transition-colors duration-200
            hover:bg-ink hover:text-white
-           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue;
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink;
   }
 
   /* A selector pill with a state dot, lifted from the reference's "what do you market?" row. */
@@ -88,14 +88,14 @@
            font-mono text-[10px] uppercase tracking-[0.14em] text-muted;
   }
 
-  /* ── The full-bleed blue ──
-     Flat indigo with two very soft washes over it, so a large area of one colour has some
+  /* ── The full-bleed black ──
+     Flat ink with two very soft washes over it, so a large area of one colour has some
      depth without becoming a texture the eye has to read. */
-  .bluefield {
-    background-color: theme("colors.blue.wash");
+  .inkfield {
+    background-color: theme("colors.ink.DEFAULT");
     background-image:
-      radial-gradient(60% 80% at 18% 12%, rgba(255,255,255,0.14) 0%, transparent 62%),
-      radial-gradient(52% 70% at 84% 88%, rgba(20,14,120,0.30) 0%, transparent 60%);
+      radial-gradient(60% 80% at 18% 12%, rgba(255,255,255,0.10) 0%, transparent 62%),
+      radial-gradient(52% 70% at 84% 88%, rgba(0,0,0,0.45) 0%, transparent 60%);
   }
 }
 

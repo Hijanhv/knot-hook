@@ -1,12 +1,16 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Knot — white paper, a ruled grid, one royal blue.
+ * Knot: white paper, a ruled grid, black ink.
  *
- * Taken from the Minerva reference. White ground, black text, and a single vivid indigo that
- * does three jobs and no others: the headline, anything interactive, and the full-bleed
- * sections. A faint ruled grid runs behind the whole page, which is where the engineered
- * feeling comes from rather than from borders on every element.
+ * Monochrome by choice. White ground, black text, and black doing the three jobs an accent
+ * would otherwise do: the headline, anything interactive, and the full-bleed sections.
+ * Separation comes from weight and contrast rather than hue. A faint ruled grid runs behind
+ * the whole page, which is where the engineered feeling comes from rather than from borders
+ * on every element.
+ *
+ * The `blue`/`accent`/`ocean` names are kept as aliases so existing markup keeps resolving;
+ * they all point at the same black ramp. Amber survives for warnings only.
  */
 const config: Config = {
   darkMode: ["class"],
@@ -30,21 +34,22 @@ const config: Config = {
         muted: "#6E6E76",
         faint: "#9B9BA4",
 
-        // The one colour.
+        // The accent, such as it is: black, with a grey for the second step and a near-white
+        // tint for filled chips.
         blue: {
-          DEFAULT: "#3B33D1",
-          dark: "#241DA8",
-          light: "#6B63E8",
-          wash: "#4A42DC",
-          tint: "#EEEDFB",
+          DEFAULT: "#0A0A0B",
+          dark: "#000000",
+          light: "#3C3C40",
+          wash: "#0A0A0B",
+          tint: "#F1F1F3",
         },
 
         // Aliases so existing markup keeps resolving onto the single accent.
-        accent: { DEFAULT: "#3B33D1", light: "#6B63E8", dim: "#241DA8", deep: "#EEEDFB" },
-        ocean: { DEFAULT: "#3B33D1", dim: "#EEEDFB", bright: "#6B63E8", surf: "#6B63E8", foam: "#EEEDFB" },
-        marine: { DEFAULT: "#3B33D1", dim: "#EEEDFB", bright: "#6B63E8" },
-        violet: { DEFAULT: "#3B33D1", deep: "#241DA8", light: "#6B63E8" },
-        cyan: { DEFAULT: "#6B63E8", deep: "#241DA8", light: "#EEEDFB" },
+        accent: { DEFAULT: "#0A0A0B", light: "#3C3C40", dim: "#000000", deep: "#F1F1F3" },
+        ocean: { DEFAULT: "#0A0A0B", dim: "#F1F1F3", bright: "#3C3C40", surf: "#3C3C40", foam: "#F1F1F3" },
+        marine: { DEFAULT: "#0A0A0B", dim: "#F1F1F3", bright: "#3C3C40" },
+        violet: { DEFAULT: "#0A0A0B", deep: "#000000", light: "#3C3C40" },
+        cyan: { DEFAULT: "#3C3C40", deep: "#000000", light: "#F1F1F3" },
         sand: { DEFAULT: "#FFFFFF", light: "#FFFFFF", deep: "#F5F5F7", shadow: "#E2E2E5" },
 
         // Warnings only. Never used for profit or loss.
@@ -62,8 +67,8 @@ const config: Config = {
       maxWidth: { content: "84rem" },
       boxShadow: {
         card: "0 1px 2px rgba(10,10,11,0.04)",
-        lift: "0 2px 4px rgba(10,10,11,0.04), 0 20px 48px -28px rgba(59,51,209,0.30)",
-        glow: "0 8px 24px -10px rgba(59,51,209,0.45)",
+        lift: "0 2px 4px rgba(10,10,11,0.04), 0 20px 48px -28px rgba(10,10,11,0.28)",
+        glow: "0 8px 24px -10px rgba(10,10,11,0.40)",
       },
       keyframes: {
         rise: { "0%": { opacity: "0", transform: "translateY(14px)" }, "100%": { opacity: "1", transform: "translateY(0)" } },
