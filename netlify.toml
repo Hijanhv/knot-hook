@@ -1,0 +1,11 @@
+# Netlify config, kept alongside the GitHub Pages workflow so the site is not tied to one host.
+#
+# Connect the repo at app.netlify.com and it builds with no further setup. NEXT_PUBLIC_BASE_PATH
+# is deliberately unset here: Netlify serves from a root domain, so the app needs no base path.
+[build]
+  base    = "frontend"
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "20"
