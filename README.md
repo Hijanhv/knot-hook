@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+  <b><a href="https://hijanhv.github.io/KNOT-hook-/">Live app</a></b> ·
   <b><a href="https://knot-38d8bd0e.mintlify.app">Documentation</a></b> ·
   <a href="https://knot-38d8bd0e.mintlify.app/reference/architecture">Architecture</a> ·
   <a href="https://knot-38d8bd0e.mintlify.app/security/testing">Test suites</a> ·
@@ -286,6 +287,9 @@ forge script script/DeployDemo.s.sol:Activate \
 Full walkthrough in [`DEPLOY.md`](DEPLOY.md).
 
 ### 4. Run the frontend
+
+The app is deployed at **[hijanhv.github.io/KNOT-hook-](https://hijanhv.github.io/KNOT-hook-/)**
+and reads the live Unichain Sepolia contracts. To run it locally:
 
 ```bash
 cd frontend && npm install && npm run dev   # http://localhost:3000
