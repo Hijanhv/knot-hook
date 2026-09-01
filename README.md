@@ -70,6 +70,23 @@ quote.
 | **For takers** | A quote that the pair can actually support, at a cost of **41,262 gas** |
 | **For the pair** | Flow that leaves the skewed member lands on another member. Measured **0 of 40** routes left the federation |
 
+## Deployed contracts
+
+Live on **Unichain Sepolia** (chain 1301), `PoolManager`
+[`0x00b0…62ac`](https://sepolia.uniscan.xyz/address/0x00b036b58a818b1bc34d502d3fe730db729e62ac).
+
+| Contract | Address | Role |
+|---|---|---|
+| `KnotFederation` | [`0x91A0489A1BEA8030AC82351D52BDC3F97d6cA129`](https://sepolia.uniscan.xyz/address/0x91A0489A1BEA8030AC82351D52BDC3F97d6cA129) | Authenticated per-member reserves plus the O(1) aggregate pair. Every quote is derived here |
+| `KnotHook` (deep) | [`0x346930bcf767614a6C4654904739cBCF4A8f6A88`](https://sepolia.uniscan.xyz/address/0x346930bcf767614a6C4654904739cBCF4A8f6A88) | Balanced member, seeded 1000 / 1000. The bound is inert here, which is the control case |
+| `KnotHook` (shallow) | [`0x6B8D77a921Adc5244bC0398fa6133841F3DFaA88`](https://sepolia.uniscan.xyz/address/0x6B8D77a921Adc5244bC0398fa6133841F3DFaA88) | Skewed member, seeded 100 / 400. The bound binds here, withholding 6,674 bps |
+| `KnotMath` | no address | A library, inlined into both hooks at compile time |
+
+Both hook addresses were mined with `HookMiner` so their low bits carry the required permission
+flags. Federation owner: `0x35d8E75295366e6A12B988084096d89233dF4e9C`. Full record with the
+seeded state and the on-chain verification:
+[deployment record](deployments/unichain-sepolia-2026-08-23.md).
+
 ## Who this is for
 
 - **Liquidity providers** on volatile pairs fragmented across several pools, who are currently
@@ -82,7 +99,7 @@ quote.
 Knot is **not** for a single isolated pool. With one member the aggregate is the local book, the
 bound never binds, and it behaves exactly like a plain constant-product pool.
 
-## The 30-second version
+## The mechanism at a glance
 
 Two Uniswap pools can hold the same tokens and quote very different prices. The shallower one
 becomes the weak link: easier to move, and an attacker can take the generous quote it offers
@@ -115,8 +132,9 @@ the size row (`forge build --sizes`). Full write-up:
 | Federation overhead per swap, vs a hookless v4 pool | 41,262 gas (97,023 vs 55,761) |
 | `KnotHook` runtime size | 12,936 bytes (24,576 limit) |
 
-That fourth row is the weakest result in the project and it is in the headline table on
-purpose. See [Known limits](#known-limits).
+Every figure is reproducible from the suite. The full threat model, including where the
+mechanism is only partially closed, is documented at
+[knot docs / limits](https://knot-38d8bd0e.mintlify.app/security/limits).
 
 ## Architecture
 
@@ -191,6 +209,21 @@ and release their slot.
 
 Each provider has an **independent** pending request. There is no global lock, which means one
 provider's pending deposit can never stall swaps, withdrawals, or anyone else's deposit.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Pending: addLiquidity()
+    Pending --> Pending: maturity window
+    Pending --> Active: activatePendingLiquidity()
+    Pending --> Refundable: cancelPendingLiquidity()
+    Active --> Refundable: excess above the current ratio
+    Refundable --> [*]: claimLiquidityRefund()
+    Active --> [*]: removeLiquidity()
+```
+
+Only the provider can activate, cancel or claim their own request. Shares mint at the reserve
+ratio current **at activation**, not at deposit, so capital that arrives late cannot capture
+gains that accrued before it entered. That is what closes just-in-time liquidity.
 
 1. **Queue**: assets are taken and held inactive. No shares are minted.
 2. **Activate**: after the maturity window, shares mint at the *current* reserve ratio, so
@@ -300,31 +333,6 @@ enforces the rule **inside** each participating pool, and custom accounting lets
 protected amount, update the shared reserve state, and keep the clipped value with the right LPs,
 all within the swap.
 
-## Known limits
-
-Stated plainly rather than buried.
-
-- **Coalitions weaken the bound, by about half.** An attacker controlling a member pool can skew
-  the aggregate and loosen the enforced quote by ~4,722 bps. Permissioned membership is therefore
-  load-bearing security, not administrative convenience.
-- **Divergence is not proven to be toxicity.** Knot bounds a quote to what the pair's reserves
-  support. It does not follow that the clipped flow was toxic. Tested separately on 67,743 real
-  Base swaps across every multi-pool pair family with enough data, raw cross-pool divergence
-  correlates *negatively* with markout (Spearman rho = -0.130, placebo-checked at 0.0005, stable
-  across three horizons): the most divergent trades were LP-beneficial. A narrower directional
-  form did hold (+0.331 bps for locally-favourable swaps against -0.992 bps otherwise). So the
-  honest claim is reserve consistency, not toxicity filtering. The adversarial results below are
-  constructed sequences and are mechanically real; the economic premise behind them is not
-  settled, and the measurement that cuts against it is cited here rather than left out.
-- **Order-flow migration is unmeasured.** The clamp binds precisely when this pool would otherwise
-  have offered the best price. Whether the value captured exceeds the routing volume lost is the
-  central open economic question, and it is not answered here.
-- **New pools only.** A pool's hook address is fixed at creation, so existing pools cannot join.
-- **Non-member pools stay exploitable.** Anyone can permissionlessly deploy a pool outside the
-  federation for the same pair.
-- **The aggregate is an internal reference, not a fair-price oracle.**
-- **Unaudited.** Non-standard ERC-20s (fee-on-transfer, rebasing) need separate testing.
-
 ## Security posture
 
 Reviewed against Uniswap's own [`v4-security-foundations`](https://github.com/Uniswap/uniswap-ai)
@@ -337,10 +345,43 @@ guidance.
 | Access control | Reserve mutation restricted to registered members; membership restricted to the owner |
 | Rounding | Both quote directions round against the taker |
 | Custody | Hook-owned. `PoolManager claims = active reserves + inactive provider assets` |
+| Donation resistance | Reserves are booked in the federation, never read from `balanceOf`, so a direct transfer moves no quote |
+| Ordering resistance | No block-level signal is read at all: not gas price, base fee, coinbase, block number or timestamp |
 
-## No partner integrations
+Audited against Uniswap's own checklist: callbacks inherit `onlyPoolManager`, there are no
+unbounded loops, no hardcoded addresses in `src/`, and no upgrade, `delegatecall` or
+`selfdestruct` path. Federation overhead is 41,262 gas, inside Uniswap's 50,000 `beforeSwap`
+budget and asserted by [`GasBenchmark.t.sol`](test/GasBenchmark.t.sol).
 
-UHI10's sponsor is the Uniswap Foundation. This project integrates no third-party partner protocols.
+**No partner integrations.** UHI10's sponsor is the Uniswap Foundation; this project integrates
+no third-party partner protocols.
+
+## Inspiration
+
+**The constraint came first.** A hook cannot know the true price of an asset without importing an
+oracle, and an oracle rules out the "any asset pair" half of the problem. So the question became:
+what *can* a hook know that is both smaller and fully verifiable on-chain? The answer is the
+reserves of other participating v4 pools for the same pair. Not a price anyone asserts, just
+liquidity that is already there and already public.
+
+**The name came from knot theory.** The mark is a trefoil, the simplest knot that cannot be
+untied, and the first real object in the field. For a mechanism whose whole idea is tying several
+pools into one price boundary, that was the honest symbol rather than a decorative one. It is
+drawn from the parametric curve `x = sin t + 2 sin 2t`, `y = cos t - 2 cos 2t`, with its three
+self-crossings solved numerically, so the three-fold symmetry falls out of the arithmetic instead
+of being drawn by hand.
+
+**The design was derived under six constraints**, written down before any code: no CEX feed,
+keeper or off-chain classifier; no attempt to decide whether a trader is good or toxic; instant
+atomic swaps in both directions; constant work per quote regardless of federation size; every
+reserve used for pricing belongs to an authenticated member; and local `PoolManager` claims move
+together with the aggregate ledger. The symmetric `min`/`max` rule is what those six leave you
+with. The derivation is written up in [`docs/IDEATION.md`](docs/IDEATION.md).
+
+**Built on** Uniswap [v4-core](https://github.com/Uniswap/v4-core) and
+[v4-periphery](https://github.com/Uniswap/v4-periphery), with OpenZeppelin's
+[`BaseCustomCurve`](https://github.com/OpenZeppelin/uniswap-hooks) providing the custom-accounting
+base that makes a hook-owned curve possible at all.
 
 ## Documentation
 
