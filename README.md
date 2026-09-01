@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <b><a href="https://hijanhv.github.io/KNOT-hook-/">Live app</a></b> ·
+  <b><a href="https://knot-inky.vercel.app">Live app</a></b> ·
   <b><a href="https://knot-38d8bd0e.mintlify.app">Documentation</a></b> ·
   <a href="https://knot-38d8bd0e.mintlify.app/reference/architecture">Architecture</a> ·
   <a href="https://knot-38d8bd0e.mintlify.app/security/testing">Test suites</a> ·
@@ -84,8 +84,8 @@ Live on **Unichain Sepolia** (chain 1301), `PoolManager`
 | `KnotMath` | no address | A library, inlined into both hooks at compile time |
 
 Both hook addresses were mined with `HookMiner` so their low bits carry the required permission
-flags. Federation owner: `0x35d8E75295366e6A12B988084096d89233dF4e9C`. Full record with the
-seeded state and the on-chain verification:
+flags. The federation owner is readable on-chain with `owner()`. Full record with the seeded
+state and the on-chain verification:
 [deployment record](deployments/unichain-sepolia-2026-08-23.md).
 
 ## Who this is for
@@ -288,8 +288,8 @@ Full walkthrough in [`DEPLOY.md`](DEPLOY.md).
 
 ### 4. Run the frontend
 
-The app is deployed at **[hijanhv.github.io/KNOT-hook-](https://hijanhv.github.io/KNOT-hook-/)**
-and reads the live Unichain Sepolia contracts. To run it locally:
+The app is deployed at **[knot-inky.vercel.app](https://knot-inky.vercel.app)** and reads the
+live Unichain Sepolia contracts. To run it locally:
 
 ```bash
 cd frontend && npm install && npm run dev   # http://localhost:3000
