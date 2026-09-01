@@ -128,7 +128,7 @@ the size row (`forge build --sizes`). Full write-up:
 |---|---|
 | Value withheld from a taker exploiting a skewed pool | **6,674 bps** of the isolated quote |
 | Advantage from splitting a trade 8 ways | **none**, sliced output is marginally worse |
-| Attacker P&L sandwiching through one pool | **−1.484** currency0 (a loss) |
+| Attacker P&L sandwiching through one pool | **-1.484** currency0 (a loss) |
 | **Protection loosened by a coalition-controlled member pool** | **4,722 bps (≈47%)** |
 | Federation overhead per swap, vs a hookless v4 pool | 41,262 gas (97,023 vs 55,761) |
 | `KnotHook` runtime size | 12,936 bytes (24,576 limit) |

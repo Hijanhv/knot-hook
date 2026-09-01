@@ -3,10 +3,18 @@
 ## Run
 
 ```bash
-forge test -vv
+forge test                                          # 138 tests across 14 suites
+forge test --match-contract MEVProtectionTest  -vv  # headline adversarial results
+forge test --match-contract MEVAdversarialTest -vv  # federation-specific attacks
+forge coverage --ir-minimum --no-match-coverage "^(test|script)/"
 ```
 
-The Foundry suite has 29 project-defined checks against a real v4 PoolManager harness, plus two inherited harness smoke entries. Three fuzz properties run 1,000 cases each. Four federation invariants each run 8,192 mixed swap and liquidity-lifecycle calls across both members.
+138 tests run against the canonical v4 `PoolManager`, with nothing mocked but the ERC-20s. Line
+coverage on `src/` is 96.21%. Fuzz properties run 1,000 cases each. Four federation invariants
+each run 8,192 mixed swap and liquidity-lifecycle calls across both members.
+
+Per-suite counts and the MEV class each test answers are tabulated in the
+[test-suite docs](https://knot-38d8bd0e.mintlify.app/security/testing).
 
 ## Risk map
 
@@ -39,6 +47,15 @@ The Foundry suite has 29 project-defined checks against a real v4 PoolManager ha
 
 ## What is not proved
 
-The current suite does not prove resistance to a coalition controlling registered liquidity. It also does not benchmark gas across production deployments, non-standard ERC-20s, native ETH or a large lifecycle of member additions.
+A coalition controlling registered liquidity is measured rather than resisted: it loosens the
+enforced quote by 4,722 bps. That number is published rather than omitted, and permissioned
+membership is what bounds it.
 
-Before final deployment, add a live-chain broadcast, contract verification and non-standard token checks. The stateful lifecycle invariants, withdrawal lifecycle, local gas report and configurable maturity policy are implemented.
+Non-standard ERC-20s, fee-on-transfer and rebasing tokens, are untested and unsupported. Order
+flow migration is unmeasured: whether the value retained exceeds the routing volume lost is the
+open economic question and this suite does not answer it.
+
+Gas, native ETH and the stateful lifecycle are no longer gaps. `GasBenchmark.t.sol` measures the
+federation overhead against a hookless v4 pool and asserts it under Uniswap's 50,000 gas
+`beforeSwap` budget, `KnotNativeEth.t.sol` runs the full lifecycle with native ETH as
+`currency0`, and four state machines cover mixed lifecycle sequences.

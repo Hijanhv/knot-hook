@@ -53,7 +53,7 @@ gains nothing by fragmenting. Had this gone the other way the protection would b
 
 Front-run 2e18, victim 1e18, back-run 2e18, all through the shallow pool:
 
-**Attacker currency0 delta: −1.484220902439273232**, a loss.
+**Attacker currency0 delta: -1.484220902439273232**, a loss.
 
 Sandwiching is not Knot's target (it protects LPs, not swappers), but a protection that
 *inverted* under sandwiching would be a real defect. It does not.

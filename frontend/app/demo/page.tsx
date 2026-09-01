@@ -70,7 +70,7 @@ export default function DemoPage() {
             <div className="mt-5">
               <p className="eyebrow mb-1">Attacker P&amp;L</p>
               <p className={`tnum font-display text-3xl tracking-tightest ${c.r.pnl > 0n ? "text-amber" : "text-blue"}`}>
-                {c.r.pnl > 0n ? "+" : "−"}{fmt(c.r.pnl > 0n ? c.r.pnl : -c.r.pnl)}
+                {c.r.pnl > 0n ? "+" : "-"}{fmt(c.r.pnl > 0n ? c.r.pnl : -c.r.pnl)}
               </p>
               <p className="mt-1 text-sm text-muted">{c.r.pnl > 0n ? "Profitable attack" : "The attack loses money"}</p>
             </div>
