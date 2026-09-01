@@ -117,6 +117,15 @@ Stated plainly rather than buried.
 - **Coalitions weaken the bound, by about half.** An attacker controlling a member pool can skew
   the aggregate and loosen the enforced quote by ~4,722 bps. Permissioned membership is therefore
   load-bearing security, not administrative convenience.
+- **Divergence is not proven to be toxicity.** Knot bounds a quote to what the pair's reserves
+  support. It does not follow that the clipped flow was toxic. Tested separately on 67,743 real
+  Base swaps across every multi-pool pair family with enough data, raw cross-pool divergence
+  correlates *negatively* with markout (Spearman rho = -0.130, placebo-checked at 0.0005, stable
+  across three horizons): the most divergent trades were LP-beneficial. A narrower directional
+  form did hold (+0.331 bps for locally-favourable swaps against -0.992 bps otherwise). So the
+  honest claim is reserve consistency, not toxicity filtering. The adversarial results below are
+  constructed sequences and are mechanically real; the economic premise behind them is not
+  settled, and the measurement that cuts against it is cited here rather than left out.
 - **Order-flow migration is unmeasured.** The clamp binds precisely when this pool would otherwise
   have offered the best price. Whether the value captured exceeds the routing volume lost is the
   central open economic question, and it is not answered here.

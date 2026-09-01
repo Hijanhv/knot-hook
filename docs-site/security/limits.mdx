@@ -19,6 +19,35 @@ they want.
 | After | 9.2989 |
 | **Loosened by** | **4,722 bps, roughly half** |
 
+## Divergence is not proven to be toxicity
+
+Knot bounds a quote to what the pair's reserves support. It does not follow that the flow it
+clipped was toxic, and that distinction is worth stating plainly because the pitch is easy to
+overstate.
+
+Tested separately against real Base data, across 67,743 swaps in every multi-pool pair family
+with enough volume:
+
+| | |
+| --- | --- |
+| Raw divergence vs markout | **Spearman rho = -0.130**, the wrong direction |
+| Placebo (shuffled divergence) | 0.0005, so the result is signal, not noise |
+| Robustness | Holds across three markout horizons and across pair families |
+| Directional form | **+0.331 bps** for locally-favourable swaps vs **-0.992 bps** otherwise |
+
+The most divergent trades were LP-beneficial, not harmful. A narrower directional version of the
+claim did survive every check. The honest description of this hook is therefore **reserve
+consistency**, not toxicity filtering.
+
+The adversarial results in [Results](/security/results) are constructed sequences and are
+mechanically real: the bound does bind, and the round trip does flip to a loss. What is not
+settled is whether the flow it bounds is the flow LPs actually lose to.
+
+<Note>
+Sample-size caveat, stated as it was recorded: only four multi-tier pair families exist in the
+resolved Base set and one dominates. This is a directional signal, not a definitive verdict.
+</Note>
+
 Two things bound the damage, neither of which eliminates it: membership is permissioned, so an
 attacker must first be admitted; and skewing the aggregate costs real capital proportional to the
 influence sought.
