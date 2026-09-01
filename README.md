@@ -9,7 +9,7 @@
 [![Uniswap v4](https://img.shields.io/badge/Uniswap-v4%20hook-FF007A.svg?logo=uniswap)](https://docs.uniswap.org/contracts/v4/overview)
 [![Foundry](https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg)](https://getfoundry.sh/)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.26-363636.svg?logo=solidity)](https://soliditylang.org/)
-[![Tests](https://img.shields.io/badge/tests-134%20passing-3FB950.svg)](#verify)
+[![Tests](https://img.shields.io/badge/tests-138%20passing-3FB950.svg)](#verify)
 [![Coverage](https://img.shields.io/badge/line%20coverage-96.21%25-3FB950.svg)](#verify)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
@@ -95,7 +95,7 @@ Dependencies are vendored under `lib/`, so a fresh clone needs no install step.
 ```bash
 git clone https://github.com/Hijanhv/KNOT-hook-.git && cd KNOT-hook-
 
-forge test                                        # full suite, 134 tests
+forge test                                        # full suite, 138 tests
 forge test --match-contract MEVProtectionTest -vv # the adversarial results above
 
 # Coverage needs --ir-minimum. The unoptimised build that coverage forces

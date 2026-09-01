@@ -2,8 +2,12 @@
 pragma solidity ^0.8.26;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {IHooks} from "@uniswap/v4-core/src/interfaces/IHooks.sol";
+import {LPFeeLibrary} from "@uniswap/v4-core/src/libraries/LPFeeLibrary.sol";
 import {Currency} from "@uniswap/v4-core/src/types/Currency.sol";
+import {PoolKey} from "@uniswap/v4-core/src/types/PoolKey.sol";
 import {BaseFixture} from "./BaseFixture.sol";
+import {KnotHook} from "../src/KnotHook.sol";
 
 /// @title Adversarial extraction attempts that the rest of the suite does not cover.
 ///
@@ -232,5 +236,112 @@ contract MEVAdversarialTest is BaseFixture {
         assertGt(r0After, r0Before, "the swap did not move the book at all");
         assertLt(afterLocal, beforeLocal, "book moved but the quote did not follow it");
         assertAggregateConsistent();
+    }
+
+    // ── 8. Exact-output variants ─────────────────────────────────────────
+
+    /// @dev Every sandwich above is exact-input. Exact-output takes the OTHER branch of the
+    ///      bound (max instead of min) and is a separate code path, so a sandwich built out of
+    ///      exact-output legs needs its own assertion rather than an argument by symmetry.
+    function test_sandwich_builtFromExactOutputLegsAlsoLoses() public {
+        fund(attacker);
+        fund(bob);
+
+        uint256 opening0 = _bal(currency0, attacker);
+        uint256 held1 = _bal(currency1, attacker);
+
+        doSwapAs(attacker, shallowKey, true, 20 ether); // exact OUTPUT: buy 20 token1
+        uint256 bought1 = _bal(currency1, attacker) - held1;
+
+        doSwapAs(bob, shallowKey, true, -5 ether);
+        doSwapAs(attacker, shallowKey, false, -int256(bought1));
+
+        assertLt(_bal(currency0, attacker), opening0, "exact-output sandwich turned a profit");
+        assertAggregateConsistent();
+    }
+
+    // ── 9. Griefing ──────────────────────────────────────────────────────
+
+    /// @dev Extraction is not the only hostile goal. A hook that can be pushed into a state
+    ///      where honest swaps revert is a denial-of-service surface, and for an AMM that is a
+    ///      loss of its own. Drive the shallow member hard in one direction, then check an
+    ///      ordinary trade in both directions still settles.
+    function test_grief_hostileFlowCannotBlockHonestSwaps() public {
+        fund(attacker);
+        fund(bob);
+
+        for (uint256 i = 0; i < 8; i++) {
+            doSwapAs(attacker, shallowKey, true, -12 ether);
+        }
+
+        uint256 bobBefore = _bal(currency1, bob);
+        doSwapAs(bob, shallowKey, true, -1 ether);
+        assertGt(_bal(currency1, bob), bobBefore, "an honest trade could not settle after hostile flow");
+
+        uint256 bobBack = _bal(currency0, bob);
+        doSwapAs(bob, shallowKey, false, -1 ether);
+        assertGt(_bal(currency0, bob), bobBack, "the reverse direction was blocked");
+
+        assertAggregateConsistent();
+    }
+
+    // ── 10. Three live members ───────────────────────────────────────────
+
+    /// @dev The multi-member bound is fuzzed as pure arithmetic elsewhere. This runs it live:
+    ///      a third registered, initialised, funded member, then a cycle through all three.
+    ///      More members means a larger aggregate, which is a WEAKER bound on any one pool, so
+    ///      this is the direction where the mechanism is most likely to give.
+    function test_cycle_threeLiveMembersStillBleedTheAttacker() public {
+        KnotHook third = _deployHook(3, "Knot Third", "KNOT-T");
+        federation.register(address(third));
+        (PoolKey memory thirdKey,) =
+            initPool(currency0, currency1, IHooks(address(third)), LPFeeLibrary.DYNAMIC_FEE_FLAG, SQRT_PRICE_1_1);
+        _approveHook(address(third));
+        third.addLiquidity(addParams(300 ether, 300 ether));
+        vm.roll(block.number + 1);
+        third.activatePendingLiquidity();
+
+        assertEq(federation.memberCount(), 3, "third member did not register");
+
+        fund(attacker);
+        uint256 opening0 = _bal(currency0, attacker);
+
+        for (uint256 lap = 0; lap < 4; lap++) {
+            doSwapAs(attacker, shallowKey, true, -2 ether);
+            doSwapAs(attacker, thirdKey, false, -2 ether);
+            doSwapAs(attacker, deepKey, true, -2 ether);
+            doSwapAs(attacker, shallowKey, false, -2 ether);
+        }
+
+        assertLt(_bal(currency0, attacker), opening0, "a three-member cycle was profitable");
+
+        // assertAggregateConsistent() only sums the fixture's two members, so with a third
+        // registered it would report drift that is not there. Check all three explicitly.
+        (uint256 d0, uint256 d1) = federation.reservesOf(address(deep));
+        (uint256 s0, uint256 s1) = federation.reservesOf(address(shallow));
+        (uint256 t0, uint256 t1) = federation.reservesOf(address(third));
+        assertEq(federation.aggregateReserve0(), d0 + s0 + t0, "aggregate0 drifted across three members");
+        assertEq(federation.aggregateReserve1(), d1 + s1 + t1, "aggregate1 drifted across three members");
+    }
+
+    // ── 11. First depositor ──────────────────────────────────────────────
+
+    /// @dev The classic share-inflation attack: be the first depositor into an empty pool, mint
+    ///      a single share, donate to inflate its value, and let the next depositor round to
+    ///      zero. Knot closes it upstream by restricting the first deposit into an empty member
+    ///      to the federation owner. Assert that gate rather than the arithmetic behind it.
+    function test_firstDepositor_cannotSeedAnEmptyMember() public {
+        KnotHook fresh = _deployHook(3, "Knot Fresh", "KNOT-F");
+        federation.register(address(fresh));
+        initPool(currency0, currency1, IHooks(address(fresh)), LPFeeLibrary.DYNAMIC_FEE_FLAG, SQRT_PRICE_1_1);
+
+        fund(attacker);
+        approveHookAs(attacker, address(fresh));
+
+        assertEq(fresh.totalSupply(), 0, "fresh member was not empty");
+
+        vm.prank(attacker);
+        vm.expectRevert(KnotHook.OnlyInitialLiquidityProvider.selector);
+        fresh.addLiquidity(addParams(1, 1));
     }
 }

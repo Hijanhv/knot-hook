@@ -1,13 +1,13 @@
 ---
 title: "Test suites"
-description: "134 tests across 14 suites, and what each one is there to prove."
+description: "138 tests across 14 suites, and what each one is there to prove."
 ---
 
 Every suite below runs on `forge test` against the canonical v4 `PoolManager`. Nothing is mocked
 except the ERC-20s. Line coverage on `src/` is **96.21%**.
 
 ```bash
-forge test                                        # all 134
+forge test                                        # all 138
 forge test --match-contract MEVProtectionTest -vv # the headline adversarial results
 forge test --match-contract MEVAdversarialTest -vv
 forge coverage --ir-minimum --no-match-coverage "^(test|script)/"
@@ -18,7 +18,7 @@ forge coverage --ir-minimum --no-match-coverage "^(test|script)/"
 | Suite | Tests | What it exists to prove |
 | --- | --- | --- |
 | `MEVProtection` | 9 | The textbook evasions: slicing, sandwiching, same-block JIT, and the coalition result |
-| `MEVAdversarial` | 10 | Federation-specific attacks: donation, cross-member sandwich, back-running, multi-block JIT, cycles, ordering independence |
+| `MEVAdversarial` | 14 | Federation-specific attacks: donation, cross-member and exact-output sandwiches, back-running, multi-block JIT, two- and three-member cycles, ordering independence, griefing, first-depositor |
 | `KnotFederationAttack` | 4 | Buddy-pool manipulation of the shared reference |
 | `EconomicViability` | 6 | The cross-pool round trip, swept across sizes |
 | `RouterRealism` | 5 | Does the bound cost the federation its flow, and the skew sensitivity curve |
@@ -50,6 +50,10 @@ claim about the mechanism in general.
 | **Federation cycling** | Every lap of a two-member loop is asserted to lose, not just the average | `test_cycle_repeatedTwoPoolLoopBleedsTheAttackerEveryLap` |
 | **Ordering and priority games** | No block-level signal is read at all, so there is nothing to bid for | `test_ordering_quoteIsIndependentOfEveryBlockLevelSignal` |
 | **Flash-loan scale** | The quote either stays inside reserves or the trade is refused | `testFuzz_flashScaleTradeNeverOutrunsTheReserves` |
+| **Sandwich, exact-output legs** | The other branch of the bound (max, not min) is a separate path and is asserted separately | `test_sandwich_builtFromExactOutputLegsAlsoLoses` |
+| **Griefing / denial of service** | Hostile flow cannot push a member into a state where honest swaps revert, in either direction | `test_grief_hostileFlowCannotBlockHonestSwaps` |
+| **Three or more live members** | A larger aggregate is a weaker bound, so the cycle is run live across three members | `test_cycle_threeLiveMembersStillBleedTheAttacker` |
+| **First-depositor share inflation** | The first deposit into an empty member is restricted to the federation owner | `test_firstDepositor_cannotSeedAnEmptyMember` |
 | **Coalition of members** | **Partially open.** Loosens the bound by 4,722 bps. See [Limits](/security/limits) | `test_coalition_attackerOwnedMemberPoolMovesTheAggregate` |
 
 <Warning>
