@@ -11,6 +11,19 @@ Knot connects participating pools through one shared reserve ledger. Every swap 
 and the trader receives the **less favourable** of the two. The clipped difference stays with the
 local pool's LPs.
 
+```mermaid
+flowchart LR
+    T["Trader"] -->|"swap"| PM["PoolManager"]
+    PM -->|"beforeSwap"| H["KnotHook<br/>this pool"]
+    H -->|"executeSwap"| F["KnotFederation"]
+    F --> L["local quote"]
+    F --> A["aggregate quote"]
+    L --> W{"worse one wins"}
+    A --> W
+    W -->|"enforced amount"| H
+    W -->|"the difference"| LP["stays with this pool's LPs"]
+```
+
 <CodeGroup>
 ```text Exact input
 output = min(local output, aggregate output)

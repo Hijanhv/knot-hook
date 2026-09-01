@@ -9,6 +9,22 @@ A pool's own reserves say what it can afford in isolation. The federation's aggr
 what the pair can afford in total. When a pool is skewed, those disagree, and the gap is exactly
 the value an arbitrageur would take.
 
+```mermaid
+flowchart TB
+    subgraph SKEW["Skewed pool, 100 / 400"]
+      LQ["local quote<br/>18.993189"]
+    end
+    subgraph PAIR["Pair aggregate, 1100 / 1400"]
+      AQ["aggregate quote<br/>6.315922"]
+    end
+    LQ --> B{"min for exact input"}
+    AQ --> B
+    B --> E["enforced 6.315922"]
+    LQ -.->|"gap 12.677266<br/>6,674 bps"| E
+```
+
+Those are the deployed contracts' real numbers for a five-token trade, not an illustration.
+
 <Steps>
   <Step title="Local pool quotes">
     Constant product against this pool's own reserves.

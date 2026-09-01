@@ -9,7 +9,7 @@
 [![Uniswap v4](https://img.shields.io/badge/Uniswap-v4%20hook-FF007A.svg?logo=uniswap)](https://docs.uniswap.org/contracts/v4/overview)
 [![Foundry](https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg)](https://getfoundry.sh/)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.26-363636.svg?logo=solidity)](https://soliditylang.org/)
-[![Tests](https://img.shields.io/badge/tests-122%20passing-3FB950.svg)](#verify)
+[![Tests](https://img.shields.io/badge/tests-124%20passing-3FB950.svg)](#verify)
 [![Coverage](https://img.shields.io/badge/line%20coverage-96.21%25-3FB950.svg)](#verify)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
@@ -47,8 +47,8 @@ stops one of them becoming the easy exit.
 
 ## Key numbers
 
-Measured in `test/MEVProtection.t.sol`, except the gas and size rows, which come from
-`forge test --gas-report` and `forge build --sizes`. Full write-up:
+Measured in `test/MEVProtection.t.sol`, except the gas row (`test/GasBenchmark.t.sol`) and
+the size row (`forge build --sizes`). Full write-up:
 [`research/mev-findings.md`](research/mev-findings.md).
 
 | | Value |
@@ -57,7 +57,7 @@ Measured in `test/MEVProtection.t.sol`, except the gas and size rows, which come
 | Advantage from splitting a trade 8 ways | **none**, sliced output is marginally worse |
 | Attacker P&L sandwiching through one pool | **−1.484** currency0 (a loss) |
 | **Protection loosened by a coalition-controlled member pool** | **4,722 bps (≈47%)** |
-| Full swap through v4's `PoolSwapTest` router | 169,596 gas median |
+| Federation overhead per swap, vs a hookless v4 pool | 41,262 gas (97,023 vs 55,761) |
 | `KnotHook` runtime size | 12,936 bytes (24,576 limit) |
 
 That fourth row is the weakest result in the project and it is in the headline table on
@@ -95,7 +95,7 @@ Dependencies are vendored under `lib/`, so a fresh clone needs no install step.
 ```bash
 git clone https://github.com/Hijanhv/KNOT-hook-.git && cd KNOT-hook-
 
-forge test                                        # full suite, 122 tests
+forge test                                        # full suite, 124 tests
 forge test --match-contract MEVProtectionTest -vv # the adversarial results above
 
 # Coverage needs --ir-minimum. The unoptimised build that coverage forces

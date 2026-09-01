@@ -1,0 +1,123 @@
+---
+title: "Architecture"
+description: "What each piece is, what it owns, and how a swap moves through it."
+---
+
+## Product architecture
+
+Three contracts and a read-only frontend. Every participating pool is its own hook instance with
+its own LPs and its own reserves. The only thing they share is the ledger they all quote against.
+
+```mermaid
+flowchart TB
+    T["Trader"]
+    LP["Liquidity provider"]
+    UI["Next.js app<br/>read-only, calls preview()"]
+
+    subgraph V4["Uniswap v4 core"]
+      PM["PoolManager<br/>holds real tokens<br/>mints ERC-6909 claims"]
+    end
+
+    subgraph KNOT["Knot"]
+      HA["KnotHook A<br/>deep pool<br/>ERC-20 LP shares"]
+      HB["KnotHook B<br/>shallow pool<br/>ERC-20 LP shares"]
+      FED["KnotFederation<br/>per-member books<br/>+ O(1) aggregate"]
+      MATH["KnotMath<br/>library, inlined<br/>at compile time"]
+    end
+
+    T -->|"swap"| PM
+    PM -->|"beforeSwap"| HA
+    PM -->|"beforeSwap"| HB
+    HA -->|"executeSwap"| FED
+    HB -->|"executeSwap"| FED
+    FED -.->|"inlined"| MATH
+    HA <-->|"take / settle claims"| PM
+    HB <-->|"take / settle claims"| PM
+    LP -->|"addLiquidity / removeLiquidity"| HA
+    UI -->|"preview() · reservesOf()"| FED
+```
+
+<Note>
+`KnotMath` is a library, inlined into both hooks at compile time. It has no deployed address of
+its own.
+</Note>
+
+## Who owns what
+
+| Layer | Owns | Does not own |
+| --- | --- | --- |
+| `PoolManager` | The real ERC-20 balances | Any Knot accounting |
+| `KnotHook` | Its pool's LP shares, its pending deposits, its ERC-6909 claims | The aggregate |
+| `KnotFederation` | Every member's reserve book and the aggregate pair | Any tokens at all |
+| `KnotMath` | Nothing. Pure functions | Everything |
+
+The federation never custodies a token. It is an accounting authority, so a bug there cannot move
+funds directly, only mis-quote them.
+
+## The rule, as a decision
+
+```mermaid
+flowchart LR
+    S["Swap arrives"]
+    S --> Q1["Quote against<br/>local reserves"]
+    S --> Q2["Quote against<br/>aggregate reserves"]
+    Q1 --> D{"Exact input?"}
+    Q2 --> D
+    D -->|"yes"| MIN["output = min(local, aggregate)"]
+    D -->|"no"| MAX["input = max(local, aggregate)"]
+    MIN --> W["Difference is never paid out"]
+    MAX --> W
+    W --> R["It stays in the local reserves<br/>and accrues to that pool's LP shares"]
+```
+
+Both branches round against the taker, so rounding can never manufacture the surplus back.
+
+## Liquidity lifecycle
+
+Each provider's request is independent. There is no global lock, so a pending deposit cannot stall
+swaps, withdrawals, or another provider.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Pending: addLiquidity()
+    Pending --> Pending: maturity window
+    Pending --> Active: activatePendingLiquidity()
+    Pending --> Refundable: cancelPendingLiquidity()
+    Active --> Refundable: excess above the current ratio
+    Refundable --> [*]: claimLiquidityRefund()
+    Active --> [*]: removeLiquidity()
+```
+
+Only the provider can activate, cancel or claim their own request. Shares mint at the reserve
+ratio current **at activation**, not at deposit, so capital that arrives late cannot capture gains
+that accrued before it entered. That is what closes just-in-time liquidity.
+
+## Custody
+
+Custody reduces to one equation, asserted as a stateful invariant over 8,192 lifecycle calls:
+
+```text
+PoolManager claims held by a hook
+    = that pool's active reserves
+    + its inactive provider assets
+    + its unclaimed provider refunds
+```
+
+## Trust boundaries
+
+```mermaid
+flowchart TB
+    subgraph TRUSTED["Permissioned"]
+      OWN["Federation owner<br/>registers reviewed hooks<br/>seeds the first deposit"]
+    end
+    subgraph OPEN["Permissionless"]
+      ANY["Anyone<br/>swaps, queues liquidity,<br/>activates, cancels, claims"]
+    end
+    OWN -->|"register / unregister"| FED["KnotFederation"]
+    ANY -->|"swap"| FED
+    FED -->|"only registered members<br/>may mutate reserves"| BOOK["Reserve books"]
+```
+
+Membership is the load-bearing control. A coalition that controls a member pool can skew the
+aggregate and loosen the bound by roughly half, which is measured and stated in
+[Limits](/security/limits). Permissioned membership is therefore security, not administration.
