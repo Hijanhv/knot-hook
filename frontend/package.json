@@ -33,6 +33,8 @@
   "overrides": {
     "@next/eslint-plugin-next": {
       "glob": "10.5.0"
-    }
+    },
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0"
   }
 }
