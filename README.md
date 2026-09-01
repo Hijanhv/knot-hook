@@ -1,10 +1,18 @@
-# Knot
+<p align="center">
+  <img src="assets/banner.svg" alt="Knot. One token pair. Several pools. One price boundary." width="100%">
+</p>
 
-> **One token pair. Several pools. One reserve-aware price boundary.**
+<p align="center">
+  <b><a href="https://knot-38d8bd0e.mintlify.app">Documentation</a></b> ·
+  <a href="https://knot-38d8bd0e.mintlify.app/reference/architecture">Architecture</a> ·
+  <a href="https://knot-38d8bd0e.mintlify.app/security/testing">Test suites</a> ·
+  <a href="https://knot-38d8bd0e.mintlify.app/security/limits">Limits</a> ·
+  <a href="deployments/unichain-sepolia-2026-08-23.md">Deployment record</a>
+</p>
 
-> A stale or shallow pool can hand an arbitrageur a better quote than the pair's combined
-> liquidity actually supports. Knot makes participating pools check both reserve states before
-> a trade, and leaves the difference with the LPs who would otherwise have funded it.
+> A stale or shallow pool can hand a taker a better quote than the pair's combined liquidity
+> actually supports. Knot makes participating pools check both reserve states before a trade,
+> and leaves the difference with the LPs who would otherwise have funded it.
 
 [![Uniswap v4](https://img.shields.io/badge/Uniswap-v4%20hook-FF007A.svg?logo=uniswap)](https://docs.uniswap.org/contracts/v4/overview)
 [![Foundry](https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg)](https://getfoundry.sh/)
@@ -26,6 +34,53 @@ shallow [`0x6B8D…AA88`](https://sepolia.uniscan.xyz/address/0x6B8D77a921Adc524
 > scenarios against the canonical v4 `PoolManager`. They measure mechanics, not realised LP P&L.
 
 ---
+
+## The problem
+
+A token pair rarely lives in one pool. The same two assets sit in several, at different fee
+tiers or behind different hooks, and each one prices in isolation.
+
+That makes the shallowest pool the weak link. It is the cheapest to move, the slowest to
+correct, and while it is out of line it will quote a rate the pair's combined liquidity does not
+support. A taker who routes into it is paid out of reserves that were never deep enough to
+justify the price. The LPs of that one pool fund the difference.
+
+## The solution
+
+Knot connects participating pools through one shared reserve ledger, and quotes every swap
+twice: once against the pool's own reserves, once against the federation's aggregate. The taker
+receives the **less favourable** of the two.
+
+```text
+exact input:   output = min(local output, aggregate output)
+exact output:  input  = max(local input,  aggregate input)
+```
+
+The clipped difference is never transferred anywhere. It simply is not paid out, so it stays in
+the local pool's reserves and accrues to that pool's LP shares. There is no oracle, no keeper, no
+auction and no off-chain component: the same state and the same arguments always produce the same
+quote.
+
+## The impact
+
+| | |
+|---|---|
+| **For LPs in a skewed pool** | Up to **6,674 bps** of a taker's isolated quote stays in the pool instead of leaving with them |
+| **For LPs in a balanced pool** | Nothing changes. The bound is inert when a pool is in line with its pair |
+| **For takers** | A quote that the pair can actually support, at a cost of **41,262 gas** |
+| **For the pair** | Flow that leaves the skewed member lands on another member. Measured **0 of 40** routes left the federation |
+
+## Who this is for
+
+- **Liquidity providers** on volatile pairs fragmented across several pools, who are currently
+  paying for the weakest pool's mispricing.
+- **Pool deployers and DAOs** launching a pair across more than one fee tier who want the tiers
+  to price as one book rather than compete against each other.
+- **Protocol teams** who want MEV resistance without adopting an oracle, an auction, a
+  sequencer-level dependency or a trusted off-chain actor.
+
+Knot is **not** for a single isolated pool. With one member the aggregate is the local book, the
+bound never binds, and it behaves exactly like a plain constant-product pool.
 
 ## The 30-second version
 
@@ -63,6 +118,63 @@ the size row (`forge build --sizes`). Full write-up:
 That fourth row is the weakest result in the project and it is in the headline table on
 purpose. See [Known limits](#known-limits).
 
+## Architecture
+
+Every participating pool is its own hook instance with its own LPs and its own reserves. The only
+thing they share is the ledger they all quote against. `KnotFederation` never custodies a token:
+it is an accounting authority, so a bug there cannot move funds, only mis-quote them.
+
+```mermaid
+flowchart TB
+    T["Trader"]
+    LP["Liquidity provider"]
+
+    subgraph V4["Uniswap v4 core"]
+      PM["PoolManager<br/>holds real tokens<br/>mints ERC-6909 claims"]
+    end
+
+    subgraph KNOT["Knot"]
+      HA["KnotHook A<br/>deep pool<br/>ERC-20 LP shares"]
+      HB["KnotHook B<br/>shallow pool<br/>ERC-20 LP shares"]
+      FED["KnotFederation<br/>per-member books<br/>+ O(1) aggregate"]
+      MATH["KnotMath<br/>library, inlined"]
+    end
+
+    T -->|"swap"| PM
+    PM -->|"beforeSwap"| HA
+    PM -->|"beforeSwap"| HB
+    HA -->|"executeSwap"| FED
+    HB -->|"executeSwap"| FED
+    FED -.->|"inlined"| MATH
+    HA <-->|"take / settle claims"| PM
+    HB <-->|"take / settle claims"| PM
+    LP -->|"addLiquidity / removeLiquidity"| HA
+```
+
+One swap, start to finish:
+
+```mermaid
+sequenceDiagram
+    participant T as Trader
+    participant PM as PoolManager
+    participant H as KnotHook
+    participant F as KnotFederation
+
+    T->>PM: swap()
+    PM->>H: beforeSwap
+    H->>F: executeSwap(zeroForOne, exactInput, amount)
+    F->>F: quote local reserves
+    F->>F: quote aggregate reserves
+    F->>F: take the worse one
+    F->>F: update member + aggregate books atomically
+    F-->>H: enforced amount
+    H-->>PM: BeforeSwapDelta
+    PM-->>T: settle
+```
+
+Full diagrams, including the liquidity lifecycle state machine and trust boundaries, are in the
+[architecture docs](https://knot-38d8bd0e.mintlify.app/reference/architecture).
+
 ## How it works
 
 - **`KnotHook.sol`**: a hook-owned constant-product pool with proportional ERC-20 LP shares.
@@ -88,20 +200,98 @@ provider's pending deposit can never stall swaps, withdrawals, or anyone else's 
 
 Custody reduces to one equation: `PoolManager claims = active reserves + inactive provider assets`.
 
-## Verify
+## Using it
 
 Dependencies are vendored under `lib/`, so a fresh clone needs no install step.
+
+### 1. Run the suite
 
 ```bash
 git clone https://github.com/Hijanhv/KNOT-hook-.git && cd KNOT-hook-
 
-forge test                                        # full suite, 138 tests
-forge test --match-contract MEVProtectionTest -vv # the adversarial results above
+forge test                                          # full suite, 138 tests
+forge test --match-contract MEVProtectionTest  -vv  # the headline adversarial results
+forge test --match-contract MEVAdversarialTest -vv  # federation-specific attacks
+forge test --match-contract GasBenchmarkTest   -vv  # cost against a hookless v4 pool
 
 # Coverage needs --ir-minimum. The unoptimised build that coverage forces
 # otherwise hits "stack too deep" in script/Deploy.s.sol.
 forge coverage --ir-minimum --no-match-coverage "^(test|script)/"
 ```
+
+### 2. Read a live quote
+
+`preview` is a view, so this is the same call a swap executes against. No wallet needed.
+
+```bash
+cast call 0x91A0489A1BEA8030AC82351D52BDC3F97d6cA129 \
+  "preview(address,bool,bool,uint256)(uint256,uint256,uint256)" \
+  0x6B8D77a921Adc5244bC0398fa6133841F3DFaA88 true true 5000000000000000000 \
+  --rpc-url https://sepolia.unichain.org
+
+# localQuote      18993189503262370814   what the shallow pool would pay alone
+# aggregateQuote   6315922840581546355   what the pair supports
+# knotQuote        6315922840581546355   what the taker actually gets
+```
+
+### 3. Deploy your own federation
+
+Two phases, because new liquidity has to mature before it enters the shared book.
+
+```bash
+cp .env.example .env                  # set POOL_MANAGER and RPC_URL
+cast wallet import knot --interactive # the key never touches the filesystem
+
+forge script script/DeployDemo.s.sol:DeployDemo \
+  --rpc-url $RPC_URL --account knot --broadcast
+
+# wait LIQUIDITY_MATURITY_BLOCKS, then set DEEP_POOL / SHALLOW_POOL from the output
+forge script script/DeployDemo.s.sol:Activate \
+  --rpc-url $RPC_URL --account knot --broadcast
+```
+
+Full walkthrough in [`DEPLOY.md`](DEPLOY.md).
+
+### 4. Run the frontend
+
+```bash
+cd frontend && npm install && npm run dev   # http://localhost:3000
+```
+
+Addresses default to the live Unichain Sepolia deployment, so it reads the real chain with no
+`.env.local`. Override with `NEXT_PUBLIC_FEDERATION`, `NEXT_PUBLIC_DEEP_POOL`,
+`NEXT_PUBLIC_SHALLOW_POOL` to point it at your own.
+
+### 5. Integrate
+
+Any integrator reads `preview(hook, zeroForOne, exactInput, amount)` for a quote and swaps
+through the normal v4 router. Nothing Knot-specific is required on the caller's side. See
+[integrate](https://knot-38d8bd0e.mintlify.app/reference/integrate).
+
+## Test suites
+
+138 tests across 14 suites, 96.21% line coverage on `src/`. Nothing is mocked except the ERC-20s;
+everything runs against the canonical v4 `PoolManager`.
+
+| Suite | Tests | What it proves |
+|---|---|---|
+| [`MEVProtection`](test/MEVProtection.t.sol) | 9 | Textbook evasions: slicing, sandwiching, same-block JIT, and the coalition result |
+| [`MEVAdversarial`](test/MEVAdversarial.t.sol) | 14 | Federation-specific: donation, cross-member and exact-output sandwiches, back-running, multi-block JIT, two- and three-member cycles, ordering independence, griefing, first-depositor |
+| [`KnotFederationAttack`](test/KnotFederationAttack.t.sol) | 4 | Buddy-pool manipulation of the shared reference |
+| [`EconomicViability`](test/EconomicViability.t.sol) | 6 | The cross-pool round trip, swept across sizes |
+| [`RouterRealism`](test/RouterRealism.t.sol) | 5 | Whether the bound costs the federation its flow, plus the skew curve |
+| [`ClampDirection`](test/ClampDirection.t.sol) | 2 | The bound bites the realigning trade, which is the honest cost |
+| [`FailurePaths`](test/FailurePaths.t.sol) | 30 | Every guard, proven to actually guard |
+| [`SuccessPaths`](test/SuccessPaths.t.sol) | 12 | Every expected effect, asserted rather than assumed |
+| [`KnotHook`](test/KnotHook.t.sol) | 27 | The hook's full surface, including the live swap matrix |
+| [`FederationStateMachine`](test/FederationStateMachine.t.sol) | 5 | Four stateful invariants over 8,192 lifecycle calls |
+| [`Fuzz`](test/Fuzz.t.sol) | 12 | Bound, rounding and monotonicity under random input |
+| [`KnotMath`](test/KnotMath.t.sol) | 5 | Quoting against an independent integer oracle |
+| [`KnotNativeEth`](test/KnotNativeEth.t.sol) | 5 | The same lifecycle with native ETH as `currency0` |
+| [`GasBenchmark`](test/GasBenchmark.t.sol) | 2 | Cost against a hookless v4 pool, asserted under Uniswap's 50k budget |
+
+Which MEV class each test answers, attack by attack, is tabulated in the
+[test-suite docs](https://knot-38d8bd0e.mintlify.app/security/testing).
 
 ## Why this needs to be a hook
 
@@ -152,7 +342,24 @@ guidance.
 
 UHI10's sponsor is the Uniswap Foundation. This project integrates no third-party partner protocols.
 
-## Docs
+## Documentation
+
+The full docs are live at **[knot-38d8bd0e.mintlify.app](https://knot-38d8bd0e.mintlify.app)**,
+with architecture diagrams, the mechanism worked through with numbers, the threat model and the
+measured results.
+
+| Page | Contents |
+|---|---|
+| [Introduction](https://knot-38d8bd0e.mintlify.app) | What it is and what it is for |
+| [The rule](https://knot-38d8bd0e.mintlify.app/mechanism/the-rule) | Two quotes, and why the taker gets the worse one |
+| [Execution flow](https://knot-38d8bd0e.mintlify.app/mechanism/execution-flow) | One swap, start to finish |
+| [Architecture](https://knot-38d8bd0e.mintlify.app/reference/architecture) | Product architecture, lifecycle and trust boundaries |
+| [Threat model](https://knot-38d8bd0e.mintlify.app/security/threat-model) | What is closed, what is open |
+| [Results](https://knot-38d8bd0e.mintlify.app/security/results) | Every measured number |
+| [Test suites](https://knot-38d8bd0e.mintlify.app/security/testing) | All 14 suites and the MEV class each answers |
+| [Limits](https://knot-38d8bd0e.mintlify.app/security/limits) | The coalition result and what divergence does not prove |
+
+In-repo long-form notes:
 
 | File | Contents |
 |---|---|
@@ -162,3 +369,15 @@ UHI10's sponsor is the Uniswap Foundation. This project integrates no third-part
 | [`docs/DEMO.md`](docs/DEMO.md) | Attacker-sequence walkthrough |
 | [`research/mev-findings.md`](research/mev-findings.md) | Adversarial results in full, including the coalition number |
 | [`SECURITY.md`](SECURITY.md) | Enforced properties and known limits |
+
+## License
+
+[MIT](LICENSE). Copyright (c) 2026 Knot contributors.
+
+Third-party code is vendored under `lib/` and keeps its own licensing: Uniswap
+[v4-core](https://github.com/Uniswap/v4-core) and
+[v4-periphery](https://github.com/Uniswap/v4-periphery), OpenZeppelin
+[uniswap-hooks](https://github.com/OpenZeppelin/uniswap-hooks) and
+[contracts](https://github.com/OpenZeppelin/openzeppelin-contracts).
+
+> **Status:** unaudited hackathon software. Not for production use without an audit.
