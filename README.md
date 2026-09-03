@@ -3,14 +3,14 @@
 </p>
 
 <p align="center">
-  <b><a href="https://youtu.be/c9qJY4lcO0Q">Demo video</a></b> ·
+  <a href="https://youtu.be/c9qJY4lcO0Q">Demo video</a> ·
   <b><a href="https://knot-hook-web.vercel.app/">App</a></b> ·
   <b><a href="https://knot-38d8bd0e.mintlify.app">Documentation</a></b> ·
   <a href="https://knot-38d8bd0e.mintlify.app/mechanism/before-knot">Before KNOT</a> ·
   <a href="https://knot-38d8bd0e.mintlify.app/reference/architecture">Architecture</a> ·
   <a href="https://knot-38d8bd0e.mintlify.app/security/testing">Verification</a> ·
-  <b><a href="assets/pitch/knot-pitch-deck.pdf">Pitch deck (PDF)</a></b> ·
-  <b><a href="#see-it-on-chain">On-chain proof</a></b> ·
+  <a href="assets/pitch/knot-pitch-deck.pdf">Pitch deck</a> ·
+  <a href="#see-it-on-chain">On-chain proof</a> ·
   <a href="SECURITY.md">Security boundaries</a>
 </p>
 
@@ -25,36 +25,12 @@
 [![Uniswap v4](https://img.shields.io/badge/Uniswap-v4%20hook-FF007A.svg?logo=uniswap)](https://docs.uniswap.org/contracts/v4/overview)
 [![Foundry](https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg)](https://getfoundry.sh/)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.26-363636.svg?logo=solidity)](https://soliditylang.org/)
-[![Tests](https://img.shields.io/badge/Foundry-182%20passing-3FB950.svg)](#verification)
+[![Tests](https://img.shields.io/badge/Foundry-203%20passing-3FB950.svg)](#verification)
 [![Coverage](https://img.shields.io/badge/line%20coverage-99.19%25-3FB950.svg)](#verification)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 > KNOT is unaudited hackathon software. Its experiments measure a bounded quote rule in constructed
 > scenarios; they do not prove universal MEV protection or realised LP profit.
-
-## Demo video
-
-<p align="center">
-  <a href="https://youtu.be/c9qJY4lcO0Q">
-    <img src="https://img.youtube.com/vi/c9qJY4lcO0Q/maxresdefault.jpg" alt="KNOT demo video: one pair, several pools, one price boundary" width="70%">
-  </a>
-</p>
-
-<p align="center"><b><a href="https://youtu.be/c9qJY4lcO0Q">Watch the demo on YouTube</a></b></p>
-
-## Pitch deck
-
-<p align="center">
-  <a href="assets/pitch/knot-pitch-deck.pdf">
-    <img src="assets/pitch/cover.png" alt="KNOT pitch deck: one pair, several pools, one price boundary" width="70%">
-  </a>
-</p>
-
-<p align="center"><b><a href="assets/pitch/knot-pitch-deck.pdf">Download the pitch deck (PDF, 15 slides)</a></b></p>
-
-The deck covers the problem, the solution and its contract code, the original idea, the execution,
-the impact, the functionality, and the pitch. Every figure in it is reproduced by a named test in
-this repository.
 
 ## Partner integrations
 
@@ -316,7 +292,7 @@ checked again.
 
 ## Verification
 
-`forge test` runs **182 passing cases across 19 suites**. The KNOT source reports **99.19% line,
+`forge test` runs **203 passing cases across 20 suites**. The KNOT source reports **99.19% line,
 96.44% statement, 82.61% branch and 100% function coverage**.
 
 | Area | Evidence |
