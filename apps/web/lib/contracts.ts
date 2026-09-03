@@ -27,6 +27,19 @@ export const CONTRACTS = DEPLOYED
         role: "Skewed demonstration member. Its generous local quote is clipped to the federation's virtual aggregate curve.",
         reads: ["reserves()", "balanceOf(address)", "totalSupply()"],
       },
+      // The faucet is convenience infrastructure outside the hook trust boundary. It only
+      // appears once its address is recorded in the release manifest.
+      ...(ACTIVE_DEPLOYMENT?.faucet
+        ? [
+            {
+              name: "KnotFaucet",
+              address: ACTIVE_DEPLOYMENT.faucet.address,
+              poolId: null,
+              role: "Demo faucet. Pays test currencies behind a cooldown; it never mints, so exposure is capped by funding.",
+              reads: ["drip()", "cooldownRemaining(address)", "claimsRemaining()"],
+            },
+          ]
+        : []),
     ]
   : [];
 

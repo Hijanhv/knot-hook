@@ -26,6 +26,8 @@ export type ActiveDeploymentManifest = BaseManifest & {
   currencies: { currency0: Address; currency1: Address };
   pools: { deep: `0x${string}`; shallow: `0x${string}` };
   owner: Address;
+  /** Demo faucet. Optional: absent until the faucet is deployed and recorded. */
+  faucet?: { address: Address; dripAmount: string; cooldownSeconds: number };
   verification: {
     verifiedAtBlock: number;
     previewAmount: string;
@@ -100,9 +102,11 @@ function requirePositiveInteger(parent: Record<string, unknown>, key: string) {
   return value as number;
 }
 
-function requireAddress(parent: Record<string, unknown>, key: string) {
+function requireAddress(parent: Record<string, unknown>, key: string, scope?: string) {
   const value = requireString(parent, key);
-  if (!addressPattern.test(value)) throw new Error(`Deployment manifest: ${key} is not an address`);
+  if (!addressPattern.test(value)) {
+    throw new Error(`Deployment manifest: ${scope ? `${scope}.` : ""}${key} is not an address`);
+  }
   return value as Address;
 }
 
@@ -172,7 +176,7 @@ export function assertDeploymentManifest(value: unknown): asserts value is Deplo
   requireReservePair(seed, "shallow");
 
   if (value.status === "pending") {
-    if ("contracts" in value || "verification" in value || "deployedAtBlock" in value) {
+    if ("contracts" in value || "verification" in value || "deployedAtBlock" in value || "faucet" in value) {
       throw new Error("Deployment manifest: pending state cannot carry stale release data");
     }
     return;
@@ -201,6 +205,16 @@ export function assertDeploymentManifest(value: unknown): asserts value is Deplo
   const shallowPool = requireBytes32(pools, "shallow");
   if (deepPool === shallowPool) throw new Error("Deployment manifest: pool IDs must be distinct");
   requireAddress(value, "owner");
+
+  if ("faucet" in value) {
+    const faucet = requireRecord(value, "faucet");
+    requireAddress(faucet, "address", "faucet");
+    const dripAmount = requireString(faucet, "dripAmount");
+    if (!uintPattern.test(dripAmount) || BigInt(dripAmount) === 0n) {
+      throw new Error("Deployment manifest: faucet.dripAmount must be a positive decimal amount");
+    }
+    requirePositiveInteger(faucet, "cooldownSeconds");
+  }
 
   const verification = requireRecord(value, "verification");
   requirePositiveInteger(verification, "verifiedAtBlock");

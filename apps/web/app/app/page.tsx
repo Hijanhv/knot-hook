@@ -13,6 +13,7 @@ import {
 } from "@/lib/knot";
 import LiveBadge from "@/components/LiveBadge";
 import Connect from "@/components/Connect";
+import SwapPanel from "@/components/SwapPanel";
 import { chainHeadAgeSeconds, isChainHeadStale, publicClient, readChainHead } from "@/lib/rpc";
 import { CHAIN } from "@/lib/contracts";
 import { ACTIVE_DEPLOYMENT, DEPLOYMENT, DEPLOYMENT_IS_ACTIVE } from "@/lib/deployment";
@@ -128,7 +129,7 @@ export default function AppPage() {
               status={liveStatus}
               block={head?.number}
             />
-            <span className="pill">read only · chain {CHAIN_ID}</span>
+            <span className="pill">chain {CHAIN_ID}</span>
           </div>
           <h1 className="opsz-display font-display text-[2.4rem] font-light leading-[1.02] tracking-[-0.03em] md:text-[3rem]">
             Quote a swap. Watch the bound.
@@ -136,6 +137,7 @@ export default function AppPage() {
           <p className="mt-2 max-w-xl text-[15px] leading-[1.55] text-ink-soft">
             Explore the exact boundary enforced by <code className="font-mono text-[13px] text-blue">preview()</code>.
             Live values come directly from the deployed federation; fallback values are explicitly labelled as reference data.
+            Connect a wallet to execute the quoted swap through the Universal Router.
           </p>
         </div>
         <div className="flex flex-col items-end gap-2">
@@ -285,6 +287,19 @@ export default function AppPage() {
               enforced ÷ local · a shorter bar means the bound is biting harder
             </p>
           </div>
+
+          {active && hook && (
+            <SwapPanel
+              active={active}
+              hook={hook}
+              poolLabel={pool}
+              zeroForOne={zeroForOne}
+              exactInput={exactInput}
+              specifiedAmount={e18(amount)}
+              enforced={enforcedQ}
+              live={chainRead}
+            />
+          )}
         </div>
       </div>
     </div>

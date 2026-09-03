@@ -20,4 +20,7 @@ export const DEPLOYMENTS: { label: string; address?: string; explorer?: string }
   { label: "KnotHook (shallow)", address: ACTIVE_DEPLOYMENT?.contracts.shallow },
   { label: "kETH", address: ACTIVE_DEPLOYMENT?.currencies.currency0 },
   { label: "kUSD", address: ACTIVE_DEPLOYMENT?.currencies.currency1 },
+  ...(ACTIVE_DEPLOYMENT?.faucet
+    ? [{ label: "KnotFaucet", address: ACTIVE_DEPLOYMENT.faucet.address }]
+    : []),
 ];

@@ -164,4 +164,46 @@ describe("deployment manifest", () => {
     (proof(candidate).transactions as Record<string, unknown>).activate = proofTransactions.deploy;
     expect(() => assertDeploymentManifest(candidate)).toThrow(/must be distinct/);
   });
+
+  it("accepts an active manifest with no faucet recorded", () => {
+    const candidate = activeCopy();
+    expect("faucet" in candidate).toBe(false);
+    expect(() => assertDeploymentManifest(candidate)).not.toThrow();
+  });
+
+  it("accepts a recorded faucet with a positive drip and cooldown", () => {
+    const candidate = activeCopy();
+    candidate.faucet = {
+      address: "0x0000000000000000000000000000000000000005",
+      dripAmount: "100000000000000000000",
+      cooldownSeconds: 28800,
+    };
+    expect(() => assertDeploymentManifest(candidate)).not.toThrow();
+  });
+
+  it("rejects a faucet with a malformed address", () => {
+    const candidate = activeCopy();
+    candidate.faucet = {
+      address: "0x1234",
+      dripAmount: "100000000000000000000",
+      cooldownSeconds: 28800,
+    };
+    expect(() => assertDeploymentManifest(candidate)).toThrow(/faucet.*address/);
+  });
+
+  it("rejects a faucet with a zero drip amount", () => {
+    const candidate = activeCopy();
+    candidate.faucet = {
+      address: "0x0000000000000000000000000000000000000005",
+      dripAmount: "0",
+      cooldownSeconds: 28800,
+    };
+    expect(() => assertDeploymentManifest(candidate)).toThrow(/faucet\.dripAmount/);
+  });
+
+  it("rejects faucet data while deployment is pending", () => {
+    const candidate = pendingCopy();
+    candidate.faucet = { address: "0x0000000000000000000000000000000000000005" };
+    expect(() => assertDeploymentManifest(candidate)).toThrow(/cannot carry stale release data/);
+  });
 });
