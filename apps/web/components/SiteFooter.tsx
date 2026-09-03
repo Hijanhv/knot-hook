@@ -14,7 +14,7 @@ export default function SiteFooter() {
             One token pair. Several pools. One reserve-aware price boundary.
           </p>
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
-            {SITE.cohort} · {SITE.theme}
+            {SITE.projectId} · {SITE.cohort} · {SITE.theme}
           </p>
         </div>
 

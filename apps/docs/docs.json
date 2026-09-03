@@ -24,6 +24,7 @@
           {
             "group": "Mechanism",
             "pages": [
+              "mechanism/before-knot",
               "mechanism/the-rule",
               "mechanism/execution-flow",
               "mechanism/lifecycle"
@@ -54,7 +55,7 @@
     "links": [
       {
         "label": "Run the app",
-        "href": "/quickstart"
+        "href": "https://knot-hook-web.vercel.app/"
       }
     ],
     "primary": {

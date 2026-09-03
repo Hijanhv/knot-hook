@@ -2,6 +2,8 @@
 
 Mintlify source. Deployed from this folder.
 
+Public site: <https://knot-38d8bd0e.mintlify.app>
+
 ## Local preview
 
 ```bash
@@ -19,7 +21,7 @@ One-time setup:
 3. Set the content directory to `apps/docs`
 4. Copy the published URL into `apps/web/.env.local`:
    ```
-   NEXT_PUBLIC_DOCS_URL=https://<your-subdomain>.mintlify.app
+   NEXT_PUBLIC_DOCS_URL=https://knot-38d8bd0e.mintlify.app
    ```
 
 After that, every push to `main` redeploys automatically. The site's nav and footer already read

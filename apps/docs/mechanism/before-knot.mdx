@@ -1,0 +1,75 @@
+---
+title: "Before KNOT"
+description: "Why independent pools for the same pair can expose incompatible quotes."
+---
+
+Without KNOT, each Uniswap pool prices a swap from its own reserves. Two pools can hold the same
+token pair while remaining completely independent: they do not share liquidity, reserve state,
+or a price boundary.
+
+## The independent-pool path
+
+```mermaid
+flowchart LR
+    T["Trader"] --> R["Router"]
+    R --> A["Pool A<br/>1,000 token0 / 1,000 token1"]
+    R --> B["Pool B<br/>100 token0 / 400 token1"]
+    A --> QA["Quote from Pool A reserves"]
+    B --> QB["Quote from Pool B reserves"]
+    QA -.-> X["No shared reserve-aware boundary"]
+    QB -.-> X
+```
+
+For a five-token exact-input swap through Pool B, its isolated curve returns **18.993189 token1**.
+Pool A does not participate in that calculation, even though both pools trade the same pair.
+
+<Warning>
+Reserve divergence is not proof of manipulation. It can result from legitimate flow, shallow
+liquidity, or a newly created pool. KNOT does not classify why a pool is skewed.
+</Warning>
+
+## What changes with KNOT
+
+Participating pools keep separate custody and liquidity-provider (LP) ownership. The hook adds one
+shared accounting boundary: every swap is quoted once against the local reserves and once against
+the sum of all member reserves.
+
+```mermaid
+flowchart LR
+    T["Trader"] --> PM["Uniswap v4<br/>PoolManager"]
+    PM --> H["KnotHook<br/>selected pool"]
+    H --> L["Local quote<br/>18.993189 token1"]
+    H --> F["Federation quote<br/>6.315922 token1"]
+    L --> D{"Exact input:<br/>take min"}
+    F --> D
+    D --> E["Trader receives<br/>6.315922 token1"]
+    D --> K["12.677266 token1<br/>is not paid out"]
+    K --> LP["Remains in the local pool<br/>for its LP shares"]
+```
+
+The aggregate curve is virtual. A swap still settles against one pool, and the federation never
+custodies tokens or creates a cross-pool route.
+
+## Before and after
+
+| Property | Before KNOT | With KNOT |
+| --- | --- | --- |
+| Quote source | Selected pool only | Local pool and federation aggregate |
+| Exact-input result | Local output | `min(local output, aggregate output)` |
+| Exact-output result | Local input | `max(local input, aggregate input)` |
+| Pool custody | Independent | Independent |
+| LP ownership and fees | Independent | Independent |
+| Shared price boundary | None | Deterministic reserve-aware bound |
+| Oracle or classifier | None | None |
+
+KNOT changes the enforceable quote, not the ownership model. If the local pool already gives the
+taker the less favourable result, the hook is inert.
+
+<CardGroup cols={2}>
+  <Card title="See the rule" icon="scale-balanced" href="/mechanism/the-rule">
+    Follow the exact-input and exact-output decision branches.
+  </Card>
+  <Card title="Follow a swap" icon="arrow-right-arrow-left" href="/mechanism/execution-flow">
+    Trace one transaction from the trader through settlement.
+  </Card>
+</CardGroup>

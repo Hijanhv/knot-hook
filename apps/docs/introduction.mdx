@@ -3,6 +3,8 @@ title: "Introduction"
 description: "One token pair. Several pools. One reserve-aware price boundary."
 ---
 
+<Info>UHI10 Hookathon project ID: `HK-UHI10-1087`</Info>
+
 Two Uniswap pools can hold the same tokens and quote very different prices. KNOT lets a group of
 new pools opt into one rule: no member may give a taker a better quote than both its own curve and
 a second curve computed from the members' combined reserves.
@@ -35,6 +37,15 @@ input = max(local input, aggregate input)
 
 This is arithmetic, not a prediction. There is no oracle or attacker classifier. The aggregate
 curve is an internal policy boundary; it is not an external fair price.
+
+<CardGroup cols={2}>
+  <Card title="Before KNOT" icon="clock-rotate-left" href="/mechanism/before-knot">
+    See why independent pools for one pair can expose incompatible quotes.
+  </Card>
+  <Card title="Architecture" icon="diagram-project" href="/reference/architecture">
+    See which contract owns custody, accounting, and quote logic.
+  </Card>
+</CardGroup>
 
 ## What it is for
 

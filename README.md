@@ -5,6 +5,7 @@
 <p align="center">
   <b><a href="https://knot-hook-web.vercel.app/">App</a></b> ·
   <b><a href="https://knot-38d8bd0e.mintlify.app">Documentation</a></b> ·
+  <a href="https://knot-38d8bd0e.mintlify.app/mechanism/before-knot">Before KNOT</a> ·
   <a href="https://knot-38d8bd0e.mintlify.app/reference/architecture">Architecture</a> ·
   <a href="https://knot-38d8bd0e.mintlify.app/security/testing">Verification</a> ·
   <a href="SECURITY.md">Security boundaries</a>
@@ -24,8 +25,6 @@
 [![Tests](https://img.shields.io/badge/Foundry-182%20passing-3FB950.svg)](#verification)
 [![Coverage](https://img.shields.io/badge/line%20coverage-99.19%25-3FB950.svg)](#verification)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-
-**UHI10 Hookathon · Sustainable Liquidity & MEV Protection**
 
 > KNOT is unaudited hackathon software. Its experiments measure a bounded quote rule in constructed
 > scenarios; they do not prove universal MEV protection or realised LP profit.

@@ -2,6 +2,7 @@ import { ACTIVE_DEPLOYMENT } from "./deployment";
 
 export const SITE = {
   project: "Knot",
+  projectId: "HK-UHI10-1087",
   cohort: "UHI10",
   theme: "Reserve-aware custom accounting",
   github: "https://github.com/Hijanhv/knot-hook",

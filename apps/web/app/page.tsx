@@ -78,6 +78,7 @@ export default function Home() {
 
             <div className="mt-8 flex flex-wrap items-center gap-2">
               <span className="pill">{SITE.cohort}</span>
+              <span className="pill">{SITE.projectId}</span>
               <span className="pill">
                 <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-ink" />
                 {DEPLOYMENT_IS_ACTIVE ? "live on unichain sepolia" : "release manifest unavailable"}
