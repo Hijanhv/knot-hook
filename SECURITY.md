@@ -27,10 +27,14 @@ Knot is hackathon code, not audited production software.
 - Maturity prevents immediate activation, not a coalition built from capital that has already matured.
 - Federation calls add gas and create a shared liveness dependency for member pools.
 - The aggregate reserve state is an internal reference, not an external fair-price oracle.
-- Bounding a quote to the pair's reserves is not the same as filtering toxic flow. On 67,743 real
-  Base swaps, raw cross-pool divergence correlated negatively with markout (Spearman rho = -0.130,
-  placebo 0.0005); only a directional form of the claim held. Knot enforces reserve consistency.
-  It does not claim to identify toxicity.
+- Divergence magnitude does not predict toxicity and Knot never reads it. On 67,743 real Base
+  swaps, raw cross-pool divergence correlated negatively with markout (Spearman rho = -0.130,
+  placebo 0.0005). The directional form did hold: +0.331 bps markout for locally-favourable
+  swaps against -0.991 bps for the rest. Knot engages on exactly that direction, proven in
+  test/DirectionalSelectivity.t.sol.
+- The directional evidence comes from sibling pools at different fee tiers on Base, not from a
+  Knot federation, and only four multi-tier pair families in that set carried enough volume. It
+  supports the choice of signal. It does not measure the benefit on a live federation.
 - A pending request cannot activate after its member unregisters, but its provider can still cancel and reclaim both assets.
 - Native token behavior and non-standard ERC-20 tokens need separate deployment testing.
 - OpenZeppelin's custom-accounting base is experimental.

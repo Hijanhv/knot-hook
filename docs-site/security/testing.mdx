@@ -1,13 +1,16 @@
 ---
 title: "Test suites"
-description: "138 tests across 14 suites, and what each one is there to prove."
+description: "142 tests across 15 suites, and what each one is there to prove."
 ---
 
 Every suite below runs on `forge test` against the canonical v4 `PoolManager`. Nothing is mocked
-except the ERC-20s. Line coverage on `src/` is **96.21%**.
+except the ERC-20s. Coverage on `src/` is **96.21% lines, 92.25% statements, 96.43% functions
+and 64.81% branches**. The branch figure is the honest one to watch: the uncovered branches are
+mostly revert arms already asserted by name in `FailurePaths`, which `forge coverage` does not
+credit, but it is quoted rather than hidden behind the line number.
 
 ```bash
-forge test                                        # all 138
+forge test                                        # all 142
 forge test --match-contract MEVProtectionTest -vv # the headline adversarial results
 forge test --match-contract MEVAdversarialTest -vv
 forge coverage --ir-minimum --no-match-coverage "^(test|script)/"
@@ -18,6 +21,7 @@ forge coverage --ir-minimum --no-match-coverage "^(test|script)/"
 | Suite | Tests | What it exists to prove |
 | --- | --- | --- |
 | `MEVProtection` | 9 | The textbook evasions: slicing, sandwiching, same-block JIT, and the coalition result |
+| `DirectionalSelectivity` | 4 | The bound engages on direction and never on magnitude, on both branches |
 | `MEVAdversarial` | 14 | Federation-specific attacks: donation, cross-member and exact-output sandwiches, back-running, multi-block JIT, two- and three-member cycles, ordering independence, griefing, first-depositor |
 | `KnotFederationAttack` | 4 | Buddy-pool manipulation of the shared reference |
 | `EconomicViability` | 6 | The cross-pool round trip, swept across sizes |

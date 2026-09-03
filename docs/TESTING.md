@@ -3,13 +3,13 @@
 ## Run
 
 ```bash
-forge test                                          # 138 tests across 14 suites
+forge test                                          # 142 tests across 15 suites
 forge test --match-contract MEVProtectionTest  -vv  # headline adversarial results
 forge test --match-contract MEVAdversarialTest -vv  # federation-specific attacks
 forge coverage --ir-minimum --no-match-coverage "^(test|script)/"
 ```
 
-138 tests run against the canonical v4 `PoolManager`, with nothing mocked but the ERC-20s. Line
+142 tests run against the canonical v4 `PoolManager`, with nothing mocked but the ERC-20s. Line
 coverage on `src/` is 96.21%. Fuzz properties run 1,000 cases each. Four federation invariants
 each run 8,192 mixed swap and liquidity-lifecycle calls across both members.
 

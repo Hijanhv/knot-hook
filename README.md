@@ -18,7 +18,7 @@
 [![Uniswap v4](https://img.shields.io/badge/Uniswap-v4%20hook-FF007A.svg?logo=uniswap)](https://docs.uniswap.org/contracts/v4/overview)
 [![Foundry](https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg)](https://getfoundry.sh/)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.26-363636.svg?logo=solidity)](https://soliditylang.org/)
-[![Tests](https://img.shields.io/badge/tests-138%20passing-3FB950.svg)](#verify)
+[![Tests](https://img.shields.io/badge/tests-142%20passing-3FB950.svg)](#verify)
 [![Coverage](https://img.shields.io/badge/line%20coverage-96.21%25-3FB950.svg)](#verify)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
@@ -70,6 +70,30 @@ quote.
 | **For LPs in a balanced pool** | Nothing changes. The bound is inert when a pool is in line with its pair |
 | **For takers** | A quote that the pair can actually support, at a cost of **41,262 gas** |
 | **For the pair** | Flow that leaves the skewed member lands on another member. Measured **0 of 40** routes left the federation |
+
+## What the bound keys off
+
+Knot compares two quotes and takes the worse one. It never reads how far apart they are, and
+that distinction is load-bearing, because the two forms of the claim were measured separately
+against real chain data and they disagree.
+
+| Form of the claim | Measured result | Used by Knot |
+|---|---|---|
+| Divergence **magnitude** predicts toxicity | **False.** Spearman rho = -0.130, the wrong direction. Placebo 0.0005. Stable across three horizons and across pair families | **No.** Never an input |
+| Divergence **direction** predicts toxicity | **True.** Locally-favourable swaps average **+0.331 bps** markout, harmful. The rest average **-0.991 bps** | **Yes.** The only condition the bound engages on |
+
+Measured across 67,743 swaps in every multi-pool pair family on Base with enough volume.
+
+The bound engages on exactly one condition: the local pool would pay the taker more than the
+pair's combined reserves support. That is what "locally favourable" means, and it is the
+population the data marks harmful. A pool quoting worse than its pair is untouched, however far
+from the aggregate it sits. [`test/DirectionalSelectivity.t.sol`](test/DirectionalSelectivity.t.sol)
+proves that selectivity on both branches.
+
+This supports the choice of signal rather than measuring the payoff. The markout figures come
+from an offline harness against sibling pools at different fee tiers on Base, not from a Knot
+federation, and only four multi-tier pair families there carried enough volume. Stated as
+directional evidence, which is what it is.
 
 ## Deployed contracts
 
@@ -243,7 +267,7 @@ Dependencies are vendored under `lib/`, so a fresh clone needs no install step.
 ```bash
 git clone https://github.com/Hijanhv/KNOT-hook-.git && cd KNOT-hook-
 
-forge test                                          # full suite, 138 tests
+forge test                                          # full suite, 142 tests
 forge test --match-contract MEVProtectionTest  -vv  # the headline adversarial results
 forge test --match-contract MEVAdversarialTest -vv  # federation-specific attacks
 forge test --match-contract GasBenchmarkTest   -vv  # cost against a hookless v4 pool
@@ -307,12 +331,14 @@ through the normal v4 router. Nothing Knot-specific is required on the caller's 
 
 ## Test suites
 
-138 tests across 14 suites, 96.21% line coverage on `src/`. Nothing is mocked except the ERC-20s;
+142 tests across 15 suites. Coverage on `src/` is 96.21% lines, 92.25% statements, 96.43%
+functions and 64.81% branches. Nothing is mocked except the ERC-20s;
 everything runs against the canonical v4 `PoolManager`.
 
 | Suite | Tests | What it proves |
 |---|---|---|
 | [`MEVProtection`](test/MEVProtection.t.sol) | 9 | Textbook evasions: slicing, sandwiching, same-block JIT, and the coalition result |
+| [`DirectionalSelectivity`](test/DirectionalSelectivity.t.sol) | 4 | The bound engages on direction and never on magnitude, on both branches |
 | [`MEVAdversarial`](test/MEVAdversarial.t.sol) | 14 | Federation-specific: donation, cross-member and exact-output sandwiches, back-running, multi-block JIT, two- and three-member cycles, ordering independence, griefing, first-depositor |
 | [`KnotFederationAttack`](test/KnotFederationAttack.t.sol) | 4 | Buddy-pool manipulation of the shared reference |
 | [`EconomicViability`](test/EconomicViability.t.sol) | 6 | The cross-pool round trip, swept across sizes |
@@ -401,7 +427,7 @@ measured results.
 | [Architecture](https://knot-38d8bd0e.mintlify.app/reference/architecture) | Product architecture, lifecycle and trust boundaries |
 | [Threat model](https://knot-38d8bd0e.mintlify.app/security/threat-model) | What is closed, what is open |
 | [Results](https://knot-38d8bd0e.mintlify.app/security/results) | Every measured number |
-| [Test suites](https://knot-38d8bd0e.mintlify.app/security/testing) | All 14 suites and the MEV class each answers |
+| [Test suites](https://knot-38d8bd0e.mintlify.app/security/testing) | All 15 suites and the MEV class each answers |
 | [Limits](https://knot-38d8bd0e.mintlify.app/security/limits) | The coalition result and what divergence does not prove |
 
 In-repo long-form notes:

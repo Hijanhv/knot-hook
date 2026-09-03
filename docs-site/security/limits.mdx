@@ -19,34 +19,33 @@ they want.
 | After | 9.2989 |
 | **Loosened by** | **4,722 bps, roughly half** |
 
-## Divergence is not proven to be toxicity
+## What the bound keys off, and what the data says about it
 
-Knot bounds a quote to what the pair's reserves support. It does not follow that the flow it
-clipped was toxic, and that distinction is worth stating plainly because the pitch is easy to
-overstate.
+Knot compares two quotes and takes the worse one. It never reads how far apart they are. That
+distinction is not stylistic: the two forms of the claim were measured separately against real
+chain data and they do not agree.
 
-Tested separately against real Base data, across 67,743 swaps in every multi-pool pair family
-with enough volume:
+| Form of the claim | Result | Does Knot use it |
+| --- | --- | --- |
+| Divergence **magnitude** predicts toxicity | **False.** Spearman rho = -0.130, the wrong direction. Placebo 0.0005, so it is signal and not noise. Holds across three markout horizons and across pair families | **No.** Magnitude is never an input |
+| Divergence **direction** predicts toxicity | **True.** Locally-favourable swaps average **+0.331 bps** markout, which is harmful. The rest average **-0.991 bps** | **Yes.** This is the only condition the bound engages on |
 
-| | |
-| --- | --- |
-| Raw divergence vs markout | **Spearman rho = -0.130**, the wrong direction |
-| Placebo (shuffled divergence) | 0.0005, so the result is signal, not noise |
-| Robustness | Holds across three markout horizons and across pair families |
-| Directional form | **+0.331 bps** for locally-favourable swaps vs **-0.992 bps** otherwise |
+Measured across 67,743 swaps in every multi-pool pair family on Base with enough volume.
 
-The most divergent trades were LP-beneficial, not harmful. A narrower directional version of the
-claim did survive every check. The honest description of this hook is therefore **reserve
-consistency**, not toxicity filtering.
+The bound engages on exactly one condition: the local pool would pay the taker more than the
+pair's combined reserves support. That condition is what "locally favourable" means, and it is
+the population the data marks harmful. A pool quoting worse than its pair is left alone, however
+far from the aggregate it sits.
 
-The adversarial results in [Results](/security/results) are constructed sequences and are
-mechanically real: the bound does bind, and the round trip does flip to a loss. What is not
-settled is whether the flow it bounds is the flow LPs actually lose to.
+`test/DirectionalSelectivity.t.sol` proves the selectivity mechanically, on both the exact-input
+and exact-output branches, and pins down that magnitude is never consulted.
 
-<Note>
-Sample-size caveat, stated as it was recorded: only four multi-tier pair families exist in the
-resolved Base set and one dominates. This is a directional signal, not a definitive verdict.
-</Note>
+<Warning>
+This supports the choice of signal. It does not measure the benefit on a live federation. The
+markout figures come from an offline harness against sibling pools at different fee tiers on
+Base, not from a Knot deployment, and only four multi-tier pair families in that set carried
+enough volume. Treat it as directional evidence, which is how it was recorded.
+</Warning>
 
 Two things bound the damage, neither of which eliminates it: membership is permissioned, so an
 attacker must first be admitted; and skewing the aggregate costs real capital proportional to the
