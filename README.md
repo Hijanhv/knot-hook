@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+  <b><a href="https://youtu.be/c9qJY4lcO0Q">Demo video</a></b> ·
   <b><a href="https://knot-hook-web.vercel.app/">App</a></b> ·
   <b><a href="https://knot-38d8bd0e.mintlify.app">Documentation</a></b> ·
   <a href="https://knot-38d8bd0e.mintlify.app/mechanism/before-knot">Before KNOT</a> ·
@@ -29,6 +30,16 @@
 
 > KNOT is unaudited hackathon software. Its experiments measure a bounded quote rule in constructed
 > scenarios; they do not prove universal MEV protection or realised LP profit.
+
+## Demo video
+
+<p align="center">
+  <a href="https://youtu.be/c9qJY4lcO0Q">
+    <img src="https://img.youtube.com/vi/c9qJY4lcO0Q/maxresdefault.jpg" alt="KNOT demo video: one pair, several pools, one price boundary" width="70%">
+  </a>
+</p>
+
+<p align="center"><b><a href="https://youtu.be/c9qJY4lcO0Q">Watch the demo on YouTube</a></b></p>
 
 ## Pitch deck
 
