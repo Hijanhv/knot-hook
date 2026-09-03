@@ -8,7 +8,8 @@
   <a href="https://knot-38d8bd0e.mintlify.app/reference/architecture">Architecture</a> ·
   <a href="https://knot-38d8bd0e.mintlify.app/security/testing">Verification</a> ·
   <a href="SECURITY.md">Security boundaries</a>
-</p>
+</p>  
+
 **UHI10 Hookathon · Sustainable Liquidity & MEV Protection**
 
 **Project ID: `HK-UHI10-1087`**
