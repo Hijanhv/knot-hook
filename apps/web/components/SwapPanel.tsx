@@ -6,6 +6,7 @@ import { CHAIN } from "@/lib/contracts";
 import { CHAIN_ID, fmt } from "@/lib/knot";
 import type { ActiveDeploymentManifest, Address } from "@/lib/deployment";
 import { publicClient } from "@/lib/rpc";
+import { useTokenSymbols } from "@/lib/tokens";
 import {
   MAX_UINT160,
   MAX_UINT256,
@@ -104,19 +105,7 @@ export default function SwapPanel({
   const quoteOut = exactInput ? enforced : specifiedAmount;
   const spend = requiredSpend(exactInput, amountIn, enforced);
 
-  const metaQuery = useQuery({
-    queryKey: ["knot", CHAIN_ID, "tokens", input, output],
-    queryFn: async () => {
-      const [inSymbol, outSymbol, inDecimals, outDecimals] = await Promise.all([
-        publicClient.readContract({ address: input, abi: erc20Abi, functionName: "symbol" }),
-        publicClient.readContract({ address: output, abi: erc20Abi, functionName: "symbol" }),
-        publicClient.readContract({ address: input, abi: erc20Abi, functionName: "decimals" }),
-        publicClient.readContract({ address: output, abi: erc20Abi, functionName: "decimals" }),
-      ]);
-      return { inSymbol, outSymbol, inDecimals, outDecimals };
-    },
-    staleTime: 60_000,
-  });
+  const { inSymbol: tokenIn, outSymbol: tokenOut } = useTokenSymbols(input, output);
 
   const accountQuery = useQuery({
     queryKey: ["knot", CHAIN_ID, "allowances", address, input],
@@ -180,8 +169,8 @@ export default function SwapPanel({
 
   const wrongNetwork = isConnected && chainId !== CHAIN_ID;
   const quoteUsable = live && enforced > 0n && fitsRouter(specifiedAmount, enforced);
-  const inSymbol = metaQuery.data?.inSymbol ?? (zeroForOne ? "token0" : "token1");
-  const outSymbol = metaQuery.data?.outSymbol ?? (zeroForOne ? "token1" : "token0");
+  const inSymbol = tokenIn ?? (zeroForOne ? "token0" : "token1");
+  const outSymbol = tokenOut ?? (zeroForOne ? "token1" : "token0");
   const balance = accountQuery.data?.balance;
   const allowanceOk = (accountQuery.data?.allowance ?? 0n) >= spend && spend > 0n;
   const permitOk =
@@ -253,6 +242,13 @@ export default function SwapPanel({
   const busy = pendingAction !== null || receipt.isLoading;
   const canSwap =
     isConnected && !wrongNetwork && quoteUsable && fundsOk && allowanceOk && permitOk && !busy;
+
+  const steps = [
+    { label: "1 · Funded", done: fundsOk },
+    { label: "2 · Approved", done: allowanceOk && permitOk },
+    { label: "3 · Swapped", done: swapped },
+  ] as const;
+  const currentStep = steps.findIndex((step) => !step.done);
 
   return (
     <div className="card">
@@ -351,6 +347,23 @@ export default function SwapPanel({
 
       {isConnected && !wrongNetwork && quoteUsable && (
         <div className="mt-4 space-y-2">
+          <ol className="flex flex-wrap items-center gap-x-2 font-mono text-[11px] uppercase tracking-[0.1em]">
+            {steps.map((step, index) => (
+              <li
+                key={step.label}
+                className={
+                  step.done
+                    ? "text-blue"
+                    : index === currentStep
+                      ? "text-ink"
+                      : "text-faint"
+                }
+              >
+                {step.done ? `${step.label} ✓` : step.label}
+                {index < steps.length - 1 && <span className="ml-2 text-faint">→</span>}
+              </li>
+            ))}
+          </ol>
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"

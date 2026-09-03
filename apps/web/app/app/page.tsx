@@ -17,8 +17,13 @@ import SwapPanel from "@/components/SwapPanel";
 import { chainHeadAgeSeconds, isChainHeadStale, publicClient, readChainHead } from "@/lib/rpc";
 import { CHAIN } from "@/lib/contracts";
 import { ACTIVE_DEPLOYMENT, DEPLOYMENT, DEPLOYMENT_IS_ACTIVE } from "@/lib/deployment";
+import { useTokenSymbols } from "@/lib/tokens";
 
 const e18 = (n: number) => BigInt(Math.round(n * 1e6)) * 10n ** 12n;
+
+const MIN_AMOUNT = 0.5;
+const MAX_AMOUNT = 25;
+const clampAmount = (n: number) => Math.min(MAX_AMOUNT, Math.max(MIN_AMOUNT, Math.round(n * 2) / 2));
 
 /**
  * Reads the deployed federation directly. `preview` is a view, so quotes come from the same
@@ -33,6 +38,13 @@ export default function AppPage() {
 
   const active = ACTIVE_DEPLOYMENT;
   const hook = active ? (pool === "shallow" ? active.contracts.shallow : active.contracts.deep) : null;
+  const [amountText, setAmountText] = useState<string | null>(null);
+  const { inSymbol: symbol0, outSymbol: symbol1 } = useTokenSymbols(
+    active?.currencies.currency0 ?? null,
+    active?.currencies.currency1 ?? null
+  );
+  const token0Label = symbol0 ?? "token0";
+  const token1Label = symbol1 ?? "token1";
   const reservesQuery = useQuery({
     queryKey: ["knot", CHAIN_ID, "reserves"],
     queryFn: async () => {
@@ -193,11 +205,11 @@ export default function AppPage() {
             <div className="grid grid-cols-2 gap-1.5">
               <button type="button" aria-pressed={zeroForOne} onClick={() => setZeroForOne(true)}
                 className={`px-3 py-2 font-mono text-xs transition-colors ${zeroForOne ? "bg-ink text-canvas" : "bg-canvas text-muted hover:text-ink"}`}>
-                token0 → token1
+                {token0Label} → {token1Label}
               </button>
               <button type="button" aria-pressed={!zeroForOne} onClick={() => setZeroForOne(false)}
                 className={`px-3 py-2 font-mono text-xs transition-colors ${!zeroForOne ? "bg-ink text-canvas" : "bg-canvas text-muted hover:text-ink"}`}>
-                token1 → token0
+                {token1Label} → {token0Label}
               </button>
             </div>
           </div>
@@ -217,13 +229,33 @@ export default function AppPage() {
           </div>
 
           <div>
-            <div className="mb-2 flex items-baseline justify-between">
+            <div className="mb-2 flex items-baseline justify-between gap-2">
               <p className="eyebrow">{exactInput ? "Amount in" : "Amount out"}</p>
-              <span className="tnum font-mono text-sm">{amount.toFixed(1)}</span>
+              <input
+                type="number"
+                min={MIN_AMOUNT}
+                max={MAX_AMOUNT}
+                step={0.5}
+                value={amountText ?? String(amount)}
+                onChange={(ev) => setAmountText(ev.target.value)}
+                onBlur={(ev) => {
+                  const parsed = Number(ev.target.value);
+                  if (Number.isFinite(parsed)) setAmount(clampAmount(parsed));
+                  setAmountText(null);
+                }}
+                onKeyDown={(ev) => {
+                  if (ev.key === "Enter") (ev.target as HTMLInputElement).blur();
+                }}
+                className="tnum w-20 rounded-[3px] border border-line bg-canvas px-2 py-1 text-right font-mono text-sm text-ink"
+                aria-label={exactInput ? "Exact input amount" : "Exact output amount"}
+              />
             </div>
-            <input type="range" min={0.5} max={25} step={0.5} value={amount}
-              onChange={(ev) => setAmount(Number(ev.target.value))}
-              className="w-full accent-ocean" aria-label={exactInput ? "Exact input amount" : "Exact output amount"} />
+            <input type="range" min={MIN_AMOUNT} max={MAX_AMOUNT} step={0.5} value={amount}
+              onChange={(ev) => {
+                setAmount(Number(ev.target.value));
+                setAmountText(null);
+              }}
+              className="w-full accent-ocean" aria-label={exactInput ? "Exact input amount slider" : "Exact output amount slider"} />
           </div>
 
           {dr && sr && aggregate && reservesQuery.data && (
