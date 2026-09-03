@@ -140,13 +140,31 @@ contract KnotFederationAttackTest is KnotTestBase {
         uint64 rawVictim,
         uint8 rawRoute
     ) public pure {
-        ThreePoolState memory initial = _boundedState(raw00, raw01, raw10, raw11, raw20, raw21);
         uint256 front = bound(uint256(rawFront), 1e12, 20 ether);
         uint256 victim = bound(uint256(rawVictim), 1e12, 20 ether);
         (uint256 frontMember, uint256 victimMember, uint256 backMember) = _route(rawRoute);
 
-        int256 knotPnl = _exactInputSandwichPnl(initial, front, victim, frontMember, victimMember, backMember, true);
-        int256 plainPnl = _exactInputSandwichPnl(initial, front, victim, frontMember, victimMember, backMember, false);
+        // Each portfolio runs on its own copy of the initial state. Memory structs pass by
+        // reference, so sharing one state would run the plain counterfactual on reserves the
+        // KNOT legs already moved, and the comparison would measure move order, not the bound.
+        int256 knotPnl = _exactInputSandwichPnl(
+            _boundedState(raw00, raw01, raw10, raw11, raw20, raw21),
+            front,
+            victim,
+            frontMember,
+            victimMember,
+            backMember,
+            true
+        );
+        int256 plainPnl = _exactInputSandwichPnl(
+            _boundedState(raw00, raw01, raw10, raw11, raw20, raw21),
+            front,
+            victim,
+            frontMember,
+            victimMember,
+            backMember,
+            false
+        );
 
         if (knotPnl > 0) {
             assertLe(knotPnl, plainPnl, "KNOT created or amplified profitable exact-input extraction");
@@ -167,16 +185,62 @@ contract KnotFederationAttackTest is KnotTestBase {
         uint64 rawVictim,
         uint8 rawRoute
     ) public pure {
-        ThreePoolState memory initial = _boundedState(raw00, raw01, raw10, raw11, raw20, raw21);
         uint256 output = bound(uint256(rawOutput), 1e12, 5 ether);
         uint256 victim = bound(uint256(rawVictim), 1e12, 20 ether);
         (uint256 frontMember, uint256 victimMember, uint256 backMember) = _route(rawRoute);
 
-        int256 knotPnl = _exactOutputSandwichPnl(initial, output, victim, frontMember, victimMember, backMember, true);
-        int256 plainPnl = _exactOutputSandwichPnl(initial, output, victim, frontMember, victimMember, backMember, false);
+        // Fresh state per portfolio: memory structs pass by reference, so sharing `initial`
+        // would run the plain counterfactual on reserves the KNOT legs already moved.
+        int256 knotPnl = _exactOutputSandwichPnl(
+            _boundedState(raw00, raw01, raw10, raw11, raw20, raw21),
+            output,
+            victim,
+            frontMember,
+            victimMember,
+            backMember,
+            true
+        );
+        int256 plainPnl = _exactOutputSandwichPnl(
+            _boundedState(raw00, raw01, raw10, raw11, raw20, raw21),
+            output,
+            victim,
+            frontMember,
+            victimMember,
+            backMember,
+            false
+        );
 
         if (knotPnl > 0) {
             assertLe(knotPnl, plainPnl, "KNOT created or amplified profitable exact-output extraction");
+        }
+    }
+
+    /// @dev Pins the exact inputs that failed while both portfolios shared one memory state.
+    ///      Memory structs pass by reference, so the plain counterfactual ran on reserves the
+    ///      KNOT legs had already moved. Each portfolio here gets its own initial state.
+    function test_threeMemberCounterfactualUsesFreshStatePerPortfolio() public pure {
+        uint256 front = bound(uint256(13254050915664909), 1e12, 20 ether);
+        uint256 victim = bound(uint256(4651), 1e12, 20 ether);
+        int256 knotPnl = _exactInputSandwichPnl(
+            _boundedState(0, 160618575090, 3, 1026168342043060820955804463, 0, 54203061569114),
+            front,
+            victim,
+            0,
+            0,
+            1,
+            true
+        );
+        int256 plainPnl = _exactInputSandwichPnl(
+            _boundedState(0, 160618575090, 3, 1026168342043060820955804463, 0, 54203061569114),
+            front,
+            victim,
+            0,
+            0,
+            1,
+            false
+        );
+        if (knotPnl > 0) {
+            assertLe(knotPnl, plainPnl, "portfolios must share the initial state, not a moved one");
         }
     }
 

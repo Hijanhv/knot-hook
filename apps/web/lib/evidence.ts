@@ -1,7 +1,7 @@
 /** Reproducible figures from the final local verification suite. */
 export const RELEASE_EVIDENCE = {
   verification: {
-    foundryCases: 182,
+    foundryCases: 204,
     statefulInvariantProperties: 5,
     highDepthStatefulCalls: 163_840,
   },

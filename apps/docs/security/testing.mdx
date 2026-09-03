@@ -1,15 +1,15 @@
 ---
 title: "Test suites"
-description: "182 Foundry cases across 19 suites, and what each one is there to prove."
+description: "204 Foundry cases across 20 suites, and what each one is there to prove."
 ---
 
-Foundry reports 182 passing cases: 168 KNOT-authored checks plus 14 inherited OpenZeppelin harness
+Foundry reports 204 passing cases: 190 KNOT-authored checks plus 14 inherited OpenZeppelin harness
 methods. Live integration paths use the canonical v4 `PoolManager`; hostile token contracts are
 isolated negative fixtures. Source-only coverage is **99.19% lines**, **96.44% statements**,
 **82.61% branches**, and **100% functions**.
 
 ```bash
-forge test                                        # all 182
+forge test                                        # all 204
 forge test --match-contract MEVProtectionTest -vv # the headline adversarial results
 forge test --match-contract MEVAdversarialTest -vv
 forge coverage --ir-minimum --no-match-coverage "^(test|script)/" --report summary
@@ -36,14 +36,17 @@ forge coverage --ir-minimum --no-match-coverage "^(test|script)/" --report summa
 | `KnotHook` | 40 | Live swaps, custody, two-stage LP maturity, membership release and rollback |
 | `MembershipStateMachine` | 2 | Registration churn preserves count, code identity and aggregate invariants |
 | `KnotStateMachine` | 5 | Five stateful properties over mixed swap and liquidity lifecycles |
-| `KnotFederationAttack` | 8 | Buddy-pool influence, membership, and three-member portfolio counterfactuals |
+| `KnotFederationAttack` | 9 | Buddy-pool influence, membership, and three-member portfolio counterfactuals |
+| `KnotFaucet` | 21 | Fixed drip per address behind a cooldown; never mints; drains loudly |
 | `Fuzz` | 12 | Bound, rounding and monotonicity under randomized input |
 
-The suite contains 28 fuzz properties. A high-depth run passed 10,000 runs per property.
+The suite contains 29 fuzz properties. A high-depth run passed 10,000 runs per property.
 
 Two three-member fuzz properties compare exact-input and exact-output front/victim/back portfolios
 with the identical plain-pool route. Profitable KNOT routes do exist in arbitrarily skewed pools;
 the checked property is only that KNOT did not amplify positive extraction in the sampled cases.
+Each portfolio starts from its own copy of the sampled state: sharing one memory state across
+both runs once compared the plain route against reserves the KNOT legs had already moved.
 This is randomized evidence, not a universal theorem.
 Five stateful invariants passed 163,840 calls with zero handler reverts.
 
