@@ -80,6 +80,33 @@ Uniswap v4 PoolManager. Click a hash to open it in the explorer.
 | kETH · currency0 | [`0x0784b9D734f2a6d13209087964640B1aD7699AAe`](https://sepolia.uniscan.xyz/address/0x0784b9D734f2a6d13209087964640B1aD7699AAe) |
 | kUSD · currency1 | [`0x243B3f2672Bdd36b63cA960AE201ECDDA4a7b83e`](https://sepolia.uniscan.xyz/address/0x243B3f2672Bdd36b63cA960AE201ECDDA4a7b83e) |
 
+### Demo faucet
+
+The demo currencies minted their whole supply to the deployer, so a fresh wallet holds nothing
+to swap with. [`KnotFaucet.sol`](packages/contracts/src/periphery/KnotFaucet.sol) fixes that: it
+holds a funded balance of both currencies and pays a fixed drip per address behind a cooldown.
+It never mints, so its exposure is capped by its funding, and it reverts loudly when drained.
+It sits outside the hook trust boundary.
+
+Status: **not yet deployed**, so no address is recorded here. The app's claim button activates
+on its own once a faucet is recorded in `deployments/unichain-sepolia.json` as
+`faucet: { address, dripAmount, cooldownSeconds }`; the manifest validator and the contracts
+page both understand that field.
+
+To deploy it from the wallet holding the demo currencies:
+
+```bash
+cd packages/contracts
+CURRENCY0=0x0784b9D734f2a6d13209087964640B1aD7699AAe \
+CURRENCY1=0x243B3f2672Bdd36b63cA960AE201ECDDA4a7b83e \
+PRIVATE_KEY=<deployer-key> \
+forge script script/deploy/DeployFaucet.s.sol:DeployFaucet \
+  --rpc-url https://sepolia.unichain.org --broadcast
+```
+
+Then record the logged `KNOT_FAUCET` address in the manifest. Defaults pay 100 of each
+currency per claim with an 8-hour cooldown per address.
+
 <details>
 <summary>Deployment and setup transactions</summary>
 
