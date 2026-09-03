@@ -50,6 +50,36 @@ const txUrl = (hash: string) => `${CHAIN.explorer}/tx/${hash}`;
  * Permit2 approval of the router, then `execute`. Every step is explicit and every
  * hash links to the explorer, so nothing about the write path is hidden.
  */
+/**
+ * Gas, estimated on our own transport rather than the wallet's.
+ *
+ * MetaMask can hand viem a block whose `gasLimit` is missing for a manually added network, and
+ * preparation then dies with "Cannot destructure property 'gasLimit' of null" before the
+ * transaction is ever offered for signing. It reads as a contract revert but nothing reverted:
+ * the same call estimates fine over the public RPC. Estimating here and passing an explicit
+ * limit skips the wallet's preparation path. On failure it returns undefined and the wallet
+ * estimates as it did before, so this can only add a path, never remove one.
+ */
+async function gasFor(
+  request: {
+    address: Address;
+    abi: readonly unknown[];
+    functionName: string;
+    args?: readonly unknown[];
+  },
+  account: Address
+): Promise<bigint | undefined> {
+  try {
+    const estimate = await publicClient.estimateContractGas({
+      ...request,
+      account,
+    } as Parameters<typeof publicClient.estimateContractGas>[0]);
+    return (estimate * 125n) / 100n;
+  } catch {
+    return undefined;
+  }
+}
+
 export default function SwapPanel({
   active,
   hook,
@@ -175,34 +205,25 @@ export default function SwapPanel({
 
   const onApprove = () =>
     run("approve", () =>
-      writeContractAsync({
-        address: input,
-        abi: erc20Abi,
-        functionName: "approve",
-        args: [PERMIT2, MAX_UINT256],
-        chainId: CHAIN_ID,
-      })
+      (async () => {
+        const req = { address: input, abi: erc20Abi, functionName: "approve", args: [PERMIT2, MAX_UINT256] } as const;
+        return writeContractAsync({ ...req, chainId: CHAIN_ID, gas: await gasFor(req, address as Address) });
+      })()
     );
 
   const onPermit = () =>
     run("permit", () =>
-      writeContractAsync({
-        address: PERMIT2,
-        abi: permit2Abi,
-        functionName: "approve",
-        args: [input, UNIVERSAL_ROUTER, MAX_UINT160, MAX_UINT48],
-        chainId: CHAIN_ID,
-      })
+      (async () => {
+        const req = { address: PERMIT2, abi: permit2Abi, functionName: "approve", args: [input, UNIVERSAL_ROUTER, MAX_UINT160, MAX_UINT48] } as const;
+        return writeContractAsync({ ...req, chainId: CHAIN_ID, gas: await gasFor(req, address as Address) });
+      })()
     );
   const onFaucet = () =>
     run("faucet", () => {
       if (!faucet) throw new Error("No faucet is recorded in the release manifest");
-      return writeContractAsync({
-        address: faucet.address,
-        abi: faucetAbi,
-        functionName: "drip",
-        chainId: CHAIN_ID,
-      });
+      const req = { address: faucet.address, abi: faucetAbi, functionName: "drip" } as const;
+      return (async () =>
+        writeContractAsync({ ...req, chainId: CHAIN_ID, gas: await gasFor(req, address as Address) }))();
     });
 
   const onSwap = () =>
@@ -224,13 +245,9 @@ export default function SwapPanel({
             input,
             deadline
           );
-      return writeContractAsync({
-        address: UNIVERSAL_ROUTER,
-        abi: routerAbi,
-        functionName: "execute",
-        args: [call.commands, call.inputs, call.deadline],
-        chainId: CHAIN_ID,
-      });
+      const req = { address: UNIVERSAL_ROUTER, abi: routerAbi, functionName: "execute", args: [call.commands, call.inputs, call.deadline] } as const;
+      return (async () =>
+        writeContractAsync({ ...req, chainId: CHAIN_ID, gas: await gasFor(req, address as Address) }))();
     });
 
   const busy = pendingAction !== null || receipt.isLoading;
