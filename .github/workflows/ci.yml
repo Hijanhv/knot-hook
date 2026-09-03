@@ -14,9 +14,13 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Keyed by commit, not by ref. A CI result is a statement about one commit, so a newer push
+# must not cancel the run that is still deciding whether an older commit was sound. Same-commit
+# duplicates (a re-run, a retag) still collapse. The deploy workflow keeps ref-keyed cancelling,
+# where only the newest build matters.
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.sha }}
+  cancel-in-progress: false
 
 jobs:
   contracts:
