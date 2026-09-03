@@ -10,6 +10,7 @@
   <a href="https://knot-38d8bd0e.mintlify.app/reference/architecture">Architecture</a> ·
   <a href="https://knot-38d8bd0e.mintlify.app/security/testing">Verification</a> ·
   <b><a href="assets/pitch/knot-pitch-deck.pdf">Pitch deck (PDF)</a></b> ·
+  <b><a href="#see-it-on-chain">On-chain proof</a></b> ·
   <a href="SECURITY.md">Security boundaries</a>
 </p>
 
@@ -58,6 +59,47 @@ this repository.
 ## Partner integrations
 
 No partner integrations.
+
+## See it on-chain
+
+Every swap below ran through the deployed hook on **Unichain Sepolia** against the canonical
+Uniswap v4 PoolManager. Click a hash to open it in the explorer.
+
+| Swap through the hook | Transaction |
+| --- | --- |
+| Exact input · token0 → token1 | [`0xe5c64d7c…c50df5`](https://sepolia.uniscan.xyz/tx/0xe5c64d7c64086b9c8a56c0f64d70f0cc1c7a517e812770b65df406c550c50df5) |
+| Exact input · token1 → token0 | [`0xffe5985a…c26ac3`](https://sepolia.uniscan.xyz/tx/0xffe5985a4e9597539af1baf01063668d35711ab61856f6aeec3403a71ec26ac3) |
+| Exact output · token0 → token1 | [`0xf712456b…3c3890`](https://sepolia.uniscan.xyz/tx/0xf712456bd2b7ed6a7a24356e78cc1654197d24414d85cddd202dd6833d3c3890) |
+| Exact output · token1 → token0 | [`0xa8a97a2d…253d93`](https://sepolia.uniscan.xyz/tx/0xa8a97a2da390ed9b4928111012ac4f7c591e58fbb60bba9bf7c2f6c334253d93) |
+
+| Contract | Address |
+| --- | --- |
+| KnotFederation | [`0x49579383965f68079FB671b1d7AF0071cf206199`](https://sepolia.uniscan.xyz/address/0x49579383965f68079FB671b1d7AF0071cf206199) |
+| KnotHook · deep | [`0x55c73752E38403DDd30d03039568A5090256aa88`](https://sepolia.uniscan.xyz/address/0x55c73752E38403DDd30d03039568A5090256aa88) |
+| KnotHook · shallow | [`0x1c828fA6d4232E80aaeCEb143736092b0F822A88`](https://sepolia.uniscan.xyz/address/0x1c828fA6d4232E80aaeCEb143736092b0F822A88) |
+| kETH · currency0 | [`0x0784b9D734f2a6d13209087964640B1aD7699AAe`](https://sepolia.uniscan.xyz/address/0x0784b9D734f2a6d13209087964640B1aD7699AAe) |
+| kUSD · currency1 | [`0x243B3f2672Bdd36b63cA960AE201ECDDA4a7b83e`](https://sepolia.uniscan.xyz/address/0x243B3f2672Bdd36b63cA960AE201ECDDA4a7b83e) |
+
+<details>
+<summary>Deployment and setup transactions</summary>
+
+| Step | Transaction |
+| --- | --- |
+| Federation deployed | [`0x3e69ab06…d5a91c`](https://sepolia.uniscan.xyz/tx/0x3e69ab0612e71a10939357032a4cc35317027e8ef1031989b25a0ef04ed5a91c) |
+| Deep hook deployed | [`0xc22a5c0e…ce9439`](https://sepolia.uniscan.xyz/tx/0xc22a5c0e59efe04a40daa084fdb9ad24436cacf1b8016f6af1121e96edce9439) |
+| Shallow hook deployed | [`0x176b66cd…516e1a`](https://sepolia.uniscan.xyz/tx/0x176b66cdda8e326ffe73df280da0777ca228a4baa72fdd30a13a6925ba516e1a) |
+| Deep member registered | [`0xa423e8fb…19f024`](https://sepolia.uniscan.xyz/tx/0xa423e8fb197836df9a74cceae27609c0f40bfc934faee20cfe3eafa9c719f024) |
+| Shallow member registered | [`0x2a456f86…22188d`](https://sepolia.uniscan.xyz/tx/0x2a456f86de7c37eca905f6352455dcb2da5ac52fec84198706daa774cf22188d) |
+| Deep pool initialized | [`0xefdd72e8…ff2c2c`](https://sepolia.uniscan.xyz/tx/0xefdd72e8ee666916daaf1108e42dfe2a12604e58cffd72deeafbed2490ff2c2c) |
+| Shallow pool initialized | [`0xb9f3601e…27102e`](https://sepolia.uniscan.xyz/tx/0xb9f3601eab0a3cab06e15445efc2f9d00977e084d3aed244913fbd6c3e27102e) |
+| Deep liquidity queued | [`0x2de56b1d…fff904`](https://sepolia.uniscan.xyz/tx/0x2de56b1de661e36a1597e446c4a0651d25c2c87416c37b9aee2d1ecea1fff904) |
+| Shallow liquidity queued | [`0x38a7c3cc…94f918`](https://sepolia.uniscan.xyz/tx/0x38a7c3cc1c1aaa7c74e73e07eb5cb6f2d69a65c2b9b6e94f2b4256bb0094f918) |
+| Deep liquidity activated | [`0xe384ac6f…95aec2`](https://sepolia.uniscan.xyz/tx/0xe384ac6ff1ddb27a59c9fb40203d74b0463906fdceb5faf4f90617e3df95aec2) |
+| Shallow liquidity activated | [`0xad3ac152…4bd8d6`](https://sepolia.uniscan.xyz/tx/0xad3ac1522a99eba1ff22f5598f35f97ef9f3ed677687f47caafbdb4d864bd8d6) |
+| kETH deployed | [`0x7dc6666c…60b52b`](https://sepolia.uniscan.xyz/tx/0x7dc6666c6440236a1aa2a6bd2a02ff83b035063b3dd9544cf138b29ac760b52b) |
+| kUSD deployed | [`0x5627a491…062b2b`](https://sepolia.uniscan.xyz/tx/0x5627a491ea97fe41d12ab21276a731177de0809e9860c38d1d2820efb6062b2b) |
+
+</details>
 
 ## The idea in one minute
 
