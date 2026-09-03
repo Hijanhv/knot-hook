@@ -36,6 +36,20 @@
 
 No partner integrations.
 
+## Try it
+
+The pools are live and anyone can trade against them.
+
+1. Open the [app](https://knot-hook-web.vercel.app/app/) and connect a wallet on Unichain Sepolia.
+2. Claim 100 kETH and 100 kUSD from the demo faucet. Gas is paid in Unichain Sepolia ETH, which
+   public faucets supply.
+3. Approve the token, then approve the router through Permit2. Both are one-time.
+4. Swap. The quote on screen is the limit the swap is submitted with, so it settles at the
+   enforced bound or it reverts.
+
+Choose the shallow pool to watch the boundary bind, or the deep pool to watch it stay inert
+because that pool's own curve is already the more conservative of the two.
+
 ## See it on-chain
 
 Every swap below ran through the deployed hook on **Unichain Sepolia** against the canonical
