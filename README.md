@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://youtu.be/c9qJY4lcO0Q">Demo video</a> ·
+  <a href="https://youtu.be/c9qJY4lcO0Q">pitch video</a> ·
   <b><a href="https://knot-hook-web.vercel.app/">App</a></b> ·
   <b><a href="https://knot-38d8bd0e.mintlify.app">Documentation</a></b> ·
   <a href="https://knot-38d8bd0e.mintlify.app/mechanism/before-knot">Before KNOT</a> ·
