@@ -14,7 +14,7 @@ and the trader receives the **less favourable** of the two. The clipped differen
 local pool's LPs.
 
 ```mermaid
-flowchart LR
+flowchart TB
     T["Trader"] -->|"swap"| PM["PoolManager"]
     PM -->|"beforeSwap"| H["KnotHook<br/>this pool"]
     H -->|"executeSwap"| F["KnotFederation"]

@@ -10,7 +10,7 @@ or a price boundary.
 ## The independent-pool path
 
 ```mermaid
-flowchart LR
+flowchart TB
     T["Trader"] --> R["Router"]
     R --> A["Pool A<br/>1,000 token0 / 1,000 token1"]
     R --> B["Pool B<br/>100 token0 / 400 token1"]
@@ -35,7 +35,7 @@ shared accounting boundary: every swap is quoted once against the local reserves
 the sum of all member reserves.
 
 ```mermaid
-flowchart LR
+flowchart TB
     T["Trader"] --> PM["Uniswap v4<br/>PoolManager"]
     PM --> H["KnotHook<br/>selected pool"]
     H --> L["Local quote<br/>18.993189 token1"]
