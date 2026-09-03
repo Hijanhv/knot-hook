@@ -349,16 +349,56 @@ export default function SwapPanel({
         </div>
       )}
 
-      {isConnected && !wrongNetwork && quoteUsable && fundsOk && (
+      {isConnected && !wrongNetwork && quoteUsable && (
         <div className="mt-4 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <button type="button" className={allowanceOk ? "btn-ghost pointer-events-none" : "btn-ghost"} disabled={allowanceOk || busy} onClick={() => void onApprove()}>
+            <button
+              type="button"
+              className={allowanceOk ? "btn-ghost pointer-events-none" : "btn-ghost"}
+              disabled={allowanceOk || busy || !fundsOk}
+              title={
+                allowanceOk
+                  ? "Token already approved"
+                  : balance === undefined
+                    ? "Loading balance…"
+                    : !fundsOk
+                      ? `Insufficient ${inSymbol} — claim test tokens from the faucet above`
+                      : "Approve the token for Permit2"
+              }
+              onClick={() => void onApprove()}
+            >
               {allowanceOk ? "1 · Token approved ✓" : pendingAction === "approve" ? "1 · Approving…" : "1 · Approve token"}
             </button>
-            <button type="button" className={permitOk ? "btn-ghost pointer-events-none" : "btn-ghost"} disabled={!allowanceOk || permitOk || busy} onClick={() => void onPermit()}>
+            <button
+              type="button"
+              className={permitOk ? "btn-ghost pointer-events-none" : "btn-ghost"}
+              disabled={!allowanceOk || permitOk || busy}
+              title={
+                permitOk
+                  ? "Router already approved"
+                  : !allowanceOk
+                    ? "Approve the token first"
+                    : "Approve the router through Permit2"
+              }
+              onClick={() => void onPermit()}
+            >
               {permitOk ? "2 · Router approved ✓" : pendingAction === "permit" ? "2 · Approving…" : "2 · Approve router"}
             </button>
-            <button type="button" className="btn" disabled={!canSwap} onClick={() => void onSwap()}>
+            <button
+              type="button"
+              className="btn"
+              disabled={!canSwap}
+              title={
+                canSwap
+                  ? `Swap at the bound quote`
+                  : !fundsOk
+                    ? `Insufficient ${inSymbol} — claim test tokens from the faucet above`
+                    : !allowanceOk || !permitOk
+                      ? "Finish both approvals first"
+                      : "Confirm in your wallet to swap"
+              }
+              onClick={() => void onSwap()}
+            >
               {pendingAction === "swap" || (lastTx?.kind === "swap" && receipt.isLoading)
                 ? "Swapping…"
                 : `Swap ${inSymbol} → ${outSymbol}`}
