@@ -1,0 +1,63 @@
+---
+title: "Contracts"
+description: "Three contracts, one line each."
+---
+
+| Contract | Role |
+| --- | --- |
+| `KnotHook.sol` | Hook-owned constant-product pool with proportional ERC-20 LP shares |
+| `KnotFederation.sol` | Authenticated per-member reserves plus the O(1) aggregate pair |
+| `KnotMath.sol` | Fee-aware exact-input and exact-output quoting, rounding against the taker |
+
+## Live deployment
+
+The active release runs on Unichain Sepolia, chain `1301`.
+
+| Component | Address |
+| --- | --- |
+| Uniswap v4 PoolManager | [`0x00b036b58a818b1bc34d502d3fe730db729e62ac`](https://sepolia.uniscan.xyz/address/0x00b036b58a818b1bc34d502d3fe730db729e62ac) |
+| KnotFederation | [`0x49579383965f68079FB671b1d7AF0071cf206199`](https://sepolia.uniscan.xyz/address/0x49579383965f68079FB671b1d7AF0071cf206199) |
+| KnotHook · deep | [`0x55c73752E38403DDd30d03039568A5090256aa88`](https://sepolia.uniscan.xyz/address/0x55c73752E38403DDd30d03039568A5090256aa88) |
+| KnotHook · shallow | [`0x1c828fA6d4232E80aaeCEb143736092b0F822A88`](https://sepolia.uniscan.xyz/address/0x1c828fA6d4232E80aaeCEb143736092b0F822A88) |
+| kETH · currency0 | [`0x0784b9D734f2a6d13209087964640B1aD7699AAe`](https://sepolia.uniscan.xyz/address/0x0784b9D734f2a6d13209087964640B1aD7699AAe) |
+| kUSD · currency1 | [`0x243B3f2672Bdd36b63cA960AE201ECDDA4a7b83e`](https://sepolia.uniscan.xyz/address/0x243B3f2672Bdd36b63cA960AE201ECDDA4a7b83e) |
+
+The deep pool ID is
+`0xa37acc9c7b38bddba8dd58392ef174e031308d7d674250d3ac96ca5b668b6ce4`; the shallow pool ID is
+`0xfd1361ff40dcbffa9fbf20ab5dc741b0378f74cfb55c0d9519322126fe8b6d71`.
+The canonical deployment manifest records the complete transaction and custody proof. The
+federation, both hooks, and both test tokens are exact creation- and runtime-bytecode matches on
+Sourcify.
+
+## KnotFederation
+
+<ResponseField name="preview" type="view">
+  Returns `(localQuote, aggregateQuote, knotQuote)` without mutating state. The read used by the
+  frontend and by any integrator.
+</ResponseField>
+
+<ResponseField name="executeSwap" type="onlyMember">
+  Quotes and atomically updates both the member book and the aggregate.
+</ResponseField>
+
+<ResponseField name="reservesOf" type="view">
+  One member's reserve pair.
+</ResponseField>
+
+<ResponseField name="register / unregister" type="onlyOwner">
+  Membership management, bounded by an immutable member cap. Only an empty member may release its slot.
+</ResponseField>
+
+## KnotHook
+
+<ResponseField name="activatePendingLiquidity" type="external">
+  Activates the caller's matured deposit at the current reserve ratio.
+</ResponseField>
+
+<ResponseField name="cancelPendingLiquidity" type="external">
+  Cancels the caller's inactive deposit without touching active liquidity.
+</ResponseField>
+
+<ResponseField name="claimLiquidityRefund" type="external">
+  Withdraws all assets currently refundable to the caller.
+</ResponseField>

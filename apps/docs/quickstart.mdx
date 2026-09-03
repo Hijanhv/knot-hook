@@ -1,0 +1,40 @@
+---
+title: "Quickstart"
+description: "Build, test and reproduce every number in these docs."
+---
+
+## Install
+
+```bash
+git clone https://github.com/Hijanhv/KNOT-hook-.git
+cd KNOT-hook-
+npm install
+```
+
+Dependencies are pinned in the repository. Do not run `forge update` during reproduction.
+
+## Run the suite
+
+<CodeGroup>
+```bash Everything
+npm test
+```
+```bash MEV adversarial
+npm run test:security --workspace @knot/contracts
+```
+```bash Economics
+npm run test:unit --workspace @knot/contracts
+```
+```bash Coverage
+npm run test:coverage
+```
+</CodeGroup>
+
+## Frontend
+
+```bash
+npm run dev
+```
+
+Open [localhost:3000](http://localhost:3000). Before a verified release manifest exists, the quote
+inspector uses the canonical deterministic fixture and labels every value as reference data.

@@ -1,0 +1,72 @@
+---
+title: "Adversarial results"
+description: "Every number, and the command that reproduces it."
+---
+
+These results keep the mechanism's favorable and unfavorable cases together. Every number below
+comes from a named KNOT test that can be rerun from the repository.
+
+```bash
+forge test --match-contract MEVProtectionTest -vv
+forge test --match-contract EconomicViabilityTest -vv
+forge test --match-contract RouterRealismTest -vv
+```
+
+## Constructed round-trip fixture
+
+The same synthetic reserve sequence, run with and without the federation:
+
+| | Attacker P&L, 5-token stake |
+| --- | --- |
+| Independent pools | **+13.5843**, profitable |
+| Under Knot | **-0.0298**, a loss |
+| **Difference between fixtures** | **13.6141** |
+
+The KNOT path is lower at every sampled size, from 0.1 to 20 tokens. This proves the mechanics of
+that constructed sequence; it is not a historical replay or a production-profit forecast.
+
+## Routing
+
+The router fixtures check quote ordering, not organic order flow:
+
+| | |
+| --- | --- |
+| Samples routed between the two members | **40**, all land on a member by construction |
+| Deep member vs an identical outside pool | **0 wins · 40 ties · 0 losses** |
+
+The external control has the same reserves and fee as the deep member, so a tie is the only honest
+result. These tests do not establish how a production router or real flow would respond.
+
+## Same-member sandwich fixtures
+
+The attacker sells the exact output inventory acquired in the front-run, so both portfolios close
+in currency0.
+
+| Fixture | KNOT attacker delta | Hookless control |
+| --- | ---: | ---: |
+| Skewed member | **-1.347578** | not the control used for this regression |
+| Balanced member | **≈+0.393701** | **≈+1.803279** |
+
+KNOT dampens the balanced fixture but does not eliminate the sandwich profit. The skewed fixture
+closes at a loss. These are bounded simulation results, not a universal MEV claim.
+
+## Skew sensitivity
+
+| Skew | Isolated-quote reduction |
+| --- | --- |
+| 1× (balanced) | 0 bps |
+| 2× | 4,299 bps |
+| 4× | 6,674 bps |
+| 6× | 7,466 bps |
+| 8× | 7,862 bps |
+
+An earlier version divided retained output tokens by hypothetical input-token fees. That ratio was
+dimensionally invalid and has been removed. A normalized fixture can compare both values in one
+numeraire, but it still would not measure routing loss or realised LP returns, so it is not used as
+a headline claim.
+
+## Stateful
+
+Twelve sequential extraction attempts with state carried forward: the quote for a fixed size falls
+from 1.2678 to 1.2406. The test advances the member and aggregate books with the gross input on
+every step, matching `executeSwap`. In this sequence the fixed-size quote tightens as reserves move.

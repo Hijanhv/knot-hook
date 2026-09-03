@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 2,
+  "status": "active",
+  "statusReason": "The two-member KNOT deployment is active and its complete Universal Router lifecycle is verified on Unichain Sepolia.",
+  "chain": {
+    "id": 1301,
+    "name": "Unichain Sepolia",
+    "rpc": "https://sepolia.unichain.org",
+    "explorer": "https://sepolia.uniscan.xyz"
+  },
+  "dependencies": {
+    "poolManager": "0x00b036b58a818b1bc34d502d3fe730db729e62ac"
+  },
+  "hookPermissionBits": "0x2a88",
+  "parameters": {
+    "feeNumerator": 997,
+    "feeDenominator": 1000,
+    "maxMembers": 8,
+    "liquidityMaturityBlocks": 1
+  },
+  "seed": {
+    "deep": ["1000000000000000000000", "1000000000000000000000"],
+    "shallow": ["100000000000000000000", "400000000000000000000"]
+  },
+  "deployedAtBlock": 61583973,
+  "contracts": {
+    "federation": "0x49579383965f68079FB671b1d7AF0071cf206199",
+    "deep": "0x55c73752E38403DDd30d03039568A5090256aa88",
+    "shallow": "0x1c828fA6d4232E80aaeCEb143736092b0F822A88"
+  },
+  "currencies": {
+    "currency0": "0x0784b9D734f2a6d13209087964640B1aD7699AAe",
+    "currency1": "0x243B3f2672Bdd36b63cA960AE201ECDDA4a7b83e"
+  },
+  "pools": {
+    "deep": "0xa37acc9c7b38bddba8dd58392ef174e031308d7d674250d3ac96ca5b668b6ce4",
+    "shallow": "0xfd1361ff40dcbffa9fbf20ab5dc741b0378f74cfb55c0d9519322126fe8b6d71"
+  },
+  "owner": "0x184083bA756BD25D0B7a414cC88Ec86B84CFE1C4",
+  "verification": {
+    "verifiedAtBlock": 61584469,
+    "previewAmount": "1000000000000000",
+    "deepQuote": [
+      "996999005991991",
+      "1268909805489508",
+      "996999005991991"
+    ],
+    "shallowQuote": [
+      "3987966100380843",
+      "1268909805489508",
+      "1268909805489508"
+    ],
+    "memberRuntimeCodehash": "0xedc496e70b6ca318a43b174db134f48b3efb7b730946c767b4f0dd8df9f05abf",
+    "memberReserves": {
+      "deep": ["1000000000000000000000", "1000000000000000000000"],
+      "shallow": ["100000538827111491562", "400002743093822493495"],
+      "aggregate": ["1100000538827111491562", "1400002743093822493495"]
+    },
+    "custody": {
+      "deepClaims": ["1000000000000000000000", "1000000000000000000000"],
+      "shallowClaims": ["100000538827111491562", "400002743093822493495"],
+      "deepInactive": ["0", "0"],
+      "shallowInactive": ["0", "0"]
+    },
+    "sourceVerification": {
+      "provider": "Sourcify",
+      "match": "exact_match",
+      "matchIds": {
+        "federation": "47077297",
+        "deep": "47077308",
+        "shallow": "47077309",
+        "currency0": "47077313",
+        "currency1": "47077312"
+      }
+    },
+    "transactions": {
+      "currency0Deployment": "0x7dc6666c6440236a1aa2a6bd2a02ff83b035063b3dd9544cf138b29ac760b52b",
+      "currency1Deployment": "0x5627a491ea97fe41d12ab21276a731177de0809e9860c38d1d2820efb6062b2b",
+      "deploy": "0x3e69ab0612e71a10939357032a4cc35317027e8ef1031989b25a0ef04ed5a91c",
+      "deepDeployment": "0xc22a5c0e59efe04a40daa084fdb9ad24436cacf1b8016f6af1121e96edce9439",
+      "shallowDeployment": "0x176b66cdda8e326ffe73df280da0777ca228a4baa72fdd30a13a6925ba516e1a",
+      "registerDeep": "0xa423e8fb197836df9a74cceae27609c0f40bfc934faee20cfe3eafa9c719f024",
+      "registerShallow": "0x2a456f86de7c37eca905f6352455dcb2da5ac52fec84198706daa774cf22188d",
+      "initializeDeep": "0xefdd72e8ee666916daaf1108e42dfe2a12604e58cffd72deeafbed2490ff2c2c",
+      "initializeShallow": "0xb9f3601eab0a3cab06e15445efc2f9d00977e084d3aed244913fbd6c3e27102e",
+      "queueDeep": "0x2de56b1de661e36a1597e446c4a0651d25c2c87416c37b9aee2d1ecea1fff904",
+      "queueShallow": "0x38a7c3cc1c1aaa7c74e73e07eb5cb6f2d69a65c2b9b6e94f2b4256bb0094f918",
+      "activate": "0xe384ac6ff1ddb27a59c9fb40203d74b0463906fdceb5faf4f90617e3df95aec2",
+      "activateShallow": "0xad3ac1522a99eba1ff22f5598f35f97ef9f3ed677687f47caafbdb4d864bd8d6",
+      "routerExactInputZeroForOne": "0xe5c64d7c64086b9c8a56c0f64d70f0cc1c7a517e812770b65df406c550c50df5",
+      "routerExactInputOneForZero": "0xffe5985a4e9597539af1baf01063668d35711ab61856f6aeec3403a71ec26ac3",
+      "routerExactOutputZeroForOne": "0xf712456bd2b7ed6a7a24356e78cc1654197d24414d85cddd202dd6833d3c3890",
+      "routerExactOutputOneForZero": "0xa8a97a2da390ed9b4928111012ac4f7c591e58fbb60bba9bf7c2f6c334253d93"
+    }
+  }
+}

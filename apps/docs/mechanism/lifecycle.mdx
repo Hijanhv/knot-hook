@@ -1,0 +1,36 @@
+---
+title: "Liquidity lifecycle"
+description: "Independent, non-blocking, and JIT-resistant."
+---
+
+Each provider holds an **independent** pending request. There is no global lock, so one provider's
+pending deposit can never stall swaps, withdrawals, or anyone else's deposit.
+
+<Steps>
+  <Step title="Queue">
+    Assets are taken and held inactive. No shares are minted yet.
+  </Step>
+  <Step title="Mature">
+    After the maturity window, the deposit becomes activatable. Fresh capital cannot back a quote
+    before this point, which is what closes just-in-time liquidity.
+  </Step>
+  <Step title="Activate">
+    Shares mint at the **current** reserve ratio, so pending capital cannot capture gains that
+    accrued before it entered. Any excess becomes refundable. Activation starts a second maturity
+    window on the new shares.
+  </Step>
+  <Step title="Unlock or cancel">
+    Newly activated shares cannot transfer or withdraw until the second window ends. A request
+    that has not activated can still be cancelled at any time.
+  </Step>
+  <Step title="Claim">
+    Only the provider can activate, cancel or claim. Cancelled assets and activation excess are
+    refundable to that provider alone.
+  </Step>
+</Steps>
+
+<Note>
+Cancelling an inactive request has no maturity requirement, deliberately. The exit lock applies
+only after shares activate and begin affecting the shared quote. It does not trap a deposit that
+never entered the active reserve book.
+</Note>

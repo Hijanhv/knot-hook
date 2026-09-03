@@ -1,0 +1,46 @@
+---
+title: "Threat model"
+description: "What Knot defends against, and what it deliberately does not."
+---
+
+## The policy boundary
+
+**Liquidity providers in participating pools.** KNOT prevents one member from giving a taker a
+quote that is better than the federation's aggregate curve while retaining the member's own curve
+as the other boundary.
+
+## Explicitly not the target
+
+**An oracle, intent classifier, or universal sandwich defense.** The rule does not know the
+external fair price or why a trader arrived. The dataset in this repository does not justify
+calling raw reserve divergence toxic flow.
+
+## Attack surface
+
+| Vector | Status |
+| --- | --- |
+| Constructed cross-pool round trip | **Lower in the documented fixture.** +13.5843 becomes -0.0298 |
+| Trade splitting | **No advantage.** Sliced output is marginally worse than one large trade |
+| Same-member sandwich | **Reduced, not eliminated.** Balanced fixture: +0.393701 with KNOT vs +1.803279 plain. Skewed fixture: -1.347578 |
+| JIT liquidity | **Two-stage lock.** Fresh deposits cannot affect a quote before maturity; activated shares then wait another window before transfer or exit |
+| Repeated extraction fixture | **Bound holds in the tested sequence.** The fixed-size quote tightens as reserves move |
+| Reserve manipulation | **Fuzzed**, 10,000-run high-depth campaign, no underflow, aggregate never drifts |
+| Coalition of members | **Partially open**, see [Limits](/security/limits) |
+| Non-member pool | **Outside the boundary.** A pool for the same pair can exist without joining |
+| Fee/rebase/callback token | **Unsupported and negative-tested.** KNOT does not adapt hostile token semantics |
+
+## Permissions
+
+Knot enables `beforeSwapReturnDelta`, which Uniswap's own
+[v4 security framework](https://github.com/uniswapfoundation/security-framework) rates this
+permission as the highest-risk class. This is
+unavoidable for a custom curve: the hook replaces the pricing function, which is the flag's
+intended legitimate use. It means the hook is in the highest-scrutiny tier and should be read
+accordingly.
+
+| Control | Implementation |
+| --- | --- |
+| Reserve mutation | Restricted to registered members |
+| Membership | Owner-gated, bounded member cap |
+| Reentrancy | Guards on federation mutations and public LP activation, cancellation and refund entry points; activation completes local effects before calling the federation |
+| Rounding | Both directions round against the taker |

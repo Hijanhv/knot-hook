@@ -1,0 +1,94 @@
+---
+title: "Limits"
+description: "What is unresolved, stated with numbers."
+---
+
+<Warning>
+Unaudited hackathon software. Figures measure mechanics against the canonical v4 `PoolManager`,
+not realised LP P&L.
+</Warning>
+
+## Coalitions weaken the bound
+
+An attacker who controls a member pool can skew its reserves to drag the aggregate toward the quote
+they want.
+
+| | Enforced quote |
+| --- | --- |
+| Before coalition skew | 6.3159 |
+| After | 9.2989 |
+| **Loosened by** | **4,722 bps, roughly half** |
+
+## Divergence is not proven to be toxicity
+
+Knot bounds a quote to the curve implied by the sum of participating reserves. That virtual curve
+is a policy reference, not a route that is guaranteed to be directly executable. It does not follow that the flow it
+clipped was toxic, and that distinction is worth stating plainly because the pitch is easy to
+overstate.
+
+Tested separately against real Base data, across 67,743 swaps in every multi-pool pair family
+with enough volume:
+
+| | |
+| --- | --- |
+| Raw divergence vs markout | **Spearman rho = -0.130**, the wrong direction |
+| Shuffled control | 0.0005; useful as a check, not proof of causality |
+| Robustness | Holds across three markout horizons and across pair families |
+| Directional form | **+0.331 bps** for locally-favourable swaps vs **-0.991 bps** otherwise |
+
+In this sample, greater raw divergence was associated with better subsequent LP markout. A
+narrower directional split had the opposite sign across the two buckets. Neither observation is
+causal. The honest description of this hook is therefore **reserve consistency**, not toxicity
+filtering.
+
+The adversarial results in [Results](/security/results) are constructed sequences and are
+mechanically real: the bound does bind, and the round trip does flip to a loss. What is not
+settled is whether the flow it bounds is the flow LPs actually lose to.
+
+<Note>
+Sample-size caveat, stated as it was recorded: only four multi-tier pair families exist in the
+resolved Base set and one dominates. This is a directional signal, not a definitive verdict.
+</Note>
+
+Two things bound the damage, neither of which eliminates it: membership is permissioned, so an
+attacker must first be admitted; and skewing the aggregate costs real capital proportional to the
+influence sought.
+
+**Treat permissioned membership as load-bearing security, not administrative convenience.**
+
+## Structural constraints
+
+<AccordionGroup>
+  <Accordion title="New pools only">
+    A pool's hook address is fixed at creation, so existing pools cannot join a federation. Knot
+    applies to pools deployed into one from the start.
+  </Accordion>
+  <Accordion title="Non-member pools stay exploitable">
+    Anyone can permissionlessly deploy a pool outside the federation for the same pair. Knot
+    protects its members, not the pair universally.
+  </Accordion>
+  <Accordion title="The aggregate is not an oracle">
+    It is an internal reference derived from member reserves. It is not a fair-price feed and
+    should not be consumed as one.
+  </Accordion>
+  <Accordion title="Non-standard tokens">
+    Fee-on-transfer, rebasing and callback-bearing ERC-20s are negative-tested and unsupported.
+    A forced negative rebase can make PoolManager claims undercollateralized even though KNOT's
+    books remain internally consistent. Native ETH is lifecycle-tested separately.
+  </Accordion>
+  <Accordion title="Ordinary sandwiches can remain profitable">
+    In the balanced-member fixture, KNOT lowers a closed sandwich portfolio from about 1.803279
+    token0 profit to about 0.393701; it does not eliminate it. The skewed-member fixture closes at
+    a 1.347578 token0 loss. These are fixtures, not a universal sandwich guarantee.
+  </Accordion>
+</AccordionGroup>
+
+## What the rule actually selects
+
+Across 1,000 fuzz cases plus one concrete regression case, the bound did not engage when the local
+quote was already less favourable than the aggregate quote. It engaged on the opposite direction:
+the direction in which the local pool offered the taker the better quote.
+
+That is quote-direction selection, not proof of attacker intent, toxicity, or external price
+alignment. The rule can charge a legitimate rebalancing trade. Whether the retained amount exceeds
+lost flow is an open production question.

@@ -10,7 +10,10 @@ on:
   push:
     branches: [main]
     paths:
-      - "frontend/**"
+      - "apps/web/**"
+      - "deployments/unichain-sepolia.json"
+      - "package.json"
+      - "package-lock.json"
       - ".github/workflows/deploy-frontend.yml"
   workflow_dispatch:
 
@@ -26,38 +29,39 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          node-version: 20
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - run: npm ci
 
-      - name: Typecheck and lint
+      - name: Verify frontend
         run: |
-          npx tsc --noEmit
-          npm run lint
+          npm audit --audit-level=low
+          npm run typecheck --workspace @knot/web
+          npm run lint --workspace @knot/web
+          npm test --workspace @knot/web
 
       - name: Build static export
         env:
           NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
-        run: npm run build
+        run: npm run build --workspace @knot/web
 
       # Pages runs the output through Jekyll unless told not to, which strips _next/.
       - name: Disable Jekyll
-        run: touch out/.nojekyll
+        run: touch apps/web/out/.nojekyll
 
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
-          path: frontend/out
+          path: apps/web/out
 
   deploy:
     needs: build
@@ -67,4 +71,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

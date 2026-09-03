@@ -1,0 +1,24 @@
+{
+  "name": "knot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "KNOT ties participating Uniswap v4 pools to one aggregate-reserve quote boundary.",
+  "workspaces": [
+    "apps/web",
+    "packages/contracts"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @knot/web",
+    "build": "npm run build --workspaces --if-present",
+    "check": "npm run check --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:coverage": "npm run test:coverage --workspace @knot/contracts",
+    "contracts:test": "npm run test --workspace @knot/contracts",
+    "contracts:local": "npm run local:e2e --workspace @knot/contracts",
+    "web:dev": "npm run dev --workspace @knot/web"
+  },
+  "engines": {
+    "node": ">=22",
+    "npm": ">=10"
+  }
+}

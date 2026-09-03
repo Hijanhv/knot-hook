@@ -1,0 +1,18 @@
+{
+  "name": "@knot/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "KNOT Uniswap v4 hooks, reserve federation, deployment flows, and adversarial suites.",
+  "scripts": {
+    "build": "forge build --sizes",
+    "check": "forge fmt --check && forge lint src script && forge build --sizes",
+    "test": "forge test",
+    "test:unit": "forge test --match-path 'test/unit/*.t.sol'",
+    "test:integration": "forge test --match-path 'test/integration/*.t.sol'",
+    "test:security": "forge test --match-path 'test/security/*.t.sol'",
+    "test:invariant": "forge test --match-path 'test/invariant/*.t.sol'",
+    "test:benchmark": "forge test --match-path 'test/benchmark/*.t.sol'",
+    "test:coverage": "forge coverage --ir-minimum --no-match-coverage '^(test|script)/' --report summary",
+    "local:e2e": "forge script script/local/LocalE2E.s.sol:LocalE2E"
+  }
+}

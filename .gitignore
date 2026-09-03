@@ -4,5 +4,12 @@ broadcast/
 coverage/
 lcov.info
 .env
+.secrets/
+/docs/
 node_modules/
 .next/
+
+# Local execution ledger and framework-generated agent hints stay private.
+/AGENTS.md
+/apps/web/AGENTS.md
+/apps/web/CLAUDE.md

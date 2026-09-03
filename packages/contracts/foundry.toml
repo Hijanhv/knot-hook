@@ -1,0 +1,27 @@
+[profile.default]
+src = "src"
+test = "test"
+script = "script"
+out = "out"
+libs = ["lib"]
+solc = "0.8.26"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 200
+via_ir = true
+
+[lint]
+# The public immutable getters (`federation()`, `currency0()`, `feeNumerator()` ...) are part of
+# the deployed ABI, and KnotFederation.register calls IKnotMember.federation() by that exact
+# name. Renaming them to SCREAMING_SNAKE_CASE would break integrators and the public ABI.
+exclude_lints = ["screaming-snake-case-immutable"]
+# Lint the protocol source. Test fixtures cast literal amounts to int256 throughout, which is
+# safe by construction and would otherwise bury real findings in src/ under warnings.
+ignore = ["test/**/*.sol"]
+
+[fuzz]
+runs = 1000
+
+[invariant]
+runs = 128
+depth = 64
