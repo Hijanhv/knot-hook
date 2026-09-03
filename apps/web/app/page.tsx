@@ -59,7 +59,15 @@ export default function Home() {
         <div className="wrap relative grid items-center gap-0 py-14 md:py-20 lg:grid-cols-[1.02fr_0.98fr]">
           <div className="relative z-10 lg:pr-10">
             <div className="stagger">
-              <p className="eyebrow mb-7">Uniswap v4 hook</p>
+              <div className="mb-7 flex flex-wrap items-center gap-2">
+                <p className="eyebrow">Uniswap v4 hook</p>
+                <span className="pill">{SITE.cohort}</span>
+                <span className="pill">{SITE.projectId}</span>
+                <span className="pill">
+                  <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-ink" />
+                  {DEPLOYMENT_IS_ACTIVE ? "live on unichain sepolia" : "release manifest unavailable"}
+                </span>
+              </div>
 
               <h1 className="opsz-display font-display text-[clamp(2.9rem,7.4vw,6rem)] font-light leading-[0.94] tracking-[-0.035em] text-ink">
                 <span className="line-clip">One pair.</span>
@@ -76,14 +84,6 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-2">
-              <span className="pill">{SITE.cohort}</span>
-              <span className="pill">{SITE.projectId}</span>
-              <span className="pill">
-                <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-ink" />
-                {DEPLOYMENT_IS_ACTIVE ? "live on unichain sepolia" : "release manifest unavailable"}
-              </span>
-            </div>
           </div>
 
           {/* The render. Tall enough to read as an object, capped so it never pushes the fold. */}
