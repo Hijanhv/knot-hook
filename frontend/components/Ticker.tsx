@@ -2,7 +2,7 @@ const LINES = [
   "Live on Unichain Sepolia · chain 1301",
   "6,674 bps withheld from a taker exploiting the skewed pool",
   "Cross-pool round trip flips from +13.58 to -0.075",
-  "142 passing Foundry tests · 96.21% line coverage",
+  "150 passing Foundry tests · 96.68% line coverage",
   "Four stateful invariants over 8,192 lifecycle calls",
   "Bound verified on-chain, reproduces the suite to the wei",
   "No oracle · no keeper · no off-chain component",

@@ -18,8 +18,8 @@
 [![Uniswap v4](https://img.shields.io/badge/Uniswap-v4%20hook-FF007A.svg?logo=uniswap)](https://docs.uniswap.org/contracts/v4/overview)
 [![Foundry](https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg)](https://getfoundry.sh/)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.26-363636.svg?logo=solidity)](https://soliditylang.org/)
-[![Tests](https://img.shields.io/badge/tests-142%20passing-3FB950.svg)](#verify)
-[![Coverage](https://img.shields.io/badge/line%20coverage-96.21%25-3FB950.svg)](#verify)
+[![Tests](https://img.shields.io/badge/tests-150%20passing-3FB950.svg)](#verify)
+[![Coverage](https://img.shields.io/badge/line%20coverage-96.68%25-3FB950.svg)](#verify)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **UHI10 Hookathon · Sustainable Liquidity & MEV Protection**
@@ -267,7 +267,7 @@ Dependencies are vendored under `lib/`, so a fresh clone needs no install step.
 ```bash
 git clone https://github.com/Hijanhv/KNOT-hook-.git && cd KNOT-hook-
 
-forge test                                          # full suite, 142 tests
+forge test                                          # full suite, 150 tests
 forge test --match-contract MEVProtectionTest  -vv  # the headline adversarial results
 forge test --match-contract MEVAdversarialTest -vv  # federation-specific attacks
 forge test --match-contract GasBenchmarkTest   -vv  # cost against a hookless v4 pool
@@ -331,13 +331,14 @@ through the normal v4 router. Nothing Knot-specific is required on the caller's 
 
 ## Test suites
 
-142 tests across 15 suites. Coverage on `src/` is 96.21% lines, 92.25% statements, 96.43%
-functions and 64.81% branches. Nothing is mocked except the ERC-20s;
+150 tests across 16 suites. Coverage on `src/` is 96.68% lines, 94.01% statements, 96.43%
+functions and 74.07% branches. Nothing is mocked except the ERC-20s;
 everything runs against the canonical v4 `PoolManager`.
 
 | Suite | Tests | What it proves |
 |---|---|---|
 | [`MEVProtection`](test/MEVProtection.t.sol) | 9 | Textbook evasions: slicing, sandwiching, same-block JIT, and the coalition result |
+| [`DefensiveGuards`](test/DefensiveGuards.t.sol) | 8 | Every declared guard fired by selector, and why ReentrantCall has no reachable path |
 | [`DirectionalSelectivity`](test/DirectionalSelectivity.t.sol) | 4 | The bound engages on direction and never on magnitude, on both branches |
 | [`MEVAdversarial`](test/MEVAdversarial.t.sol) | 14 | Federation-specific: donation, cross-member and exact-output sandwiches, back-running, multi-block JIT, two- and three-member cycles, ordering independence, griefing, first-depositor |
 | [`KnotFederationAttack`](test/KnotFederationAttack.t.sol) | 4 | Buddy-pool manipulation of the shared reference |
@@ -427,7 +428,7 @@ measured results.
 | [Architecture](https://knot-38d8bd0e.mintlify.app/reference/architecture) | Product architecture, lifecycle and trust boundaries |
 | [Threat model](https://knot-38d8bd0e.mintlify.app/security/threat-model) | What is closed, what is open |
 | [Results](https://knot-38d8bd0e.mintlify.app/security/results) | Every measured number |
-| [Test suites](https://knot-38d8bd0e.mintlify.app/security/testing) | All 15 suites and the MEV class each answers |
+| [Test suites](https://knot-38d8bd0e.mintlify.app/security/testing) | All 16 suites and the MEV class each answers |
 | [Limits](https://knot-38d8bd0e.mintlify.app/security/limits) | The coalition result and what divergence does not prove |
 
 In-repo long-form notes:
