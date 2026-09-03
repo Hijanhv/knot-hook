@@ -34,7 +34,7 @@ export default function SiteFooter() {
             <li><a href={SITE.uniswapV4} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-blue">Uniswap v4 ↗</a></li>
             <li><Link href="/contracts" className="text-muted hover:text-blue">Contracts</Link></li>
             <li className="text-ink-soft">Solidity 0.8.26 · Foundry</li>
-            <li className="text-ink-soft">Next.js · React Query · viem</li>
+            <li className="text-ink-soft">Next.js · wagmi · viem</li>
           </ul>
         </div>
 

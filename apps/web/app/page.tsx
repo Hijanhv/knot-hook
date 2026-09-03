@@ -289,7 +289,7 @@ export default function Home() {
             <p className="eyebrow mb-6">Stack</p>
             <div className="grid grid-cols-2 gap-x-10 border-t border-grid">
               {[["Protocol", "Uniswap v4"], ["Base", "BaseCustomCurve"], ["Accounting", "ERC-6909"],
-                ["Solidity", "0.8.26"], ["Chain", "Unichain Sepolia"], ["Client", "viem"],
+                ["Solidity", "0.8.26"], ["Chain", "Unichain Sepolia"], ["Client", "wagmi · viem"],
                 ["Docs", "Mintlify"], ["Oracle", "none"]].map(([k, v]) => (
                 <div key={k} className="flex justify-between gap-2 border-b border-grid py-3">
                   <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-faint">{k}</span>
@@ -313,12 +313,12 @@ export default function Home() {
           <p className="eyebrow mb-5">Try it</p>
 
           <h2 className="opsz-display max-w-2xl font-display text-[clamp(2rem,4.4vw,3.4rem)] font-light leading-[1.04] tracking-[-0.03em] text-ink">
-            Move one input. Watch both price boundaries.
+            Connect a wallet and watch the bound bind.
           </h2>
 
           <p className="mt-6 max-w-md text-[15.5px] leading-[1.6] text-muted">
-            No wallet is needed. Quotes are read from <code className="font-mono text-[13.5px] text-ink">preview()</code> on
-            the deployed federation, the same calculation a swap executes against.
+            Quotes are read from <code className="font-mono text-[13.5px] text-ink">preview()</code> on
+            the deployed federation, the same call a swap executes against.
           </p>
 
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">

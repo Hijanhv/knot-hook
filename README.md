@@ -166,8 +166,8 @@ on Sourcify.
 Prerequisites: Node.js 22+, npm 10+ and Foundry.
 
 ```bash
-git clone https://github.com/Hijanhv/KNOT-hook-.git
-cd KNOT-hook-
+git clone https://github.com/Hijanhv/knot-hook.git
+cd knot-hook
 npm install
 npm run check
 npm test
@@ -246,7 +246,7 @@ MEV prevention.
 ## Repository map
 
 ```text
-KNOT-hook-/
+knot-hook/
 ├── apps/
 │   ├── web/                       Next.js product and quote inspector
 │   └── docs/                      Mintlify documentation

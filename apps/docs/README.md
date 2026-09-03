@@ -15,7 +15,7 @@ Mintlify deploys through a GitHub app, authorised in a browser. There is no CLI 
 One-time setup:
 
 1. Sign in at [mintlify.com](https://mintlify.com)
-2. **Add deployment** → authorise the GitHub app → select `Hijanhv/KNOT-hook-`
+2. **Add deployment** → authorise the GitHub app → select `Hijanhv/knot-hook`
 3. Set the content directory to `apps/docs`
 4. Copy the published URL into `apps/web/.env.local`:
    ```

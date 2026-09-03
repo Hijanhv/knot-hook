@@ -4,7 +4,7 @@ export const SITE = {
   project: "Knot",
   cohort: "UHI10",
   theme: "Reserve-aware custom accounting",
-  github: "https://github.com/Hijanhv/KNOT-hook-",
+  github: "https://github.com/Hijanhv/knot-hook",
   // Mintlify docs. Point NEXT_PUBLIC_DOCS_URL at the deployed docs subdomain.
   docs: process.env.NEXT_PUBLIC_DOCS_URL ?? "https://knot-38d8bd0e.mintlify.app",
   uniswapV4: "https://docs.uniswap.org/contracts/v4/overview",

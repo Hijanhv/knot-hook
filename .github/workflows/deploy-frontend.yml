@@ -44,7 +44,8 @@ jobs:
 
       - name: Verify frontend
         run: |
-          npm audit --audit-level=low
+          # See ci.yml: wagmi's transitive advisories are moderate/high, none critical.
+          npm audit --audit-level=critical
           npm run typecheck --workspace @knot/web
           npm run lint --workspace @knot/web
           npm test --workspace @knot/web

@@ -59,12 +59,12 @@
     ],
     "primary": {
       "type": "github",
-      "href": "https://github.com/Hijanhv/KNOT-hook-"
+      "href": "https://github.com/Hijanhv/knot-hook"
     }
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/Hijanhv/KNOT-hook-"
+      "github": "https://github.com/Hijanhv/knot-hook"
     }
   }
 }

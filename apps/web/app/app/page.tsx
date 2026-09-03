@@ -12,6 +12,7 @@ import {
   previewQuote,
 } from "@/lib/knot";
 import LiveBadge from "@/components/LiveBadge";
+import Connect from "@/components/Connect";
 import { chainHeadAgeSeconds, isChainHeadStale, publicClient, readChainHead } from "@/lib/rpc";
 import { CHAIN } from "@/lib/contracts";
 import { ACTIVE_DEPLOYMENT, DEPLOYMENT, DEPLOYMENT_IS_ACTIVE } from "@/lib/deployment";
@@ -137,11 +138,14 @@ export default function AppPage() {
             Live values come directly from the deployed federation; fallback values are explicitly labelled as reference data.
           </p>
         </div>
-        {active && (
-          <a href={`${CHAIN.explorer}/address/${active.contracts.federation}`} target="_blank" rel="noopener noreferrer" className="btn-ghost">
-            View deployment ↗
-          </a>
-        )}
+        <div className="flex flex-col items-end gap-2">
+          <Connect />
+          {active && (
+            <a href={`${CHAIN.explorer}/address/${active.contracts.federation}`} target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] uppercase tracking-[0.12em] text-faint hover:text-blue">
+              View deployment ↗
+            </a>
+          )}
+        </div>
       </div>
 
       {!DEPLOYMENT_IS_ACTIVE && (
