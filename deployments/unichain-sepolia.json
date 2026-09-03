@@ -37,6 +37,11 @@
     "shallow": "0xfd1361ff40dcbffa9fbf20ab5dc741b0378f74cfb55c0d9519322126fe8b6d71"
   },
   "owner": "0x184083bA756BD25D0B7a414cC88Ec86B84CFE1C4",
+  "faucet": {
+    "address": "0xd9BdcF978669eCa41A6Fd44771AF95C7327f379b",
+    "dripAmount": "100000000000000000000",
+    "cooldownSeconds": 28800
+  },
   "verification": {
     "verifiedAtBlock": 61584469,
     "previewAmount": "1000000000000000",

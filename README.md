@@ -88,10 +88,14 @@ holds a funded balance of both currencies and pays a fixed drip per address behi
 It never mints, so its exposure is capped by its funding, and it reverts loudly when drained.
 It sits outside the hook trust boundary.
 
-Status: **not yet deployed**, so no address is recorded here. The app's claim button activates
-on its own once a faucet is recorded in `deployments/unichain-sepolia.json` as
-`faucet: { address, dripAmount, cooldownSeconds }`; the manifest validator and the contracts
-page both understand that field.
+Status: **deployed** at
+[`0xd9BdcF978669eCa41A6Fd44771AF95C7327f379b`](https://sepolia.uniscan.xyz/address/0xd9BdcF978669eCa41A6Fd44771AF95C7327f379b),
+funded with 100,000 of each currency for 1,000 claims of 100 each behind an 8-hour
+cooldown. Deployment:
+[`0x864ab92d…b72f`](https://sepolia.uniscan.xyz/tx/0x864ab92d7b2a2c5a4b1d73664d81fa0c77ac0136ac4d80def90ea0b047b1b72f).
+The app's claim button reads the recorded `faucet` entry in
+`deployments/unichain-sepolia.json`; the manifest validator and the contracts page both
+understand that field.
 
 To deploy it from the wallet holding the demo currencies:
 

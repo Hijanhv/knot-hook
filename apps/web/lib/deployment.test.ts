@@ -167,6 +167,7 @@ describe("deployment manifest", () => {
 
   it("accepts an active manifest with no faucet recorded", () => {
     const candidate = activeCopy();
+    delete candidate.faucet;
     expect("faucet" in candidate).toBe(false);
     expect(() => assertDeploymentManifest(candidate)).not.toThrow();
   });
