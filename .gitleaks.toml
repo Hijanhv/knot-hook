@@ -1,0 +1,11 @@
+title = "KNOT secret scanning"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Ignore vendored upstream dependency fixtures"
+paths = [
+  '''^lib/uniswap-hooks/''',
+  '''^packages/contracts/lib/uniswap-hooks/''',
+]

@@ -39,13 +39,13 @@ Before each swap, KNOT computes two constant-product quotes:
 
 The trader receives the less favourable result:
 
-\[
-\text{exact input output}=\min(\text{local output},\text{aggregate output})
-\]
+$$
+\text{exact input output} = \min(\text{local output}, \text{aggregate output})
+$$
 
-\[
-\text{exact output input}=\max(\text{local input},\text{aggregate input})
-\]
+$$
+\text{exact output input} = \max(\text{local input}, \text{aggregate input})
+$$
 
 If the local pool already offers the less favourable price, KNOT changes nothing. If the local
 pool offers the better price, the difference is never paid out and remains in that pool's

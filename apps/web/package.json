@@ -2,7 +2,7 @@
   "name": "@knot/web",
   "version": "0.1.0",
   "private": true,
-  "description": "Knot — one token pair, several pools, one reserve-aware price boundary.",
+  "description": "Knot gives several pools one reserve-aware price boundary.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -32,5 +32,8 @@
     "tailwindcss": "3.4.19",
     "typescript": "5.9.3",
     "vitest": "4.1.11"
+  },
+  "optionalDependencies": {
+    "@rolldown/binding-linux-x64-gnu": "1.2.7"
   }
 }
