@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <b><a href="https://knot-inky.vercel.app">App</a></b> ·
+  <b><a href="https://knot-hook-web.vercel.app/">App</a></b> ·
   <b><a href="https://knot-38d8bd0e.mintlify.app">Documentation</a></b> ·
   <a href="https://knot-38d8bd0e.mintlify.app/reference/architecture">Architecture</a> ·
   <a href="https://knot-38d8bd0e.mintlify.app/security/testing">Verification</a> ·
