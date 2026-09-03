@@ -5,5 +5,5 @@ export const RELEASE_EVIDENCE = {
     statefulInvariantProperties: 5,
     highDepthStatefulCalls: 163_840,
   },
-  coverage: { lines: 99.19 },
+  coverage: { lines: 99.32 },
 } as const;
