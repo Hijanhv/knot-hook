@@ -8,6 +8,7 @@
   <a href="https://knot-38d8bd0e.mintlify.app/mechanism/before-knot">Before KNOT</a> ·
   <a href="https://knot-38d8bd0e.mintlify.app/reference/architecture">Architecture</a> ·
   <a href="https://knot-38d8bd0e.mintlify.app/security/testing">Verification</a> ·
+  <b><a href="assets/pitch/knot-pitch-deck.pdf">Pitch deck (PDF)</a></b> ·
   <a href="SECURITY.md">Security boundaries</a>
 </p>
 
@@ -28,6 +29,24 @@
 
 > KNOT is unaudited hackathon software. Its experiments measure a bounded quote rule in constructed
 > scenarios; they do not prove universal MEV protection or realised LP profit.
+
+## Pitch deck
+
+<p align="center">
+  <a href="assets/pitch/knot-pitch-deck.pdf">
+    <img src="assets/pitch/cover.png" alt="KNOT pitch deck: one pair, several pools, one price boundary" width="70%">
+  </a>
+</p>
+
+<p align="center"><b><a href="assets/pitch/knot-pitch-deck.pdf">Download the pitch deck (PDF, 15 slides)</a></b></p>
+
+The deck covers the problem, the solution and its contract code, the original idea, the execution,
+the impact, the functionality, and the pitch. Every figure in it is reproduced by a named test in
+this repository.
+
+## Partner integrations
+
+No partner integrations.
 
 ## The idea in one minute
 
