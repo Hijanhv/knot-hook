@@ -1,0 +1,71 @@
+---
+title: "Trade against it"
+description: "Claim test currency and execute a bounded swap from the browser."
+---
+
+The two member pools are live on Unichain Sepolia and anyone can trade against them. Nothing is
+pre-funded and nothing is whitelisted: a wallet that has never touched this deployment can claim
+currency and swap in the same sitting.
+
+<Steps>
+  <Step title="Connect">
+    Open the [quote inspector](https://knot-hook-web.vercel.app/app/) and connect a wallet on
+    Unichain Sepolia (chain `1301`). Gas is paid in Unichain Sepolia ETH, which public faucets
+    supply. The quotes on the page are readable without a wallet; only the write steps need one.
+  </Step>
+  <Step title="Claim test currency">
+    `KnotFaucet` pays 100 kETH and 100 kUSD per address behind an eight-hour cooldown. It never
+    mints, so it can only ever hand out what it was funded with, and it reverts loudly rather than
+    paying zero once drained.
+  </Step>
+  <Step title="Approve twice">
+    Uniswap's Universal Router spends through Permit2, so two one-time approvals are needed: the
+    ERC-20 approves Permit2, then Permit2 approves the router. Both persist, so a returning wallet
+    swaps in a single transaction.
+  </Step>
+  <Step title="Swap">
+    The swap is submitted through the Universal Router as a single-hop `V4_SWAP`. The enforced
+    quote shown on the page is passed as the limit, so the trade settles at the rule's price or it
+    reverts. It never silently fills at something else.
+  </Step>
+</Steps>
+
+## What to watch
+
+Pick the **shallow** member to see the boundary bind. Its own curve is generous relative to the
+pair, so the aggregate quote is the worse of the two and the difference stays with that pool.
+
+Pick the **deep** member to see the boundary stay inert. Its curve is already the more
+conservative of the two, so the rule selects the local quote and changes nothing. A rule that
+clipped both would be a fee, not a boundary.
+
+<Note>
+The panel labels every figure as live or reference. Live values are read from `preview()` on the
+deployed federation, the same call a swap executes against. Reference values appear only when the
+public RPC is unreachable, and a swap is refused while a quote is not live.
+</Note>
+
+## Addresses used by the write path
+
+| Contract | Address |
+| --- | --- |
+| KnotFaucet | [`0xd9BdcF978669eCa41A6Fd44771AF95C7327f379b`](https://sepolia.uniscan.xyz/address/0xd9BdcF978669eCa41A6Fd44771AF95C7327f379b) |
+| Universal Router | [`0xf70536B3bcC1bD1a972dc186A2cf84cC6da6Be5D`](https://sepolia.uniscan.xyz/address/0xf70536B3bcC1bD1a972dc186A2cf84cC6da6Be5D) |
+| Permit2 | [`0x000000000022D473030F116dDEE9F6B43aC78BA3`](https://sepolia.uniscan.xyz/address/0x000000000022D473030F116dDEE9F6B43aC78BA3) |
+
+## Notes for anyone rebuilding the calldata
+
+The deployed router decodes the **five-field** single-hop tuple from the pinned v4-periphery
+release: `poolKey`, `zeroForOne`, the specified amount, the limit, and `hookData`. Newer
+`IV4Router` source adds `minHopPriceX36`; encoding that six-field shape against this router makes
+its decoder reject the command. The builders in `apps/web/lib/swap.ts` mirror
+`script/verify/UniversalRouterLifecycle.s.sol` for exactly that reason, and their tests assert the
+pool key they build hashes to the pool IDs recorded in the release manifest.
+
+Gas is estimated on the app's own transport rather than the wallet's. A wallet that returns an
+incomplete block makes viem fail while preparing the transaction, which surfaces as a revert that
+never happened.
+
+<Warning>
+Unaudited hackathon software on a test network. kETH and kUSD are demo currencies with no value.
+</Warning>
