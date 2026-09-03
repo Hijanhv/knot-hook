@@ -9,6 +9,9 @@
   <a href="https://knot-38d8bd0e.mintlify.app/security/testing">Verification</a> ·
   <a href="SECURITY.md">Security boundaries</a>
 </p>
+**UHI10 Hookathon · Sustainable Liquidity & MEV Protection**
+
+**Project ID: `HK-UHI10-1087`**
 
 > When the same token pair is split across several pools, one shallow or skewed pool can quote
 > far beyond the price implied by the participating liquidity as a whole. KNOT gives those pools
