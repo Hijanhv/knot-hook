@@ -32,6 +32,7 @@ export default function SiteFooter() {
           <p className="eyebrow mb-4">Stack</p>
           <ul className="space-y-2.5 text-sm">
             <li><a href={SITE.uniswapV4} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-blue">Uniswap v4 ↗</a></li>
+            <li><a href="https://sepolia.uniscan.xyz" target="_blank" rel="noopener noreferrer" className="text-muted hover:text-blue">Unichain Sepolia ↗</a></li>
             <li><Link href="/contracts" className="text-muted hover:text-blue">Contracts</Link></li>
             <li className="text-ink-soft">Solidity 0.8.26 · Foundry</li>
             <li className="text-ink-soft">Next.js · wagmi · viem</li>

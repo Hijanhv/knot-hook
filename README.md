@@ -19,6 +19,9 @@
 
 **Project ID: `HK-UHI10-1087`**
 
+**Partner: Unichain** &nbsp;·&nbsp; **Topics:** Inter-connected pools · MEV · LVR · Custom hooks ·
+CPMM · CFMM · LP liquidity · Unichain · Security
+
 > When the same token pair is split across several pools, one shallow or skewed pool can quote
 > far beyond the price implied by the participating liquidity as a whole. KNOT gives those pools
 > one shared, deterministic price boundary without pooling their custody or LP ownership.
