@@ -35,7 +35,17 @@
 
 ## Partner integrations
 
-No partner integrations.
+**Unichain.** The release runs on Unichain Sepolia (chain `1301`) rather than a private fork.
+Every contract is deployed there, against the canonical Uniswap v4
+[PoolManager](https://sepolia.uniscan.xyz/address/0x00b036b58a818b1bc34d502d3fe730db729e62ac)
+at `0x00b036b5…729e62ac`, and swaps settle through the
+[Universal Router](https://sepolia.uniscan.xyz/address/0xf70536B3bcC1bD1a972dc186A2cf84cC6da6Be5D)
+at `0xf70536B3…6Be5D` with Permit2, so the write path is Uniswap's own rather than a bespoke one.
+
+The federation, both hooks and both demo currencies are exact creation- and runtime-bytecode
+matches on Sourcify, the quote inspector reads live state from the public Unichain Sepolia RPC,
+and every transaction in [See it on-chain](#see-it-on-chain) is a Unichain Sepolia transaction
+anyone can open in the explorer.
 
 ## Try it
 
