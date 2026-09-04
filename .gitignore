@@ -9,6 +9,10 @@ lcov.info
 node_modules/
 .next/
 
+# Vercel's local project link. It names the project and org, and an earlier commit
+# removed it without ignoring it, so a later `git add` swept it straight back in.
+.vercel/
+
 # Local execution ledger and framework-generated agent hints stay private.
 /AGENTS.md
 /apps/web/AGENTS.md
