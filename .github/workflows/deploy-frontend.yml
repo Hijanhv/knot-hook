@@ -15,6 +15,7 @@ on:
       - "package.json"
       - "package-lock.json"
       - ".github/workflows/deploy-frontend.yml"
+      - ".github/scripts/npm-audit-gate.sh"
   workflow_dispatch:
 
 permissions:
@@ -42,10 +43,11 @@ jobs:
 
       - run: npm ci
 
+      - name: Audit dependencies
+        run: .github/scripts/npm-audit-gate.sh
+
       - name: Verify frontend
         run: |
-          # See ci.yml: wagmi's transitive advisories are moderate/high, none critical.
-          npm audit --audit-level=critical
           npm run typecheck --workspace @knot/web
           npm run lint --workspace @knot/web
           npm test --workspace @knot/web

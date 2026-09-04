@@ -72,9 +72,10 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - run: npm ci
-      # wagmi pulls walletconnect transitive moderate/high advisories with no critical;
-      # gate on critical so the wallet stack does not fail every build on upstream noise.
-      - run: npm audit --audit-level=critical
+      # Gates on critical advisories only, and treats a registry outage as a warning rather
+      # than a failure. See the script for why both of those are deliberate.
+      - name: Audit dependencies
+        run: .github/scripts/npm-audit-gate.sh
       - run: npm run check --workspace @knot/web
 
   secrets:
